@@ -17,14 +17,14 @@ export default async function Home() {
             <h1 className="mr-3 text-5xl font-semibold text-white">Chat with any PDF</h1>
             <UserButton />
           </div>
+            <p className="max-w-xl mt-2 text-lg text-slate-600">Join millions of students, researchers and professionals to instantly answer questions and understand research with AI.</p>
 
           <div className="flex mt-2">
             {
-              isAuth && <Button>Go to Chats</Button>
+              isAuth && <Button className="bg-white text-black font-bold my-2">Go to Chats</Button>
             }
           </div>
 
-          <p className="max-w-xl mt-2 text-lg text-slate-600">Join millions of students, researchers and professionals to instantly answer questions and understand research with AI.</p>
 
           <div className="w-full mt-4">
             {
