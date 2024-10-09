@@ -3,7 +3,6 @@ import { Pinecone } from "@pinecone-database/pinecone";
 import { downloadFromS3 } from "./s3-server";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import {Document, RecursiveCharacterTextSplitter } from '@pinecone-database/doc-splitter';
-import { truncate } from "fs";
 import { getEmbeddings } from "./embedding";
 import md5 from "md5";
 import { convertToAscii } from "./utils";
@@ -55,7 +54,11 @@ export async function loadS3IntoPinecone(fileKey: string) {
 
     console.log('inserting vectors into Pinecone');
     const namespace = convertToAscii(fileKey);
+
+    console.log({pineconeIndex, vectors, namespace}, 'pinecone');
     await chunkedUpsert(pineconeIndex, vectors, namespace, 10);
+
+    console.log('upsert successfully')
     return documents[0];
 }
 
@@ -104,12 +107,23 @@ async function prepareDocument(page: PDFPage) {
 }
 
 async function chunkedUpsert(pineconeIndex: any, vectors: any, namespace: string, chunkSize = 10) {
-    for (let i = 0; i < vectors.length; i += chunkSize) {
-        const chunk = vectors.slice(i, i + chunkSize);
-        await pineconeIndex.upsert({
-            vectors: chunk,
-            namespace,
-        });
-        console.log(`Inserted vectors ${i} to ${i + chunk.length}`);
+    if (vectors.length <= 10) {
+        await pineconeIndex.namespace(namespace).upsert([
+            ...vectors
+        ]);
+        return;
     }
+
+    const chunks = [];
+
+    for (let i = 0; i < vectors.length; i += chunkSize) {
+        chunks.push(vectors.slice(i, i + chunkSize));
+    }
+
+    for (const chunk of chunks) {
+        await pineconeIndex.namespace(namespace).upsert(chunk);
+    }
+
+    return;
+
 }
