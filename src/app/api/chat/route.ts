@@ -1,10 +1,12 @@
 import {Configuration, OpenAIApi} from 'openai-edge';
-import { StreamingTextResponse, OpenAIStream } from 'ai';
+import { StreamingTextResponse, OpenAIStream, Message } from 'ai';
 import { NextResponse } from 'next/server';
-import { Stream } from 'stream';
-import { ConsoleLogWriter } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
+import { getContext } from '@/lib/context';
+import { db } from '@/lib/db';
+import { chats } from '@/lib/db/schema';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 const config = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
@@ -14,38 +16,48 @@ const openai = new OpenAIApi(config);
 
 export async function POST(req: Request) {
     try {
-        const { messages } = await req.json();
+        const { messages, chatId } = await req.json();
+        const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
+        if (_chats.length !== 1) {
+            return NextResponse.json({error: 'Chat not found'}, {status: 404});
+        }
 
-        
+        const fileKey = _chats[0].fileKey;
+        const lastMessage = messages[messages.length - 1];
+
+        const context = await getContext(lastMessage.content, fileKey);
+        const prompt = {
+            role: "system",
+            content: `AI assistant is a brand new, powerful, human-like artificial intelligence.
+            The traits of AI include expert knowledge, helpfulness, cleverness, and articulateness.
+            AI is a well-behaved and well-mannered individual.
+            AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.
+            AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
+            AI assistant is a big fan of Pinecone and Vercel.
+            START CONTEXT BLOCK
+            ${context}
+            END OF CONTEXT BLOCK
+            AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
+            If the context does not provide the answer to question, the AI assistant will say, "I'm sorry, but I don't know the answer to that question".
+            AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
+            AI assistant will not invent anything that is not drawn directly from the context.
+            `,
+          };
         const response: any = await openai.createChatCompletion({
             model: 'gpt-3.5-turbo',
-            messages,
+            messages: [
+                prompt, 
+                ...messages.filter((message: Message) => message.role === 'user')
+            ],
             stream: true
         });
 
         const stream = OpenAIStream(response);
         return new StreamingTextResponse(stream);
     } catch (error) {
-        console.log(error); 
+        console.error(error);
+        return new Response(JSON.stringify({ error: 'An error occurred' }), { status: 500 });
     }
 }
-
-async function getTextResponse(response: any) {
-    // Ensure the response body is readable and convert to text
-    const textResponse = await response.body.getReader();
-    let responseText = "";
-    
-    // Read the chunks of data from the stream
-    const decoder = new TextDecoder("utf-8");
-    let done = false;
-    while (!done) {
-      const { value, done: chunkDone } = await textResponse.read();
-      done = chunkDone;
-      if (value) {
-        responseText += decoder.decode(value, { stream: !done });
-      }
-    }
-    return responseText;
-  }
 
   
