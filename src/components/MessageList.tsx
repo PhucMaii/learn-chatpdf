@@ -1,12 +1,22 @@
 import { cn } from '@/lib/utils';
 import { Message } from 'ai/react'
+import { Loader2 } from 'lucide-react';
 import React from 'react'
 
 type Props = {
     messages: Message[];
+    isLoading: boolean;
 }
 
-function MessageList({messages}: Props) {
+function MessageList({messages, isLoading}: Props) {
+    if (isLoading) {
+        return (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <Loader2 className="animate-spin w-6 h-6" />
+            </div>
+        )
+    }
+
     if (!messages) {
         return <></>
     }

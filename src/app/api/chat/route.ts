@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { getContext } from '@/lib/context';
 import { db } from '@/lib/db';
-import { chats } from '@/lib/db/schema';
+import { chats, messages as _messages } from '@/lib/db/schema';
 
 export const runtime = 'nodejs';
 
@@ -52,7 +52,24 @@ export async function POST(req: Request) {
             stream: true
         });
 
-        const stream = OpenAIStream(response);
+        const stream = OpenAIStream(response, {
+            onStart: async () => {
+                // Save user message into db
+                await db.insert(_messages).values({
+                    chatId,
+                    content: lastMessage.content,
+                    role: 'user'
+                })
+            },
+            onCompletion: async (completion) => {
+                // Save ai message into db
+                await db.insert(_messages).values({
+                    chatId,
+                    content: completion,
+                    role: 'system'
+                })
+            }
+        });
         return new StreamingTextResponse(stream);
     } catch (error) {
         console.error(error);
