@@ -2,13 +2,29 @@ import { Button } from "@/components/ui/button";
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
-import {LogIn} from 'lucide-react';
+import {ArrowRight, LogIn} from 'lucide-react';
 import FileUpload from "@/components/FileUpload";
+import { checkSubscription } from "@/lib/subscription";
+import SubscriptionButton from "@/components/SubscriptionButton";
+import { db } from "@/lib/db";
+import { chats } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function Home() {
   const {userId} = await auth();
 
   const isAuth = !!userId;
+
+  const isPro = await checkSubscription();
+  let firstChat;
+
+  if (userId) {
+    firstChat = await db.select().from(chats).where(eq(chats.userId, userId));
+
+    if (firstChat) {
+      firstChat = firstChat[0];
+    }
+  }
 
   return (
     <div className="w-screen min-h-screen bg-gradient-to-tr from-gray-700 via-gray-900 to-black">
@@ -20,10 +36,16 @@ export default async function Home() {
           </div>
             <p className="max-w-xl mt-2 text-lg text-slate-600">Join millions of students, researchers and professionals to instantly answer questions and understand research with AI.</p>
 
-          <div className="flex mt-2">
+          <div className="flex mt-2 items-center">
             {
-              isAuth && <Button className="bg-white text-black font-bold my-2">Go to Chats</Button>
+              isAuth && firstChat && 
+              <Link href={`/chat/${firstChat.id}`}>
+                <Button className="bg-white text-black font-bold my-2">Go to Chats <ArrowRight className="w-4 h-4 ml-2" /></Button>
+              </Link>
             }
+            <div className="ml-3">
+              <SubscriptionButton isPro={isPro} />
+            </div>
           </div>
 
 

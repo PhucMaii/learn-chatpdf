@@ -1,31 +1,20 @@
 'use client';
 import { DrizzleChat } from '@/lib/db/schema';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from './ui/button';
 import { MessageCircle, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import axios from 'axios';
+import SubscriptionButton from './SubscriptionButton';
 
 type Props = {
     chats: DrizzleChat[];
-    chatId: number
+    chatId: number;
+    isPro: boolean;
 }
 
-export default function ChatSidebar({chats, chatId}: Props) {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSubscription = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get('/api/stripe');
-      window.location.href = response.data.url;
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-    }
-  }
+export default function ChatSidebar({chats, chatId, isPro}: Props) {
 
   return (
     <div className="w-full h-screen p-4 text-gray-200 bg-gray-900">
@@ -57,9 +46,7 @@ export default function ChatSidebar({chats, chatId}: Props) {
           <Link href="/">Source</Link>
         </div>
            {/* Stripe Button */}
-           <Button className="mt-2 text-wihte bg-slate-700" disabled={isLoading} onClick={handleSubscription}>
-            Upgrade To Pro
-           </Button>
+           <SubscriptionButton isPro={isPro} />
       </div>
     </div>
   )
