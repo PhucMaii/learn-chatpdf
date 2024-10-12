@@ -5,11 +5,11 @@ import { Button } from './ui/button';
 import { auth } from '@clerk/nextjs/server';
 
 type Props = {
-
+    landingPage?: boolean
 }
 
-const NavBar = async (props: Props) => {
-    const {userId } = await auth();
+const NavBar = async ({landingPage}: Props) => {
+    const { userId } = await auth();
 
   return (
     <div className="flex items-center justify-between">
@@ -21,8 +21,8 @@ const NavBar = async (props: Props) => {
         </div>
 
         <div className="flex items-center gap-8 mr-2">
-          <Link href='/dashboard' className="text-white font-semibold ">Dashboard</Link>
-          <Link href='/dashboard' className="text-white font-semibold ">Pricing</Link>
+          <Link href='/dashboard' className={`${landingPage ? 'text-white' : 'text-emerald-500'} font-semibold `}>Dashboard</Link>
+          <Link href='/dashboard' className={`${landingPage ? 'text-white' : 'text-emerald-500'} font-semibold `}>Pricing</Link>
           {userId ? <UserButton /> : <Button>Login</Button>}
         </div>
       </div>
