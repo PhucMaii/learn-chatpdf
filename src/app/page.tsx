@@ -1,21 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
-import {ArrowRight, LogIn} from 'lucide-react';
-import FileUpload from "@/components/FileUpload";
 import { checkSubscription } from "@/lib/subscription";
-import SubscriptionButton from "@/components/SubscriptionButton";
 import { db } from "@/lib/db";
 import { chats } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import NavBar from "@/components/NavBar";
 
 export default async function Home() {
   const {userId} = await auth();
-
-  const isAuth = !!userId;
-
   const isPro = await checkSubscription();
   let firstChat;
 
@@ -30,20 +24,8 @@ export default async function Home() {
   return (
     <div className="w-screen min-h-screen bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black flex justify-center">
       <div className="max-w-7xl p-8">
+      <NavBar />
       {/* Nav bar */}
-      <div className="flex items-center justify-between">
-        <div className='flex items-center gap-2'>
-          <div className="w-10 h-10 rounded-full bg-white"></div>
-          <h1 className="text-emerald-500 font-bold text-xl">LearnPDF</h1>
-        </div>
-
-        <div className="flex items-center gap-8 mr-2">
-          <Link href='/dashboard' className="text-white font-semibold ">Dashboard</Link>
-          <Link href='/dashboard' className="text-white font-semibold ">Pricing</Link>
-          {userId ? <UserButton /> : <Button>Login</Button>}
-        </div>
-      </div>
-
 
       {/* Headline */}
       <div className="w-full max-h-full flex gap-4 mt-8">

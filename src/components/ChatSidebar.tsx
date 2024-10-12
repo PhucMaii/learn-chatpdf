@@ -18,7 +18,7 @@ export default function ChatSidebar({chats, chatId, isPro}: Props) {
 
   return (
     <div className="w-full h-screen p-4 text-gray-200 bg-gray-900">
-      <Link href="/">
+      <Link href="/create-chat">
         <Button className='w-full border-dashed border-2 border-gray-700 hover:bg-gray-800/50'>
           <PlusCircle className="mr-2 w-4 h-4" />
           New Chat
