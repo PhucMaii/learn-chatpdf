@@ -7,12 +7,12 @@ import {Toaster} from 'react-hot-toast';
 
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+  src: "./fonts/Inter-Regular.ttf",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+  src: "./fonts/Inter-Bold.ttf",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
@@ -32,7 +32,7 @@ export default function RootLayout({
       <Providers>
         <html lang="en">
           <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            className={`${geistSans.variable} antialiased`}
             >
             {children}
           </body>

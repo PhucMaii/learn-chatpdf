@@ -21,7 +21,7 @@ const config: Config = {
   				foreground: 'hsl(var(--popover-foreground))'
   			},
   			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
+  				DEFAULT: '#0D9488',
   				foreground: 'hsl(var(--primary-foreground))'
   			},
   			secondary: {
@@ -49,7 +49,10 @@ const config: Config = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+			emerald: {
+				500: '#0D9488',
+			}
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
