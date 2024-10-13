@@ -42,7 +42,7 @@ export default async function Home() {
         </div>
       </div>
       <Link href={`/chat/${firstChat?.id}`}>
-        <Button className="mt-4 p-6">
+        <Button className="mt-4 p-6 hover:bg-primary-500">
           <h1 className="text-lg text-white font-bold">{userId ? 'Go To Chats' : 'Start Free Trial'}</h1>
         </Button>
       </Link>

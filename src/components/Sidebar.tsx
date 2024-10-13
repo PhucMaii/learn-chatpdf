@@ -29,8 +29,8 @@ const Sidebar = () => {
                 tabs.map((tab, index) => (
                     <Link href={tab.link} key={index}>
                         <div className="flex items-center gap-4">
-                            <tab.icon className={cn('w-10 h-10 text-gray-400', {'text-emerald-500': index === selectedTab})} />
-                            <h6 className={cn("w-full text-xl font-semibold text-gray-400", {"text-emerald-500": index === selectedTab})}>{tab.name}</h6>
+                            <tab.icon className={cn('w-8 h-8 text-gray-400', {'text-emerald-500': index === selectedTab})} />
+                            <h6 className={cn("w-full text-lg font-semibold text-gray-400", {"text-emerald-500": index === selectedTab})}>{tab.name}</h6>
                         </div>
                     </Link>
                 ))
