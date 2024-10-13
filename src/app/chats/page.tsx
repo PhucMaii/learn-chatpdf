@@ -1,14 +1,10 @@
-import ChatCard from '@/components/Chats/ChatCard'
-import Sidebar from '@/components/Sidebar'
+'use client';
 import SidebarWrapper from '@/components/SidebarWrapper'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { db } from '@/lib/db'
-import { chats } from '@/lib/db/schema'
-import { auth } from '@clerk/nextjs/server'
-import { eq } from 'drizzle-orm'
-import { FileTextIcon, MoreHorizontalIcon, MoreVerticalIcon } from 'lucide-react'
-import React from 'react';
+import { DrizzleChat } from '@/lib/db/schema'
+import { FileTextIcon, MoreVerticalIcon } from 'lucide-react'
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -18,21 +14,57 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import axios from 'axios';
+import { API_URL } from '@/lib/type';
+import LoadingComponent from '@/components/LoadingComponent';
+import useDebounce from '../../../hooks/useDebounce';
+import MoreChat from '@/components/Chats/MoreChat';
 
 
-const Chats = async () => {
-  const { userId } = await auth();
+const Chats = () => {
+  const [searchKeywords, setSearchKeywords] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [userChats, setUserChats] = useState<any>({baseData: [], displayData: []});
 
-  if (!userId) {
-    toast.error('Unauthorized');
-    return;
+  const debouncedKeywords = useDebounce(searchKeywords, 1000);
+
+  useEffect(() => {
+    fetchUserChats();
+  }, []);
+
+  useEffect(() => {
+    if (debouncedKeywords) {
+      const newChats = userChats.baseData.filter((chat: DrizzleChat) => {
+        return chat.pdfName.toLowerCase().includes(debouncedKeywords.toLowerCase());
+      });
+
+      setUserChats({...userChats, displayData: newChats});
+    } else {
+      setUserChats({...userChats, displayData: userChats.baseData});
+    }
+  }, [debouncedKeywords]);
+
+  const fetchUserChats = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`${API_URL.USER}/chats`);
+
+      if (response.data.error) {
+        toast.error('Error fetching user chats: ' + response.data.error);
+        return;
+      }
+
+      setUserChats({baseData:response.data.chats, displayData:response.data.chats});
+
+      setIsLoading(false);
+    } catch (error: any) {
+      console.log(error);
+      toast.error('Error fetching user chats: ' + error.message);
+      setIsLoading(false);
+    }
   }
-
-  const _chats = await db.select().from(chats).where(eq(chats.userId, userId));
-  console.log(_chats, 'chats');
 
   return (
     <SidebarWrapper>
@@ -46,6 +78,8 @@ const Chats = async () => {
       <div className="flex gap-2 w-full mt-6">
        <Input 
         placeholder='Search chats...'
+        value={searchKeywords}
+        onChange={(e) => setSearchKeywords(e.target.value)}
        />
        <Link href="/create-chat">
         <Button className="bg-black ">+ New Chat</Button>
@@ -54,8 +88,10 @@ const Chats = async () => {
 
       {/* Chats */}
       <h4 className="text-lg mt-6 font-bold">Recent chats</h4>
-      <Table className="mt-4">
-        <TableCaption>A list of your recent chats.</TableCaption>
+      {isLoading ? (
+              <LoadingComponent />
+            ) :<Table className="mt-4">
+        <TableCaption>A list of your chats with your PDFs.</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]">Type</TableHead>
@@ -66,23 +102,24 @@ const Chats = async () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {
-            _chats.map(chat => (
-              <TableRow key={chat.id}>
+          
+             {userChats.displayData.length > 0 && userChats.displayData.map((chat: DrizzleChat) => (
+              <TableRow key={chat?.id}>
                 <TableCell><FileTextIcon /></TableCell>
-                <TableCell className="font-bold text-md">{chat.pdfName}</TableCell>
-                <TableCell className="font-bold text-md text-gray-600">{chat.createdAt.toDateString()}</TableCell>
-                <TableCell className="font-bold text-md text-gray-600">{chat.createdAt.toDateString()}</TableCell>
+                <TableCell className="font-bold text-md">{chat?.pdfName}</TableCell>
+                <TableCell className="font-bold text-md text-gray-600">{new Date(chat?.createdAt).toDateString()}</TableCell>
+                <TableCell className="font-bold text-md text-gray-600">{new Date(chat.createdAt).toDateString()}</TableCell>
                 <TableCell>
-                  <Button className="bg-transparent text-black hover:bg-gray-200 px-1">
+                  {/* <Button className="bg-transparent text-black hover:bg-gray-200 px-1">
                     <MoreVerticalIcon />
-                  </Button>
+                  </Button> */}
+                  <MoreChat />
                 </TableCell>
               </TableRow>
-            ))
-          }
+            ))}
         </TableBody>
       </Table>
+          }
 
     </SidebarWrapper>
   )
