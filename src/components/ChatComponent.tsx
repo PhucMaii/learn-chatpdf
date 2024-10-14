@@ -25,7 +25,6 @@ const ChatComponent = ({chatId}: Props) => {
         },
         initialMessages: data || []
     });
-    console.log(messages, 'messages');
 
     useEffect(() => {
         const messageContainer = document.getElementById('message-container');

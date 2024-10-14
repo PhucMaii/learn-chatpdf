@@ -35,12 +35,11 @@ const Chat = async ({params: {chatId}}: Props) => {
 
     const currentChat = _chats.find(chat => chat.id === parseInt(chatId));
     
-    console.log(currentChat);
   return (
    <div className="flex max-h-screen overflow-scroll">
         <div className="flex w-full max-h-screen overflow-scroll">
             {/* Chats sidebar */}
-            <div className="flex-[1] max-w-xs">
+            <div className="flex-[1] max-w-xs border-r-8 border-1-slate-200">
                 <ChatSidebar chats={_chats} chatId={parseInt(chatId)} isPro={isPro} />
             </div>
             {/* pdf viewer */}
