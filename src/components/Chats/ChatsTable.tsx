@@ -52,7 +52,8 @@ const ChatsTable = ({userChats, setUserChats}: Props) => {
                 return;
             }
 
-            setUserChats(userChats.filter((c: DrizzleChat) => c.id !== chat.id));
+            const newChats = userChats.filter((c: DrizzleChat) => c.id !== chat.id);
+            setUserChats({baseData: newChats, displayData: newChats});
             toast.success('Chat deleted successfully');
             // router.refresh();
 

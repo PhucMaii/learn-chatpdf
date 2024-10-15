@@ -26,6 +26,9 @@ export default function ChatSidebar({chats, chatId, isPro}: Props) {
         <h6 className="text-lg font-semibold text-black">
           Chats
         </h6>
+
+        {!isPro && <SubscriptionButton isPro={isPro} />}
+
       </div>
       <Link href="/create-chat">
         <Button className='w-full border-dashed border-2 border-black text-black bg-white hover:bg-emerald-500 hover:text-white'>
@@ -48,15 +51,8 @@ export default function ChatSidebar({chats, chatId, isPro}: Props) {
           ))
         }
       </div>
+      
 
-      <div className="absolute bottom-8 left-4">
-        <div className="flex items-center gap-2 text-sm text-slate-500 flex-wrap">
-          <Link href="/">Home</Link>
-          <Link href="/">Source</Link>
-        </div>
-           {/* Stripe Button */}
-           <SubscriptionButton isPro={isPro} />
-      </div>
     </div>
   )
 }

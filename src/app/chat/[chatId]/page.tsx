@@ -53,7 +53,7 @@ const Chat = async ({params: {chatId}}: Props) => {
                 <PDFViewer pdfUrl={currentChat?.pdfUrl || ''} />
             </div>
             {/* chat component */}
-            <div className="flex-[3] border-1-4 border-1-slate-200">
+            <div className="flex-[5] border-1-4 border-1-slate-200">
                 <ChatComponent chatId={parseInt(chatId)} />
             </div>
         </div>

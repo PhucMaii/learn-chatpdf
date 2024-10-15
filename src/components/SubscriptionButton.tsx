@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Button } from './ui/button';
 import axios from 'axios';
+import { SparkleIcon } from 'lucide-react';
 
 type Props = {isPro: boolean}
 
@@ -21,8 +22,9 @@ const SubscriptionButton = (props: Props) => {
         }
       }
   return (
-    <Button disabled={isLoading} onClick={handleSubscription}>
-        {props.isPro ? 'Manage Subscription' : 'Get Pro'}
+    <Button className="w-full bg-white text-yellow-700 font-bold flex items-center gap-2 hover:bg-white hover:text-emerald-500" disabled={isLoading} onClick={handleSubscription}>
+      <SparkleIcon className="w-4 h-4" />
+      {props.isPro ? 'Manage Subscription' : 'Upgrade Pro'}
     </Button>
   )
 }

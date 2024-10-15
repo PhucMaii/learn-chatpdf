@@ -29,7 +29,7 @@ function MessageList({messages, isLoading}: Props) {
                         'justify-end pl-10': message.role === 'user',
                         'justify-start pr-10': message.role === 'assistant'
                     })}>
-                        <div className={cn('rounded-lg px-3 text-sm py01 shadow-md ring-1 ring-gray-900/10', {
+                        <div className={cn('rounded-lg px-3 py-2 text-sm py01 shadow-md ring-1 ring-gray-900/10', {
                             'bg-blue-600 text-white': message.role === 'user',
                             'bg-white text-black': message.role === 'assistant'
                         })}>
