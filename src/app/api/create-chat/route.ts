@@ -27,7 +27,6 @@ export async function POST(req: Request) {
             insertedId: chats.id
         });
 
-        console.log(chatId,' chatId');
         return NextResponse.json({chatId: chatId[0].insertedId}, {status: 200});
     } catch (error) {
         console.log(error);

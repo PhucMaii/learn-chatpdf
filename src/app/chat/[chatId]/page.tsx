@@ -34,6 +34,12 @@ const Chat = async ({params: {chatId}}: Props) => {
     }
 
     const currentChat = _chats.find(chat => chat.id === parseInt(chatId));
+
+    // Update last opened
+    await db
+      .update(chats)
+      .set({ lastOpenedAt: new Date() })
+      .where(eq(chats.id, parseInt(chatId)));
     
   return (
    <div className="flex max-h-screen overflow-scroll">

@@ -9,6 +9,7 @@ export const chats = pgTable('chats', {
     createdAt: timestamp('created_at').notNull().defaultNow(),
     userId: varchar('user_id', {length: 256}).notNull(),
     fileKey: text('file_key').notNull(),
+    lastOpenedAt: timestamp('last_opened_at').defaultNow(),
 });
 
 export type DrizzleChat = typeof chats.$inferSelect;

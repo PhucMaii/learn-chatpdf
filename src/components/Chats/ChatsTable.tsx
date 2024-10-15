@@ -24,6 +24,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { API_URL } from '@/lib/type';
 import toast from 'react-hot-toast';
+import moment from 'moment';
 
 type Props = {
     userChats: DrizzleChat[];
@@ -79,8 +80,8 @@ const ChatsTable = ({userChats, setUserChats}: Props) => {
               <TableRow key={chat?.id} onClick={() => router.push(`/chat/${chat.id}`)}>
                 <TableCell><FileTextIcon /></TableCell>
                 <TableCell className="font-bold text-md">{chat?.pdfName}</TableCell>
-                <TableCell className="font-bold text-md text-gray-600">{new Date(chat?.createdAt).toDateString()}</TableCell>
-                <TableCell className="font-bold text-md text-gray-600">{new Date(chat.createdAt).toDateString()}</TableCell>
+                <TableCell className="font-bold text-md text-gray-600">{moment(new Date(chat?.createdAt)).calendar()}</TableCell>
+                <TableCell className="font-bold text-md text-gray-600">{moment(new Date(chat?.lastOpenedAt || chat.createdAt)).fromNow()}</TableCell>
                 <TableCell>
                   {/* <Button className="bg-transparent text-black hover:bg-gray-200 px-1">
                     <MoreVerticalIcon />
