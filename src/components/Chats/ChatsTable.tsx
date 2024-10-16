@@ -10,7 +10,6 @@ import {
   } from "@/components/ui/table";
   import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,

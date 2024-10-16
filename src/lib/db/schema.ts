@@ -11,6 +11,7 @@ export const users = pgTable('users', {
     status: userStatusEnums('status').notNull(),
     trialEnd: timestamp('trial_end').notNull(), 
 });
+export type DrizzleUser = typeof users.$inferSelect;
 
 export const chats = pgTable('chats', {
     id: serial('id').primaryKey(),

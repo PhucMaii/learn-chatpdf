@@ -3,10 +3,9 @@ import { DrizzleChat } from '@/lib/db/schema';
 import Link from 'next/link';
 import React from 'react';
 import { Button } from './ui/button';
-import { ArrowLeftIcon, MessageCircle, MessageCircleMoreIcon, PlusCircle } from 'lucide-react';
+import { ArrowLeftIcon, MessageCircleMoreIcon, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import SubscriptionButton from './SubscriptionButton';
-import NavBar from './NavBar';
 
 type Props = {
     chats: DrizzleChat[];
