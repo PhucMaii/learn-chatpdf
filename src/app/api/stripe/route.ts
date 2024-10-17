@@ -9,9 +9,15 @@ import { NextResponse } from "next/server";
 
 const return_url = process.env.NEXT_BASE_URL;
 
-export async function GET() {
+export async function GET(req: Request) {
     try {
         const { userId } = await auth();
+
+        const { searchParams } = new URL(req.url);
+        const price: any = searchParams.get('price');
+        const plan: any = searchParams.get('plan');
+        console.log({price, plan});
+
         const user = await currentUser();
 
         if (!userId || !user) {
@@ -46,9 +52,9 @@ export async function GET() {
                             name: 'ChatPDF Pro',
                             description: 'Unlimited PDF Sessions'
                         },
-                        unit_amount: 2000,
+                        unit_amount: Number(price) * 100,
                         recurring: {
-                            interval: 'month',
+                            interval: plan,
                         },
                     },
                     quantity: 1,

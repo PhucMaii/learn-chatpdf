@@ -12,7 +12,7 @@ const queryClient = new QueryClient();
 const Providers = ({children}: Props) => {
     return (
         <QueryClientProvider client={queryClient}>
-            {children}
+                {children}
         </QueryClientProvider>
     )
 }

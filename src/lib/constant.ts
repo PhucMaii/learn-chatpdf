@@ -17,3 +17,17 @@ export const tabs = [
         link: '/help'
     }
 ]
+
+export const pricingTabs = [
+    {
+        title: 'Monthly',
+        price: 9.99,
+        plan: 'month',
+    },
+    {
+        title: 'Annually',
+        price: 99.99,
+        plan: 'year',
+        isPopular: true
+    }
+]

@@ -1,12 +1,15 @@
 'use client';
-
 import React, { useEffect, useState } from 'react'
 import StatusText from './StatusText'
 import Link from 'next/link';
 import { tabs } from '@/lib/constant';
 import { cn } from '@/lib/utils';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+import { API_URL } from '@/lib/type';
 
 const Sidebar = () => {
+    const [user, setUser] = useState<any>(null);
     const [selectedTab, setSelectedTab] = useState<number>(0);
 
     useEffect(() => {
@@ -14,13 +17,35 @@ const Sidebar = () => {
         const index = tabs.findIndex(tab => tab.link === path);
         setSelectedTab(index);
     }, [window.location.pathname]);
+
+    useEffect(() => {
+        fetchUser();
+    }, []);
+
+    console.log(user, 'user');
+
+    const fetchUser = async () => {
+        try {
+            const response = await axios.get(`${API_URL.USER}/get-user`);
+
+            if (response.data.error) {
+                toast.error('Error fetching user: ' + response.data.error);
+                return;
+            }
+
+            setUser(response.data.user);
+        } catch (error: any) {
+            console.log('Internal Server Error: ', error);
+        }
+    }
+
   return (
     <div className="w-full h-screen p-4 text-gray-200 bg-white">
         {/* Logo and user status */}
         <div className="flex items-center gap-2">
             <img src="images/logo.png" className="w-10 h-10 rounded-full"/>
             <h1 className="text-black font-bold text-xl">LearnPDF</h1>
-            <StatusText text="Beta" type="info" />
+            <StatusText text={user?.status} type="info" />
         </div>
 
         {/* Navigation links */}
