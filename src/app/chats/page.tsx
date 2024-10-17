@@ -1,22 +1,24 @@
 'use client';
-import SidebarWrapper from '@/components/SidebarWrapper'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { DrizzleChat } from '@/lib/db/schema'
+import SidebarWrapper from '@/components/SidebarWrapper';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { DrizzleChat } from '@/lib/db/schema';
 import React, { useEffect, useState } from 'react';
-import toast from 'react-hot-toast'
-import Link from 'next/link'
+import toast from 'react-hot-toast';
+import Link from 'next/link';
 import axios from 'axios';
 import { API_URL } from '@/lib/type';
 import LoadingComponent from '@/components/LoadingComponent';
 import useDebounce from '../../../hooks/useDebounce';
 import ChatsTable from '@/components/Chats/ChatsTable';
 
-
 const Chats = () => {
   const [searchKeywords, setSearchKeywords] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
-  const [userChats, setUserChats] = useState<any>({baseData: [], displayData: []});
+  const [userChats, setUserChats] = useState<any>({
+    baseData: [],
+    displayData: [],
+  });
 
   const debouncedKeywords = useDebounce(searchKeywords, 1000);
 
@@ -27,12 +29,14 @@ const Chats = () => {
   useEffect(() => {
     if (debouncedKeywords) {
       const newChats = userChats.baseData.filter((chat: DrizzleChat) => {
-        return chat.pdfName.toLowerCase().includes(debouncedKeywords.toLowerCase());
+        return chat.pdfName
+          .toLowerCase()
+          .includes(debouncedKeywords.toLowerCase());
       });
 
-      setUserChats({...userChats, displayData: newChats});
+      setUserChats({ ...userChats, displayData: newChats });
     } else {
-      setUserChats({...userChats, displayData: userChats.baseData});
+      setUserChats({ ...userChats, displayData: userChats.baseData });
     }
   }, [debouncedKeywords]);
 
@@ -46,7 +50,10 @@ const Chats = () => {
         return;
       }
 
-      setUserChats({baseData:response.data.chats, displayData:response.data.chats});
+      setUserChats({
+        baseData: response.data.chats,
+        displayData: response.data.chats,
+      });
 
       setIsLoading(false);
     } catch (error: any) {
@@ -54,11 +61,11 @@ const Chats = () => {
       toast.error('Error fetching user chats: ' + error.message);
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <SidebarWrapper>
-       {/* Header */}
+      {/* Header */}
       <h1 className="text-3xl font-bold ">Chats</h1>
       <h6 className="text-md font-bold text-gray-400">
         Make conversations with your PDFs
@@ -66,26 +73,28 @@ const Chats = () => {
 
       {/* Search bar */}
       <div className="flex gap-2 w-full mt-6">
-       <Input 
-        placeholder='Search chats...'
-        value={searchKeywords}
-        onChange={(e) => setSearchKeywords(e.target.value)}
-       />
-       <Link href="/create-chat">
-        <Button className="bg-black ">+ New Chat</Button>
-       </Link>
+        <Input
+          placeholder="Search chats..."
+          value={searchKeywords}
+          onChange={(e) => setSearchKeywords(e.target.value)}
+        />
+        <Link href="/create-chat">
+          <Button className="bg-black ">+ New Chat</Button>
+        </Link>
       </div>
 
       {/* Chats */}
       <h4 className="text-lg mt-6 font-bold">Recent chats</h4>
       {isLoading ? (
-              <LoadingComponent />
-            ) :
-              <ChatsTable userChats={userChats.displayData} setUserChats={setUserChats} />
-          }
-
+        <LoadingComponent />
+      ) : (
+        <ChatsTable
+          userChats={userChats.displayData}
+          setUserChats={setUserChats}
+        />
+      )}
     </SidebarWrapper>
-  )
-}
+  );
+};
 
-export default Chats
+export default Chats;
