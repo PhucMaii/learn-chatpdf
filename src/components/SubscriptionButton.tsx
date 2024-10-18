@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Button } from './ui/button';
 import axios from 'axios';
 import { SparkleIcon } from 'lucide-react';
+import Link from 'next/link';
 
 type Props = { isPro: boolean };
 
@@ -22,14 +23,16 @@ const SubscriptionButton = (props: Props) => {
     }
   };
   return (
-    <Button
-      className="w-full bg-white text-yellow-700 font-bold flex items-center gap-2 hover:bg-white hover:text-emerald-500"
-      disabled={isLoading}
-      onClick={handleSubscription}
-    >
-      <SparkleIcon className="w-4 h-4" />
-      {props.isPro ? 'Manage Subscription' : 'Upgrade Pro'}
-    </Button>
+    <Link href="/pricing">
+      <Button
+        className="w-full bg-white text-yellow-700 font-bold flex items-center gap-2 hover:bg-white hover:text-emerald-500"
+        disabled={isLoading}
+        onClick={handleSubscription}
+      >
+        <SparkleIcon className="w-4 h-4" />
+        {props.isPro ? 'Manage Subscription' : 'Upgrade Pro'}
+      </Button>
+    </Link>
   );
 };
 

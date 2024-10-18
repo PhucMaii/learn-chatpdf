@@ -1,8 +1,16 @@
 import FileUpload from '@/components/FileUpload';
 import NavBar from '@/components/NavBar';
+import { checkSubscription } from '@/lib/subscription';
+import { redirect } from 'next/navigation';
 import React from 'react';
 
-const CreateChat = () => {
+const CreateChat = async () => {
+  const isPro = await checkSubscription();
+
+  if (!isPro) {
+    return redirect('/chats');
+  }
+
   return (
     <div className="p-8">
       <NavBar />

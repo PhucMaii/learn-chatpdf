@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm';
 import { NextApiRequest } from 'next';
 import { NextResponse } from 'next/server';
 
-const handler = async (req: NextApiRequest) => {
+const handler = async () => {
   try {
     const { userId } = await auth();
 

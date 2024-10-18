@@ -28,9 +28,12 @@ import moment from 'moment';
 type Props = {
   userChats: DrizzleChat[];
   setUserChats: any;
+  isPro: boolean;
 };
 
-const ChatsTable = ({ userChats, setUserChats }: Props) => {
+
+const ChatsTable = ({ userChats, setUserChats, isPro }: Props) => {
+  console.log(isPro, 'isPro')
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const router = useRouter();
 
@@ -81,7 +84,7 @@ const ChatsTable = ({ userChats, setUserChats }: Props) => {
           userChats.map((chat: DrizzleChat) => (
             <TableRow
               key={chat?.id}
-              onClick={() => router.push(`/chat/${chat.id}`)}
+              onClick={() => router.push(`${isPro ? `/chat/${chat.id}` : '/pricing'}`)}
             >
               <TableCell>
                 <FileTextIcon />
@@ -118,7 +121,7 @@ const ChatsTable = ({ userChats, setUserChats }: Props) => {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onClick={() => router.push(`/chat/${chat.id}`)}
+                      onClick={() => router.push(`${isPro ? `/chat/${chat.id}` : '/pricing'}`)} 
                     >
                       Go to chat
                     </DropdownMenuItem>
