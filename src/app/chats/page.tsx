@@ -11,9 +11,6 @@ import { API_URL } from '@/lib/type';
 import LoadingComponent from '@/components/LoadingComponent';
 import useDebounce from '../../../hooks/useDebounce';
 import ChatsTable from '@/components/Chats/ChatsTable';
-import { checkSubscription } from '@/lib/subscription';
-import { useAuth } from '@clerk/nextjs';
-import { get } from 'http';
 
 const Chats = () => {
   const [isLoading, setIsLoading] = useState(true);

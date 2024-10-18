@@ -3,7 +3,6 @@ import { users } from '@/lib/db/schema';
 import { withAuthGuard } from '@/utils/guard';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
-import { NextApiRequest } from 'next';
 import { NextResponse } from 'next/server';
 
 const handler = async () => {

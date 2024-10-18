@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-const handler = async (req: Request) => {
+const handler = async () => {
     try {
         const { userId } = await auth();
 

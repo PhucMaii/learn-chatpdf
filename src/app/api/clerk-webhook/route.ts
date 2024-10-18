@@ -72,7 +72,7 @@ const handler = async (req: Request) => {
       email: email_addresses[0].email_address,
       ...(first_name ? { firstName: first_name } : {}),
       createdAt: new Date(created_at),
-      status: 'trial',
+      status: 'Trial',
       trialEnd,
     };
 
