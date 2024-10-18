@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import { getContext } from '@/lib/context';
 import { db } from '@/lib/db';
 import { chats, messages as _messages } from '@/lib/db/schema';
+import { withAuthGuard } from '@/utils/guard';
 
 export const runtime = 'nodejs';
 
@@ -14,7 +15,7 @@ const config = new Configuration({
 
 const openai = new OpenAIApi(config);
 
-export async function POST(req: Request) {
+const handler = async(req: Request) => {
   try {
     const { messages, chatId } = await req.json();
     const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
@@ -78,3 +79,5 @@ export async function POST(req: Request) {
     });
   }
 }
+
+export const POST = withAuthGuard(handler);

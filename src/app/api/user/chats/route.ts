@@ -1,10 +1,11 @@
 import { db } from '@/lib/db';
 import { chats } from '@/lib/db/schema';
+import { withAuthGuard } from '@/utils/guard';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+const handler = async () => {
   try {
     const { userId } = await auth();
 
@@ -26,3 +27,5 @@ export async function GET() {
     );
   }
 }
+
+export const GET = withAuthGuard(handler);

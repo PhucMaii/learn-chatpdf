@@ -3,13 +3,14 @@ import { chats, messages } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import AWS from 'aws-sdk';
+import { withAuthGuard } from '@/utils/guard';
 
 interface IBody {
   fileKey: string;
   chatId: number;
 }
 
-export async function DELETE(req: Request) {
+const handler = async (req: Request) => {
   try {
     const { fileKey, chatId }: IBody = await req.json();
 
@@ -51,3 +52,5 @@ export async function DELETE(req: Request) {
     );
   }
 }
+
+export const DELETE = withAuthGuard(handler);

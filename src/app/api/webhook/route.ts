@@ -1,12 +1,13 @@
 import { db } from '@/lib/db';
 import { userSubscriptions } from '@/lib/db/schema';
 import { stripe } from '@/lib/stripe';
+import { withAuthGuard } from '@/utils/guard';
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-export async function POST(req: Request) {
+const handler = async (req: Request) => {
   const body = await req.text();
 
   const signature = headers().get('Stripe-Signature') as string;
@@ -61,3 +62,5 @@ export async function POST(req: Request) {
 
   return new NextResponse(null, { status: 200 });
 }
+
+export const POST = withAuthGuard(handler);

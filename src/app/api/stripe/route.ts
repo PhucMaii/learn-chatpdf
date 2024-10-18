@@ -3,20 +3,20 @@
 import { db } from '@/lib/db';
 import { userSubscriptions } from '@/lib/db/schema';
 import { stripe } from '@/lib/stripe';
+import { withAuthGuard } from '@/utils/guard';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 const return_url = process.env.NEXT_BASE_URL;
 
-export async function GET(req: Request) {
+const handler = async(req: Request) => {
   try {
     const { userId } = await auth();
 
     const { searchParams } = new URL(req.url);
     const price: any = searchParams.get('price');
     const plan: any = searchParams.get('plan');
-    console.log({ price, plan });
 
     const user = await currentUser();
 
@@ -77,3 +77,5 @@ export async function GET(req: Request) {
     );
   }
 }
+
+export const GET = withAuthGuard(handler);

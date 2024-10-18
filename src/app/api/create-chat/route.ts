@@ -2,11 +2,12 @@ import { db } from '@/lib/db';
 import { chats } from '@/lib/db/schema';
 import { loadS3IntoPinecone } from '@/lib/pinecone';
 import { getS3Url } from '@/lib/s3';
+import { withAuthGuard } from '@/utils/guard';
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 // /api/create-chat
-export async function POST(req: Request) {
+const handler = async (req: Request) => {
   const { userId } = await auth();
 
   if (!userId) {
@@ -39,3 +40,5 @@ export async function POST(req: Request) {
     );
   }
 }
+
+export const POST = withAuthGuard(handler)
