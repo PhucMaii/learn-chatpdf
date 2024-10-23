@@ -1,15 +1,27 @@
+'use client';
 import FileUpload from '@/components/FileUpload';
 import NavBar from '@/components/NavBar';
 import { checkSubscription } from '@/lib/subscription';
-import { redirect } from 'next/navigation';
-import React from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 
-const CreateChat = async () => {
-  const isPro = await checkSubscription();
+const CreateChat = () => {
+  const router = useRouter();
 
-  if (!isPro) {
-    return redirect('/chats');
-  }
+  useEffect(() => {
+    console.log('CreateChat');
+
+    const checkProSubscription = async () => {
+      const isPro = await checkSubscription(); // Wait for the async operation to complete
+      console.log(isPro, 'isPro');
+      if (!isPro) {
+        router.push('/pricing');
+      }
+    };
+
+    checkProSubscription(); // Call the async function
+
+  }, []);
 
   return (
     <div className="p-8">

@@ -20,7 +20,7 @@ const handler = async () => {
             .where(eq(userSubscriptions.userId, userId));
 
         if (!_userSubscriptions[0]) {
-            return NextResponse.json({ isValid: false }, { status: 200 });
+            return NextResponse.json({ isPro: false }, { status: 200 });
         }
 
         const userSubscription = _userSubscriptions[0];
@@ -30,7 +30,7 @@ const handler = async () => {
           userSubscription?.stripeCurrentPeriodEnd?.getTime() + DAY_IN_MS >
             Date.now();
         
-        return NextResponse.json({ isValid }, { status: 200 });
+        return NextResponse.json({ isPro: isValid }, { status: 200 });
     } catch (error) {
         console.log(error);
         return NextResponse.json(error, { status: 500 });

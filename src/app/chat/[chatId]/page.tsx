@@ -2,12 +2,14 @@ import ChatComponent from '@/components/ChatComponent';
 import ChatSidebar from '@/components/ChatSidebar';
 import PDFViewer from '@/components/PDFViewer';
 import { db } from '@/lib/db';
-import { chats } from '@/lib/db/schema';
+import { chats, DrizzleChat } from '@/lib/db/schema';
 import { checkSubscription } from '@/lib/subscription';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
-import React from 'react';
+import React, { useContext, useState } from 'react';
+import { UserContext } from '../../../../context/UserProvider';
+import toast from 'react-hot-toast';
 
 type Props = {
   params: {
@@ -15,31 +17,42 @@ type Props = {
   };
 };
 
-const Chat = async ({ params: { chatId } }: Props) => {
-  const { userId } = auth();
-  const isPro = await checkSubscription();
+const Chat = ({ params: { chatId } }: Props) => {
+  const [chat, setChat] = useState<DrizzleChat | null>(null);
+  const { user }: any = useContext(UserContext);
+  // const { userId } = auth();
+  // const isPro = await checkSubscription();
 
-  if (!userId) {
+  if (!user) {
     return redirect('/sign-in');
   }
 
-  const _chats = await db.select().from(chats).where(eq(chats.userId, userId));
+  // const _chats = await db.select().from(chats).where(eq(chats.userId, userId));
 
-  if (!_chats) {
-    return redirect('/');
+  // if (!_chats) {
+  //   return redirect('/');
+  // }
+
+  // if (!_chats.find((chat) => chat.id === parseInt(chatId))) {
+  //   return redirect('/');
+  // }
+
+  // const currentChat = _chats.find((chat) => chat.id === parseInt(chatId));
+
+  // // Update last opened
+  // await db
+  //   .update(chats)
+  //   .set({ lastOpenedAt: new Date() })
+  //   .where(eq(chats.id, parseInt(chatId)));
+
+  const fetchChat = async () => {
+    try {
+      const response = await 
+    } catch (error: any) {
+      console.log('Internal Server Error: ', error);
+      toast.error('Internal Server Error: ' + error.message);
+    }
   }
-
-  if (!_chats.find((chat) => chat.id === parseInt(chatId))) {
-    return redirect('/');
-  }
-
-  const currentChat = _chats.find((chat) => chat.id === parseInt(chatId));
-
-  // Update last opened
-  await db
-    .update(chats)
-    .set({ lastOpenedAt: new Date() })
-    .where(eq(chats.id, parseInt(chatId)));
 
   return (
     <div className="flex max-h-screen overflow-scroll">

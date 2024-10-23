@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
+import { chats, users } from "@/lib/db/schema";
 import { withAuthGuard } from "@/utils/guard";
 import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
@@ -17,8 +17,11 @@ const handler = async () => {
 
         const isTrialEnd = dbUser[0].trialEnd?.getTime() < Date.now();
         console.log({ isTrialEnd, trial: dbUser[0].trialEnd?.getTime(), now: Date.now(), isTrial: !isTrialEnd });
+        const userChats = await db.select().from(chats).where(eq(chats.userId, userId));
 
-        return NextResponse.json({ isTrial: !isTrialEnd }, { status: 200 });
+        const isAbleToAddMoreChats = userChats.length < 3;
+
+        return NextResponse.json({ isTrial: !isTrialEnd, isAbleToAddMoreChats }, { status: 200 });
     } catch (error: any) {
         console.log('Internal Server Error: ', error);
         return NextResponse.json(

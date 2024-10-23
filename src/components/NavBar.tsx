@@ -1,15 +1,16 @@
+'use client'
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button } from './ui/button';
-import { auth } from '@clerk/nextjs/server';
+import { UserContext } from '../../context/UserProvider';
 
 type Props = {
   landingPage?: boolean;
 };
 
-const NavBar = async ({ landingPage }: Props) => {
-  const { userId } = await auth();
+const NavBar = ({ landingPage }: Props) => {
+  const { user }: any = useContext(UserContext);
 
   return (
     <div className="flex items-center justify-between">
@@ -33,7 +34,7 @@ const NavBar = async ({ landingPage }: Props) => {
         >
           Pricing
         </Link>
-        {userId ? (
+        {Object.keys(user).length > 0 ? (
           <UserButton />
         ) : (
           <Link href="/sign-in">
