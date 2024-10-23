@@ -10,9 +10,10 @@ type Props = {
   title: string;
   isPopular?: boolean;
   plan: string;
+  save?: string[];
 };
 
-const PricingCard = ({ price, title, isPopular, plan }: Props) => {
+const PricingCard = ({ price, title, isPopular, plan, save }: Props) => {
   return (
     <div className="relative w-96 border-2 border-gray-300 p-8 rounded-3xl">
       <div className="absolute w-full flex items-center justify-between top-2 left-2 px-4 p-2 text-blue-500 w-full rounded-full">
@@ -38,6 +39,14 @@ const PricingCard = ({ price, title, isPopular, plan }: Props) => {
       <div className="border-2 border-gray-500 my-4"></div>
 
       <div className="flex flex-col gap-4 mt-4">
+      {
+        save && save.map((saveText: string, index: number) => (
+          <div className="flex items-center gap-2" key={index}>
+          <BadgeCheck className="w-6 h-6 text-emerald-500 font-bold" />
+          <h6 className="text-xl font-semibold">{saveText}</h6>
+        </div>
+        ))
+      }
         <div className="flex items-center gap-2">
           <BadgeCheck className="w-6 h-6 text-emerald-500 font-bold" />
           <h6 className="text-xl font-semibold">Unlimited chats</h6>

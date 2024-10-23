@@ -22,6 +22,7 @@ const Pricing = () => {
               title={tab.title}
               isPopular={tab.isPopular}
               plan={tab.plan}
+              save={tab.save}
             />
           ))}
         </div>
