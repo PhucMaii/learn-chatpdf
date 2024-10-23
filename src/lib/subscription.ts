@@ -4,32 +4,23 @@ import toast from 'react-hot-toast';
 
 export const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
-// export const checkSubscription = async () => {
-//   const { userId } = await auth();
+export const checkIsPro = async () => {
+  try {
+    const response = await axios.get(`${API_URL.USER}/subscription/is-pro`);
+    
+    if (response.data.error) {
+      toast.error('Error fetching subscription: ' + response.data.error);
+      return;
+    }
 
-//   if (!userId) {
-//     return false;
-//   }
-//   const _userSubscriptions: any = await db
-//     .select()
-//     .from(userSubscriptions)
-//     .where(eq(userSubscriptions.userId, userId));
+    return response.data.isPro
+  } catch (error) {
+      console.log(error);
+      toast.error('Error fetching subscription: ' + error);
+  }
+}
 
-//   if (!_userSubscriptions[0]) {
-//     return false;
-//   }
-
-//   const userSubscription = _userSubscriptions[0];
-
-//   const isValid =
-//     userSubscription.stripePriceId &&
-//     userSubscription?.stripeCurrentPeriodEnd?.getTime() + DAY_IN_MS >
-//       Date.now();
-
-//   return !!isValid;
-// };
-
-export const checkSubscription = async () => {
+export const checkIsValidToAddMoreChats = async () => {
   try {
     const response = await axios.get(`${API_URL.USER}/subscription/is-pro`);
     
@@ -47,7 +38,6 @@ export const checkSubscription = async () => {
       return false;
     }
     
-    console.log(trial,' istrial from response');
     return trial.isAbleToAddMoreChats;
   } catch (error) {
     console.log(error);
@@ -55,7 +45,7 @@ export const checkSubscription = async () => {
   }
 }
 
-const getIsTrial = async () => {
+export const getIsTrial = async () => {
   try {
     const response = await axios.get(`${API_URL.USER}/subscription/is-trial`);
     
@@ -66,6 +56,22 @@ const getIsTrial = async () => {
     
     return response.data;
   } catch (error) {
+    console.log(error);
+    toast.error('Error fetching subscription: ' + error);
+  }
+}
+
+export const checkSubscription = async () => {
+  try {
+    const isPro = await checkIsPro(); // Wait for the async operation to complete
+    const isTrial = await getIsTrial();
+
+    return {
+      isPro,
+      isAbleToAddMoreChats: isTrial.isAbleToAddMoreChats,
+      isTrial: isTrial.isTrial
+    }
+  } catch (error: any) {
     console.log(error);
     toast.error('Error fetching subscription: ' + error);
   }

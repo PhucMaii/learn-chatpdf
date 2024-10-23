@@ -6,14 +6,18 @@ import { Button } from './ui/button';
 import { ArrowLeftIcon, MessageCircleMoreIcon, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import SubscriptionButton from './SubscriptionButton';
+import { MAX_FILE_UPLOAD_IN_TRIAL } from '@/lib/constant';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   chats: DrizzleChat[];
   chatId: number;
-  isPro: boolean;
+  subscription: any;
 };
 
-export default function ChatSidebar({ chats, chatId, isPro }: Props) {
+export default function ChatSidebar({ chats, chatId, subscription }: Props) {
+  const router = useRouter();
+
   return (
     <div className="w-full h-screen p-4 text-gray-200 bg-white">
       <div className="flex items-center gap-2 mb-4">
@@ -22,14 +26,16 @@ export default function ChatSidebar({ chats, chatId, isPro }: Props) {
         </Link>
         <h6 className="text-lg font-semibold text-black">Chats</h6>
 
-        {!isPro && <SubscriptionButton isPro={isPro} />}
+       <SubscriptionButton isPro={subscription.isPro} />
       </div>
-      <Link href="/create-chat">
-        <Button className="w-full border-dashed border-2 border-black text-black bg-white hover:bg-emerald-500 hover:text-white">
+        <Button 
+          disabled={!subscription.isAbleToAddMoreChats && chats.length === MAX_FILE_UPLOAD_IN_TRIAL}
+          className="w-full border-dashed border-2 border-black text-black bg-white hover:bg-emerald-500 hover:text-white"
+          onClick={() => router.push('/create-chat')}
+        >
           <PlusCircle className="mr-2 w-4 h-4" />
           New Chat
         </Button>
-      </Link>
 
       <div className="flex flex-col gap-2 mt-4">
         {chats.map((chat) => (

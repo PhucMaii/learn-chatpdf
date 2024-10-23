@@ -34,7 +34,7 @@ const NavBar = ({ landingPage }: Props) => {
         >
           Pricing
         </Link>
-        {Object.keys(user).length > 0 ? (
+        {user && Object.keys(user).length > 0 ? (
           <UserButton />
         ) : (
           <Link href="/sign-in">

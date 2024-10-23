@@ -1,3 +1,4 @@
+import { MAX_FILE_UPLOAD_IN_TRIAL } from "@/lib/constant";
 import { db } from "@/lib/db";
 import { chats, users } from "@/lib/db/schema";
 import { withAuthGuard } from "@/utils/guard";
@@ -19,7 +20,7 @@ const handler = async () => {
         console.log({ isTrialEnd, trial: dbUser[0].trialEnd?.getTime(), now: Date.now(), isTrial: !isTrialEnd });
         const userChats = await db.select().from(chats).where(eq(chats.userId, userId));
 
-        const isAbleToAddMoreChats = userChats.length < 3;
+        const isAbleToAddMoreChats = userChats.length < MAX_FILE_UPLOAD_IN_TRIAL;
 
         return NextResponse.json({ isTrial: !isTrialEnd, isAbleToAddMoreChats }, { status: 200 });
     } catch (error: any) {

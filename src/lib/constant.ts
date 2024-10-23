@@ -35,3 +35,5 @@ export const pricingTabs = [
     isPopular: true,
   },
 ];
+
+export const MAX_FILE_UPLOAD_IN_TRIAL = 2;

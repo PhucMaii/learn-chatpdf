@@ -1,5 +1,8 @@
 import { DrizzleUser } from '@/lib/db/schema';
-import React, { createContext, useState, ReactNode } from 'react';
+import { API_URL } from '@/lib/type';
+import axios from 'axios';
+import React, { createContext, useState, ReactNode, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 type UserContextType = {
   user: DrizzleUser | null;
@@ -14,6 +17,25 @@ type Props = {
 
 export const UserProvider = ({ children }: Props) => {
   const [user, setUser] = useState<DrizzleUser | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`${API_URL.USER}/get-user`);
+
+        if (response.data.error) {
+          toast.error('Error fetching user: ' + response.data.error);
+          return;
+        }
+
+        setUser(response.data.user);
+      } catch (error: any) {
+        console.log('Internal Server Error: ', error);
+      }
+    }
+
+    fetchUser();
+  }, []);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

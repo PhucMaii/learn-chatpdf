@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { auth } from '@clerk/nextjs/server';
 import Link from 'next/link';
-// import { checkSubscription } from "@/lib/subscription";
 import { db } from '@/lib/db';
 import { chats } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -10,7 +9,6 @@ import NavBar from '@/components/NavBar';
 
 export default async function Home() {
   const { userId } = await auth();
-  // const isPro = await checkSubscription();
   let firstChat;
 
   if (userId) {
