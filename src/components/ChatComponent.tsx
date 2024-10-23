@@ -1,51 +1,32 @@
-'use client';
-import React, { useEffect } from 'react';
-import { Input } from './ui/input';
-import { Message, useChat } from 'ai/react';
-import { Button } from './ui/button';
-import { Send } from 'lucide-react';
-import MessageList from './MessageList';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import React, { useEffect } from 'react'
+import MessageList from './MessageList'
+import { Input } from './ui/input'
+import { Button } from './ui/button'
+import { Send } from 'lucide-react'
 
-type Props = { chatId: number };
+type Props = {
+    messages: any[];
+    isLoading: boolean;
+    handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    input: string;
+}
 
-const ChatComponent = ({ chatId }: Props) => {
-  const { data, isLoading } = useQuery({
-    queryKey: ['chat', chatId],
-    queryFn: async () => {
-      const response = await axios.post<Message[]>('/api/get-messages', {
-        chatId,
-      });
-      return response.data;
-    },
-  });
-  const { input, handleInputChange, handleSubmit, messages } = useChat({
-    api: '/api/chat',
-    body: {
-      chatId,
-    },
-    initialMessages: data || [],
-  });
-
-  useEffect(() => {
-    const messageContainer = document.getElementById('message-container');
-    if (messageContainer) {
-      messageContainer.scrollTo({
-        top: messageContainer.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
-  }, [messages]);
+const ChatComponent = ({messages, isLoading, handleSubmit, handleInputChange, input}: Props) => {
+    useEffect(() => {
+        const messageContainer = document.getElementById('message-container');
+        if (messageContainer) {
+          messageContainer.scrollTo({
+            top: messageContainer.scrollHeight,
+            behavior: 'smooth',
+          });
+        }
+      }, [messages]);
   return (
-    <div
-      className="relative h-screen oveflow-y-scroll flex flex-col"
-      id="message-container"
-    >
-      {/* header */}
-      <div className="sticky top-0 inset-x-0 p-2 bg-white h-fit">
-        <h3 className="text-xl font-bold">Chat</h3>
-      </div>
+    <>
+        <div className="sticky top-0 inset-x-0 p-2 bg-white h-fit">
+            <h3 className="text-xl font-bold">Chat</h3>
+        </div>
 
       <MessageList messages={messages} isLoading={isLoading} />
 
@@ -66,8 +47,8 @@ const ChatComponent = ({ chatId }: Props) => {
           </Button>
         </div>
       </form>
-    </div>
-  );
-};
+    </>
+  )
+}
 
-export default ChatComponent;
+export default ChatComponent

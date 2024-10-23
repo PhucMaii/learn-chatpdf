@@ -1,5 +1,4 @@
 'use client';
-import ChatComponent from '@/components/ChatComponent';
 import ChatSidebar from '@/components/ChatSidebar';
 import PDFViewer from '@/components/PDFViewer';
 import { DrizzleChat } from '@/lib/db/schema';
@@ -10,6 +9,7 @@ import axios from 'axios';
 import { API_URL } from '@/lib/type';
 import LoadingComponent from '@/components/LoadingComponent';
 import { useRouter } from 'next/navigation';
+import InteractiveComponent from '@/components/InteractiveComponent';
 
 type Props = {
   params: {
@@ -82,7 +82,7 @@ const Chat = ({ params: { chatId } }: Props) => {
           </div>
           {/* chat component */}
           <div className="flex-[5] border-1-4 border-1-slate-200">
-            <ChatComponent chatId={parseInt(chatId)} />
+            <InteractiveComponent chatId={parseInt(chatId)} />
           </div>
           </>
       )}
