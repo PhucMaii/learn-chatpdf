@@ -12,6 +12,7 @@ interface PropTypes {
   text: string;
   type: string;
   icon?: React.ReactNode;
+  className?: string;
 }
 
 interface TextColorType {
@@ -19,7 +20,7 @@ interface TextColorType {
   color: string;
 }
 
-export default function StatusText({ text, type, icon }: PropTypes) {
+export default function StatusText({ text, type, icon, className }: PropTypes) {
   const [textColor, setTextColor] = useState<TextColorType>({
     backgroundColor: '',
     color: '',
@@ -58,29 +59,10 @@ export default function StatusText({ text, type, icon }: PropTypes) {
 
   return (
     <div
-      // display="flex"
-      // alignItems="center"
-      // gap={1}
-      // sx={{
-      //   ...textColor,
-      //   borderRadius: 2,
-      //   textAlign: 'center',
-      //   py: '5px',
-      //   px: '10px',
-      //   width: 'fit-content',
-      // }}
-      className={`flex items-center gap-1 rounded-lg ${textColor.backgroundColor} ${textColor.color} py-1 px-4 w-fit`}
+      className={`flex items-center gap-1 rounded-lg ${textColor.backgroundColor} ${textColor.color} py-1 px-4 w-fit ${className}`}
     >
       {icon}
       <h6
-        // sx={{
-        //   ...textColor,
-        //   borderRadius: 2,
-        //   textAlign: 'center',
-        //   py: '5px',
-        //   px: '10px',
-        //   width: 'fit-content',
-        // }}
         className={`text-sm ${textColor.color} font-bold items-center w-fit`}
       >
         {text}

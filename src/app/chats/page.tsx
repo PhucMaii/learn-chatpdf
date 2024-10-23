@@ -11,11 +11,11 @@ import { API_URL } from '@/lib/type';
 import LoadingComponent from '@/components/LoadingComponent';
 import useDebounce from '../../../hooks/useDebounce';
 import ChatsTable from '@/components/Chats/ChatsTable';
+import { checkSubscription } from '@/lib/subscription';
 
 const Chats = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isPro, setIsPro] = useState<boolean>(false);
-  const [isTrial, setIsTrial] = useState<boolean>(false);
+  const [subscription, setSubscription] = useState<any>(null);
   const [searchKeywords, setSearchKeywords] = useState<string>('');
   const [userChats, setUserChats] = useState<any>({
     baseData: [],
@@ -24,13 +24,17 @@ const Chats = () => {
 
   const debouncedKeywords = useDebounce(searchKeywords, 1000);
 
-  useEffect(() => {
-    fetchUserChats();
-  }, []);
 
   useEffect(() => {
-    getSubscription();
-  }, [userChats]);
+    const checkIsPro = async () => {
+      const fetchedSubscription = await checkSubscription();
+      
+      setSubscription(fetchedSubscription);
+    }
+
+    checkIsPro();
+    fetchUserChats();
+  }, []);
 
   useEffect(() => {
     if (debouncedKeywords) {
@@ -69,52 +73,6 @@ const Chats = () => {
     }
   };
 
-
-  const getIsTrial = async () => {
-    try {
-      const response = await axios.get(`${API_URL.USER}/subscription/is-trial`);
-      
-      if (response.data.error) {
-        toast.error('Error fetching subscription: ' + response.data.error);
-        return;
-      }
-
-      console.log(response.data.isTrial, 'istrial from response');
-      setIsTrial(response.data.isTrial);
-      return response.data.isTrial;
-    } catch (error) {
-      console.log(error);
-      toast.error('Error fetching subscription: ' + error);
-    }
-  }
-
-  const getSubscription = async () => {
-    try {
-      const response = await axios.get(`${API_URL.USER}/subscription/is-pro`);
-      
-      if (response.data.error) {
-        toast.error('Error fetching subscription: ' + response.data.error);
-        return;
-      }
-
-      if (response.data.isPro) {
-        setIsPro(true);
-        return;
-      }
-
-      const isTrial = await getIsTrial();
-      if (userChats.baseData.length < 2 && isTrial) {
-        setIsPro(true);
-        return;
-      }
-
-      setIsPro(false);
-    } catch (error) {
-      console.log(error);
-      toast.error('Error fetching subscription: ' + error);
-    }
-  }
-
   return (
     <SidebarWrapper>
       {/* Header */}
@@ -130,7 +88,7 @@ const Chats = () => {
           value={searchKeywords}
           onChange={(e) => setSearchKeywords(e.target.value)}
         />
-        {isPro ? (
+        {subscription?.isPro || subscription?.isAbleToAddMoreChats ? (
           <Link href="/create-chat">
             <Button className="bg-black">+ New Chat</Button>
           </Link>
@@ -147,7 +105,7 @@ const Chats = () => {
         <ChatsTable
           userChats={userChats.displayData}
           setUserChats={setUserChats}
-          isPro={isTrial}
+          subscription={subscription}
         />
       )}
     </SidebarWrapper>

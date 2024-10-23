@@ -21,19 +21,18 @@ import { Button } from '@/components/ui/button';
 import { DrizzleChat } from '@/lib/db/schema';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { API_URL } from '@/lib/type';
+import { API_URL, SubscriptionType } from '@/lib/type';
 import toast from 'react-hot-toast';
 import moment from 'moment';
 
 type Props = {
   userChats: DrizzleChat[];
   setUserChats: any;
-  isPro: boolean;
+  subscription: SubscriptionType;
 };
 
 
-const ChatsTable = ({ userChats, setUserChats, isPro }: Props) => {
-  console.log(isPro, 'isPro')
+const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const router = useRouter();
 
@@ -84,7 +83,7 @@ const ChatsTable = ({ userChats, setUserChats, isPro }: Props) => {
           userChats.map((chat: DrizzleChat) => (
             <TableRow
               key={chat?.id}
-              onClick={() => router.push(`${isPro ? `/chat/${chat.id}` : '/pricing'}`)}
+              onClick={() => router.push(`${subscription?.isPro || subscription?.isTrial ? `/chat/${chat.id}` : '/pricing'}`)}
             >
               <TableCell>
                 <FileTextIcon />
@@ -101,9 +100,6 @@ const ChatsTable = ({ userChats, setUserChats, isPro }: Props) => {
                 ).fromNow()}
               </TableCell>
               <TableCell>
-                {/* <Button className="bg-transparent text-black hover:bg-gray-200 px-1">
-                    <MoreVerticalIcon />
-                  </Button> */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -121,7 +117,7 @@ const ChatsTable = ({ userChats, setUserChats, isPro }: Props) => {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onClick={() => router.push(`${isPro ? `/chat/${chat.id}` : '/pricing'}`)} 
+                      onClick={() => router.push(`${subscription?.isPro || subscription?.isTrial ? `/chat/${chat.id}` : '/pricing'}`)} 
                     >
                       Go to chat
                     </DropdownMenuItem>

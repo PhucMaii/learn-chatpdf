@@ -8,11 +8,12 @@ import { cn } from '@/lib/utils';
 import SubscriptionButton from './SubscriptionButton';
 import { MAX_FILE_UPLOAD_IN_TRIAL } from '@/lib/constant';
 import { useRouter } from 'next/navigation';
+import { SubscriptionType } from '@/lib/type';
 
 type Props = {
   chats: DrizzleChat[];
   chatId: number;
-  subscription: any;
+  subscription: SubscriptionType;
 };
 
 export default function ChatSidebar({ chats, chatId, subscription }: Props) {
@@ -26,10 +27,10 @@ export default function ChatSidebar({ chats, chatId, subscription }: Props) {
         </Link>
         <h6 className="text-lg font-semibold text-black">Chats</h6>
 
-       <SubscriptionButton isPro={subscription.isPro} />
+       <SubscriptionButton isPro={subscription?.isPro} />
       </div>
         <Button 
-          disabled={!subscription.isAbleToAddMoreChats && chats.length === MAX_FILE_UPLOAD_IN_TRIAL}
+          disabled={!subscription?.isPro && !subscription?.isAbleToAddMoreChats && chats.length === MAX_FILE_UPLOAD_IN_TRIAL}
           className="w-full border-dashed border-2 border-black text-black bg-white hover:bg-emerald-500 hover:text-white"
           onClick={() => router.push('/create-chat')}
         >

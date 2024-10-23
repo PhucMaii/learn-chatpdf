@@ -8,6 +8,8 @@ import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { API_URL } from '@/lib/type';
+import LoadingComponent from '@/components/LoadingComponent';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   params: {
@@ -17,18 +19,27 @@ type Props = {
 
 const Chat = ({ params: { chatId } }: Props) => {
   const [chat, setChat] = useState<DrizzleChat | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [subscription, setSubscription] = useState<any>({});
   const [userChatlist, setUserChatList] = useState<DrizzleChat[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
+    fetchChats();
     const checkIsPro = async () => {
+      setIsLoading(true);
       const fetchedSubscription = await checkSubscription();
       
       setSubscription(fetchedSubscription);
+
+      if (!fetchedSubscription?.isAbleToAddMoreChats && !fetchedSubscription?.isPro && !fetchedSubscription?.isTrial) {
+        router.push('/pricing');
+        return;
+      }
+      setIsLoading(false);
     }
 
     checkIsPro();
-    fetchChats();
   }, []);
 
   const fetchChats = async () => {
@@ -62,14 +73,19 @@ const Chat = ({ params: { chatId } }: Props) => {
         <div className="flex-[1] max-w-xs border-r-8 border-1-slate-200">
           <ChatSidebar chats={userChatlist} chatId={parseInt(chatId)} subscription={subscription} />
         </div>
-        {/* pdf viewer */}
-        <div className="max-h-screen p-4 overflow-scroll flex-[5]">
-          <PDFViewer pdfUrl={chat?.pdfUrl || ''} />
-        </div>
-        {/* chat component */}
-        <div className="flex-[5] border-1-4 border-1-slate-200">
-          <ChatComponent chatId={parseInt(chatId)} />
-        </div>
+        {isLoading ? <LoadingComponent /> : 
+        (
+          <>
+            {/* pdf viewer */}
+          <div className="max-h-screen p-4 overflow-scroll flex-[5]">
+            <PDFViewer pdfUrl={chat?.pdfUrl || ''} />
+          </div>
+          {/* chat component */}
+          <div className="flex-[5] border-1-4 border-1-slate-200">
+            <ChatComponent chatId={parseInt(chatId)} />
+          </div>
+          </>
+      )}
       </div>
     </div>
   );
