@@ -33,7 +33,7 @@ const Chats = () => {
 
     checkIsPro();
     fetchUserChats();
-  }, []);
+  }, [userChats.baseData.length]);
 
   useEffect(() => {
     if (debouncedKeywords) {

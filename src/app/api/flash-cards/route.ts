@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { getContext } from '@/lib/context';
 import { db } from '@/lib/db';
-import { chats, flashCard } from '@/lib/db/schema';
+import { chats, flashCard, flashCardSet } from '@/lib/db/schema';
 import { withAuthGuard } from '@/utils/guard';
 import { auth } from '@clerk/nextjs/server';
 
@@ -15,11 +15,34 @@ const config = new Configuration({
 
 const openai = new OpenAIApi(config);
 
-const flashCardPrompt = `You are a helpful AI assistant for students. You are a brand new, powerful, human-like artificial intelligence. Task: Generate 20 questions and answers in JSON format based on provided document Topic: Questions and Answers Style: Academic Tone: Professional Audience: 20-year old Length: 500 words Format: JSON`;
+const flashCardPrompt = `You are a helpful AI assistant for students. You are a brand new, powerful, human-like artificial intelligence.
+Task: Generate 20 questions and answers in JSON format based on the provided document. 
+Ensure that the JSON follows the exact structure provided below:
+{
+  "title": "string",  // The title of the flashcard set
+  "flashcards": [
+    {
+      "question": "string",  // A single question related to the document
+      "answer": "string"  // The corresponding answer to the question
+    },
+    ...
+  ]
+}
+Use this exact structure, with "title" as the key for the academic title, and "question" and "answer" for each flashcard pair.
+Topic: Questions and Answers 
+Style: Academic 
+Tone: Professional 
+Audience: 20-year-old students 
+Length: 500 words 
+Format: JSON`;
 
 const handler = async (req: Request) => {
   try {
     const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const { chatId } = await req.json();
     const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
     if (_chats.length !== 1) {
@@ -64,20 +87,31 @@ const handler = async (req: Request) => {
     );
     console.log('formatted messages', formattedMessages);
 
-    const flashCardList = formattedMessages.questions.map((question: any) => {
+    const newFlashCardsSet = await db.insert(flashCardSet).values({
+      title: formattedMessages.title,
+      chatId: chatId,
+      createdAt: new Date(),
+      userId: userId,
+    }).returning();
+
+    console.log(newFlashCardsSet, 'newFlashCardsSet');
+
+    const flashCardList = formattedMessages.flashcards.map((question: any) => {
       return {
         question: question.question,
         answer: question.answer,
         createdAt: new Date(),
         chatId: chatId,
+        flashCardSetId: newFlashCardsSet[0].id,
         userId: userId,
       }
     })
 
     // Save Flash Card into db
     await db.insert(flashCard).values(flashCardList);
+    await db.update(chats).set({ title: formattedMessages.title }).where(eq(chats.id, chatId));
 
-    return NextResponse.json({ data: formattedMessages.questions });
+    return NextResponse.json({ data: formattedMessages.flashcards });
   } catch (error) {
     console.error(error);
     return new Response(JSON.stringify({ error: 'An error occurred' }), {

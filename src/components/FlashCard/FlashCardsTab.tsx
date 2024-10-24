@@ -5,9 +5,12 @@ import toast from 'react-hot-toast';
 import {
   CircleArrowLeftIcon, 
   CircleArrowRightIcon,
+  Loader2,
+  SquarePenIcon,
 } from 'lucide-react';
 import ErrorComponent from '../ErrorComponent';
 import LoadingComponent from '../LoadingComponent';
+import { Button } from '../ui/button';
 
 type Props = {
   chatId: number;
@@ -17,26 +20,30 @@ const FlashCardsTab = ({ chatId }: Props) => {
   const [currentFlashCardIndex, setCurrentFlashCardIndex] = useState<number>(0);
   const [flashCardData, setFlashCardData] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
 
   useEffect(() => {
     handleGetFlashCards();
   }, [])
 
   const generateFlashCards = async () => {
+    setIsAdding(true);
     try {
       const response = await axios.post('/api/flash-cards', { chatId });
 
       if (response.data.error) {
         toast.error('Error generating flash cards: ' + response.data.error);
+        setIsAdding(false);
         return;
       }
 
       setFlashCardData(response.data.data);
+      setIsAdding(false);
       return response.data.data;
     } catch (error: any) {
       console.log(error);
       toast.error('Error fetching flash cards: ' + error.message);
-      setIsLoading(false);
+      setIsAdding(false);
     }
   };
 
@@ -45,23 +52,11 @@ const FlashCardsTab = ({ chatId }: Props) => {
       setIsLoading(true);
       const response = await axios.get(`/api/flash-cards/get?chatId=${chatId}`);
 
-      setFlashCardData(response.data.flashCards);
+      setFlashCardData(response?.data?.flashCards || []);
       setIsLoading(false);
     }
      catch (error: any) {
       console.log(error);
-      if (error.response.data.error && error.response.status == 404) {
-        const newFlashCards = await generateFlashCards();
-
-        if (!newFlashCards) {
-          setIsLoading(false);
-          return;
-        }
-
-        setFlashCardData(newFlashCards);
-        setIsLoading(false);
-        return;
-      }
       // toast.error('Error fetching flash cards: ' + error.message);
       setIsLoading(false);
     }
@@ -87,17 +82,17 @@ const FlashCardsTab = ({ chatId }: Props) => {
     <div className="w-full h-full">
       <div className="sticky top-0 inset-x-0 p-2 bg-white h-fit flex justify-between">
         <h3 className="text-xl font-bold">Flash Cards</h3>
-        {/* <Button
+{       flashCardData.length === 0 && <Button
           onClick={generateFlashCards}
           className="bg-white text-emerald-500 border-dashed border-2 border-emerald-500 hover:bg-emerald-500 hover:text-white flex gap-2"
         >
           Generate Flash Cards{' '}
-          {isLoading ? (
+          {isAdding ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : (
             <SquarePenIcon className="w-4 h-4" />
           )}
-        </Button> */}
+        </Button>}
       </div>
 
       {/* flash card list */}
@@ -113,7 +108,7 @@ const FlashCardsTab = ({ chatId }: Props) => {
         <div className="relative flex justify-center items-center">
           <FlashCard flashCard={flashCardData[currentFlashCardIndex]} />
         </div>
-      <div className="absolute bottom-[450px] flex justify-center items-center w-full gap-4">
+      <div className="absolute top-[450px] flex justify-center items-center w-full gap-4">
           <CircleArrowLeftIcon className="w-10 h-10 text-emerald-500" onClick={previousCard} />
           <h6 className="text-xl font-bold">
             {currentFlashCardIndex + 1} / {flashCardData.length}

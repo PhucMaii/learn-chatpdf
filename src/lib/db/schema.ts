@@ -32,26 +32,39 @@ export const chats = pgTable('chats', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   userId: varchar('user_id', { length: 256 }).notNull(),
   fileKey: text('file_key').notNull(),
+  title: text('title'),
   lastOpenedAt: timestamp('last_opened_at').defaultNow(),
 });
 
 export type DrizzleChat = typeof chats.$inferSelect;
 
+export const flashCardSet = pgTable('flash_card_set', {
+  id: serial('id').primaryKey(),
+  chatId: integer('chat_id')
+    .references(() => chats.id, { onDelete: 'cascade' })
+    .notNull(),
+  title: text('title').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  userId: varchar('user_id', { length: 256 }).notNull(),
+});
+
 export const flashCard = pgTable('flash_card', {
   id: serial('id').primaryKey(),
   chatId: integer('chat_id')
-    .references(() => chats.id)
+    .references(() => chats.id, { onDelete: 'cascade' })
     .notNull(),
   userId: varchar('user_id', { length: 256 }).notNull(),
   question: text('question').notNull(),
   answer: text('answer').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-})
+  flashCardSetId: integer('flash_card_set_id').references(() => flashCardSet.id, { onDelete: 'cascade' }).notNull()
+});
+
 
 export const messages = pgTable('messages', {
   id: serial('id').primaryKey(),
   chatId: integer('chat_id')
-    .references(() => chats.id)
+    .references(() => chats.id, { onDelete: 'cascade' })
     .notNull(),
   content: text('text').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
