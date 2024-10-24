@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { flashCardSet } from "@/lib/db/schema";
+import { chats, flashCardSet } from "@/lib/db/schema";
 import { withAuthGuard } from "@/utils/guard";
 import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
@@ -13,9 +13,19 @@ const handler = async () => {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const flashCardSets = await db.select().from(flashCardSet).where(eq(flashCardSet.userId, userId));
+        const flashCardSetsWithChats = await db
+        .select({
+          flashCardSet: flashCardSet,
+          chat: chats,
+        })
+        .from(flashCardSet)
+        .innerJoin(chats, eq(flashCardSet.chatId, chats.id))
+        .where(eq(flashCardSet.userId, userId));
 
-        return NextResponse.json({flashCardSets});
+        console.log(flashCardSetsWithChats, 'flash card set with chats');
+      
+
+        return NextResponse.json({flashCardSetsWithChats});
     } catch (error: any) {
         console.log('Internal Server Error: ', error);
         return NextResponse.json(
