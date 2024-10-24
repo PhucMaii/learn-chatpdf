@@ -62,9 +62,7 @@ export default function StatusText({ text, type, icon, className }: PropTypes) {
       className={`flex items-center gap-1 rounded-lg ${textColor.backgroundColor} ${textColor.color} py-1 px-4 w-fit ${className}`}
     >
       {icon}
-      <h6
-        className={`text-sm ${textColor.color} font-bold items-center w-fit`}
-      >
+      <h6 className={`text-sm ${textColor.color} font-bold items-center w-fit`}>
         {text}
       </h6>
     </div>

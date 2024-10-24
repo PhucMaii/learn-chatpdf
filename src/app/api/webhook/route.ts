@@ -61,6 +61,6 @@ const handler = async (req: Request) => {
   }
 
   return new NextResponse(null, { status: 200 });
-}
+};
 
 export const POST = withAuthGuard(handler);

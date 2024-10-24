@@ -27,16 +27,20 @@ export default function ChatSidebar({ chats, chatId, subscription }: Props) {
         </Link>
         <h6 className="text-lg font-semibold text-black">Chats</h6>
 
-       <SubscriptionButton isPro={subscription?.isPro} />
+        <SubscriptionButton isPro={subscription?.isPro} />
       </div>
-        <Button 
-          disabled={!subscription?.isPro && !subscription?.isAbleToAddMoreChats && chats.length === MAX_FILE_UPLOAD_IN_TRIAL}
-          className="w-full border-dashed border-2 border-black text-black bg-white hover:bg-emerald-500 hover:text-white"
-          onClick={() => router.push('/create-chat')}
-        >
-          <PlusCircle className="mr-2 w-4 h-4" />
-          New Chat
-        </Button>
+      <Button
+        disabled={
+          !subscription?.isPro &&
+          !subscription?.isAbleToAddMoreChats &&
+          chats.length === MAX_FILE_UPLOAD_IN_TRIAL
+        }
+        className="w-full border-dashed border-2 border-black text-black bg-white hover:bg-emerald-500 hover:text-white"
+        onClick={() => router.push('/create-chat')}
+      >
+        <PlusCircle className="mr-2 w-4 h-4" />
+        New Chat
+      </Button>
 
       <div className="flex flex-col gap-2 mt-4">
         {chats.map((chat) => (

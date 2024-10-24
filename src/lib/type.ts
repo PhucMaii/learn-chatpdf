@@ -11,7 +11,7 @@ export type SubscriptionType = {
   isPro: boolean;
   isTrial: boolean;
   isAbleToAddMoreChats: boolean;
-}
+};
 
 export enum SUBSCRIPTION_TYPE {
   PRO = 'Pro',

@@ -39,14 +39,13 @@ const PricingCard = ({ price, title, isPopular, plan, save }: Props) => {
       <div className="border-2 border-gray-500 my-4"></div>
 
       <div className="flex flex-col gap-4 mt-4">
-      {
-        save && save.map((saveText: string, index: number) => (
-          <div className="flex items-center gap-2" key={index}>
-          <BadgeCheck className="w-6 h-6 text-emerald-500 font-bold" />
-          <h6 className="text-xl font-semibold">{saveText}</h6>
-        </div>
-        ))
-      }
+        {save &&
+          save.map((saveText: string, index: number) => (
+            <div className="flex items-center gap-2" key={index}>
+              <BadgeCheck className="w-6 h-6 text-emerald-500 font-bold" />
+              <h6 className="text-xl font-semibold">{saveText}</h6>
+            </div>
+          ))}
         <div className="flex items-center gap-2">
           <BadgeCheck className="w-6 h-6 text-emerald-500 font-bold" />
           <h6 className="text-xl font-semibold">Unlimited chats</h6>

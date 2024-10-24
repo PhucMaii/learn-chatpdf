@@ -31,7 +31,6 @@ type Props = {
   subscription: SubscriptionType;
 };
 
-
 const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const router = useRouter();
@@ -83,7 +82,11 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
           userChats.map((chat: DrizzleChat) => (
             <TableRow
               key={chat?.id}
-              onClick={() => router.push(`${subscription?.isPro || subscription?.isTrial ? `/chat/${chat.id}` : '/pricing'}`)}
+              onClick={() =>
+                router.push(
+                  `${subscription?.isPro || subscription?.isTrial ? `/chat/${chat.id}` : '/pricing'}`,
+                )
+              }
             >
               <TableCell>
                 <FileTextIcon />
@@ -117,7 +120,11 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onClick={() => router.push(`${subscription?.isPro || subscription?.isTrial ? `/chat/${chat.id}` : '/pricing'}`)} 
+                      onClick={() =>
+                        router.push(
+                          `${subscription?.isPro || subscription?.isTrial ? `/chat/${chat.id}` : '/pricing'}`,
+                        )
+                      }
                     >
                       Go to chat
                     </DropdownMenuItem>

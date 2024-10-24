@@ -16,29 +16,30 @@ const SidebarWrapper = ({ children }: Props) => {
   useEffect(() => {
     const checkIsPro = async () => {
       const fetchedSubscription = await checkSubscription();
-      
+
       setSubscription(fetchedSubscription);
-    }
+    };
 
     checkIsPro();
   }, []);
 
   const subscriptionStatus = useMemo(() => {
     if (subscription.isPro) {
-      return {text: 'Pro', type: COLOR_TYPE.SUCCESS};
+      return { text: 'Pro', type: COLOR_TYPE.SUCCESS };
     }
 
     if (subscription.isTrial) {
-      return {text: `Your trial is ending on ${new Date(user?.trialEnd).toDateString()}`, type: COLOR_TYPE.WARNING};
+      return {
+        text: `Your trial is ending on ${new Date(user?.trialEnd).toDateString()}`,
+        type: COLOR_TYPE.WARNING,
+      };
     }
 
     return {
       text: `Your trial ended on ${user?.trialEnd}`,
-      type: COLOR_TYPE.WARNING
-    }
-
+      type: COLOR_TYPE.WARNING,
+    };
   }, [subscription]);
-
 
   return (
     <div className="flex">
@@ -46,14 +47,10 @@ const SidebarWrapper = ({ children }: Props) => {
         <Sidebar />
       </div>
       <div className="flex-[8] w-full">
-        {
-          !subscription.isPro && (
-            <SubscriptionBanner text={subscriptionStatus.text} />
-          )
-        }
-        <div className="p-4">
-          {children}
-        </div>
+        {!subscription.isPro && (
+          <SubscriptionBanner text={subscriptionStatus.text} />
+        )}
+        <div className="p-4">{children}</div>
       </div>
     </div>
   );

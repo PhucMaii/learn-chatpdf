@@ -10,7 +10,7 @@ import { NextResponse } from 'next/server';
 
 const return_url = process.env.NEXT_BASE_URL;
 
-const handler = async(req: Request) => {
+const handler = async (req: Request) => {
   try {
     const { userId } = await auth();
 
@@ -76,6 +76,6 @@ const handler = async(req: Request) => {
       { status: 500 },
     );
   }
-}
+};
 
 export const GET = withAuthGuard(handler);

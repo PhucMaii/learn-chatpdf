@@ -26,6 +26,6 @@ const handler = async () => {
       { status: 500 },
     );
   }
-}
+};
 
 export const GET = withAuthGuard(handler);

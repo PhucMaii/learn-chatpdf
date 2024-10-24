@@ -1,11 +1,11 @@
 import { Configuration, OpenAIApi } from 'openai-edge';
-import { StreamingTextResponse, OpenAIStream, Message } from 'ai';
 import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { getContext } from '@/lib/context';
 import { db } from '@/lib/db';
-import { chats, messages as _messages } from '@/lib/db/schema';
+import { chats, flashCard } from '@/lib/db/schema';
 import { withAuthGuard } from '@/utils/guard';
+import { auth } from '@clerk/nextjs/server';
 
 export const runtime = 'nodejs';
 
@@ -15,20 +15,22 @@ const config = new Configuration({
 
 const openai = new OpenAIApi(config);
 
+const flashCardPrompt = `You are a helpful AI assistant for students. You are a brand new, powerful, human-like artificial intelligence. Task: Generate 20 questions and answers in JSON format based on provided document Topic: Questions and Answers Style: Academic Tone: Professional Audience: 20-year old Length: 500 words Format: JSON`;
+
 const handler = async (req: Request) => {
-  console.log('ACCESS HERE', req);
   try {
-    const { messages, chatId } = await req.json();
+    const { userId } = await auth();
+    const { chatId } = await req.json();
     const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
     if (_chats.length !== 1) {
       return NextResponse.json({ error: 'Chat not found' }, { status: 404 });
     }
 
     const fileKey = _chats[0].fileKey;
-    const lastMessage = messages[messages.length - 1];
+    // const lastMessage = messages[messages.length - 1];
 
-    const context = await getContext(lastMessage.content, fileKey);
-    const prompt = {
+    const context = await getContext(flashCardPrompt, fileKey);
+    const prompt: any = {
       role: 'system',
       content: `AI assistant is a brand new, powerful, human-like artificial intelligence.
             The traits of AI include expert knowledge, helpfulness, cleverness, and articulateness.
@@ -49,30 +51,33 @@ const handler = async (req: Request) => {
       model: 'gpt-3.5-turbo',
       messages: [
         prompt,
-        ...messages.filter((message: Message) => message.role === 'user'),
-      ],
-      stream: true,
-    });
-
-    const stream = OpenAIStream(response, {
-      onStart: async () => {
-        // Save user message into db
-        await db.insert(_messages).values({
-          chatId,
-          content: lastMessage.content,
+        {
           role: 'user',
-        });
-      },
-      onCompletion: async (completion) => {
-        // Save ai message into db
-        await db.insert(_messages).values({
-          chatId,
-          content: completion,
-          role: 'system',
-        });
-      },
+          content: flashCardPrompt,
+        },
+      ],
     });
-    return new StreamingTextResponse(stream);
+    const completionData = await response.json();
+
+    const formattedMessages = JSON.parse(
+      completionData.choices[0].message.content,
+    );
+    console.log('formatted messages', formattedMessages);
+
+    const flashCardList = formattedMessages.questions.map((question: any) => {
+      return {
+        question: question.question,
+        answer: question.answer,
+        createdAt: new Date(),
+        chatId: chatId,
+        userId: userId,
+      }
+    })
+
+    // Save Flash Card into db
+    await db.insert(flashCard).values(flashCardList);
+
+    return NextResponse.json({ data: formattedMessages.questions });
   } catch (error) {
     console.error(error);
     return new Response(JSON.stringify({ error: 'An error occurred' }), {

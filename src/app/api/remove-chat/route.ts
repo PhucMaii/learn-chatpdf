@@ -51,6 +51,6 @@ const handler = async (req: Request) => {
       { status: 500 },
     );
   }
-}
+};
 
 export const DELETE = withAuthGuard(handler);

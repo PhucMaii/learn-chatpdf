@@ -1,32 +1,38 @@
-import React, { useEffect } from 'react'
-import MessageList from './MessageList'
-import { Input } from './ui/input'
-import { Button } from './ui/button'
-import { Send } from 'lucide-react'
+import React, { useEffect } from 'react';
+import MessageList from './MessageList';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { Send } from 'lucide-react';
 
 type Props = {
-    messages: any[];
-    isLoading: boolean;
-    handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    input: string;
-}
+  messages: any[];
+  isLoading: boolean;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  input: string;
+};
 
-const ChatComponent = ({messages, isLoading, handleSubmit, handleInputChange, input}: Props) => {
-    useEffect(() => {
-        const messageContainer = document.getElementById('message-container');
-        if (messageContainer) {
-          messageContainer.scrollTo({
-            top: messageContainer.scrollHeight,
-            behavior: 'smooth',
-          });
-        }
-      }, [messages]);
+const ChatComponent = ({
+  messages,
+  isLoading,
+  handleSubmit,
+  handleInputChange,
+  input,
+}: Props) => {
+  useEffect(() => {
+    const messageContainer = document.getElementById('message-container');
+    if (messageContainer) {
+      messageContainer.scrollTo({
+        top: messageContainer.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [messages]);
   return (
     <>
-        <div className="sticky top-0 inset-x-0 p-2 bg-white h-fit">
-            <h3 className="text-xl font-bold">Chat</h3>
-        </div>
+      <div className="sticky top-0 inset-x-0 p-2 bg-white h-fit">
+        <h3 className="text-xl font-bold">Chat</h3>
+      </div>
 
       <MessageList messages={messages} isLoading={isLoading} />
 
@@ -48,7 +54,7 @@ const ChatComponent = ({messages, isLoading, handleSubmit, handleInputChange, in
         </div>
       </form>
     </>
-  )
-}
+  );
+};
 
-export default ChatComponent
+export default ChatComponent;

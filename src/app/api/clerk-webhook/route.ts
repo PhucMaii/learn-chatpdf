@@ -79,5 +79,5 @@ const handler = async (req: Request) => {
   }
 
   return new Response('User Created Successfully', { status: 200 });
-}
+};
 export const POST = handler;

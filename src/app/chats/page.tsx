@@ -24,13 +24,12 @@ const Chats = () => {
 
   const debouncedKeywords = useDebounce(searchKeywords, 1000);
 
-
   useEffect(() => {
     const checkIsPro = async () => {
       const fetchedSubscription = await checkSubscription();
-      
+
       setSubscription(fetchedSubscription);
-    }
+    };
 
     checkIsPro();
     fetchUserChats();
@@ -93,7 +92,9 @@ const Chats = () => {
             <Button className="bg-black">+ New Chat</Button>
           </Link>
         ) : (
-          <Button disabled className="bg-black cursor-not-allowed">+ New Chat</Button>
+          <Button disabled className="bg-black cursor-not-allowed">
+            + New Chat
+          </Button>
         )}
       </div>
 

@@ -9,7 +9,9 @@ type UserContextType = {
   setUser: React.Dispatch<React.SetStateAction<DrizzleUser | null>>;
 };
 
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+export const UserContext = createContext<UserContextType | undefined>(
+  undefined,
+);
 
 type Props = {
   children: ReactNode;
@@ -32,7 +34,7 @@ export const UserProvider = ({ children }: Props) => {
       } catch (error: any) {
         console.log('Internal Server Error: ', error);
       }
-    }
+    };
 
     fetchUser();
   }, []);

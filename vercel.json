@@ -1,8 +1,8 @@
 {
-    "crons": [
-      {
-        "path": "/api/crons/update-plan",
-        "schedule": "5 * * * *"
-      }
-    ]
-  }
+  "crons": [
+    {
+      "path": "/api/crons/update-plan",
+      "schedule": "5 * * * *"
+    }
+  ]
+}

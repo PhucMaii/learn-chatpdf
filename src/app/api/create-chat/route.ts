@@ -39,6 +39,6 @@ const handler = async (req: Request) => {
       { status: 500 },
     );
   }
-}
+};
 
-export const POST = withAuthGuard(handler)
+export const POST = withAuthGuard(handler);

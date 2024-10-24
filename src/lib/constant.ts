@@ -33,13 +33,13 @@ export const pricingTabs = [
     price: 79.99,
     plan: 'year',
     isPopular: true,
-    save: ["Save 75% vs weekly", "Save 33% vs monthly"]
+    save: ['Save 75% vs weekly', 'Save 33% vs monthly'],
   },
   {
     title: 'Monthly',
     price: 9.99,
     plan: 'month',
-    save: ['Save 60% vs weekly']
+    save: ['Save 60% vs weekly'],
   },
 ];
 

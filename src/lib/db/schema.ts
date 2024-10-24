@@ -37,6 +37,17 @@ export const chats = pgTable('chats', {
 
 export type DrizzleChat = typeof chats.$inferSelect;
 
+export const flashCard = pgTable('flash_card', {
+  id: serial('id').primaryKey(),
+  chatId: integer('chat_id')
+    .references(() => chats.id)
+    .notNull(),
+  userId: varchar('user_id', { length: 256 }).notNull(),
+  question: text('question').notNull(),
+  answer: text('answer').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+})
+
 export const messages = pgTable('messages', {
   id: serial('id').primaryKey(),
   chatId: integer('chat_id')

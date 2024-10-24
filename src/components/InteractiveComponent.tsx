@@ -7,10 +7,12 @@ import ChatComponent from './ChatComponent';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 import { TabsContent } from '@radix-ui/react-tabs';
 import FlashCardsTab from './FlashCard/FlashCardsTab';
+import { SubscriptionType } from '@/lib/type';
+import { CrownIcon } from 'lucide-react';
 
-type Props = { chatId: number };
+type Props = { chatId: number; subscription: SubscriptionType };
 
-const InteractiveComponent = ({ chatId }: Props) => {
+const InteractiveComponent = ({ chatId, subscription }: Props) => {
   const { data, isLoading } = useQuery({
     queryKey: ['chat', chatId],
     queryFn: async () => {
@@ -35,14 +37,31 @@ const InteractiveComponent = ({ chatId }: Props) => {
     >
       <Tabs defaultValue="chat" className="w-full p-4">
         <TabsList className="w-full flex justify-center">
-          <TabsTrigger value="chat"  className="flex-1 text-center">Chat</TabsTrigger>
-          <TabsTrigger value="flash-cards" className="flex-1 text-center">Flash Cards</TabsTrigger>
+          <TabsTrigger value="chat" className="flex-1 text-center">
+            Chat
+          </TabsTrigger>
+          <TabsTrigger
+            disabled={!subscription?.isPro && !subscription?.isTrial}
+            value="flash-cards"
+            className="flex-1 text-center flex gap-1"
+          >
+            Flash Cards{' '}
+            {!subscription?.isPro && !subscription?.isTrial && (
+              <CrownIcon className="w-4 h-4 text-yellow-600" />
+            )}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="chat">
-          <ChatComponent messages={messages} isLoading={isLoading} handleSubmit={handleSubmit} handleInputChange={handleInputChange} input={input} />
+          <ChatComponent
+            messages={messages}
+            isLoading={isLoading}
+            handleSubmit={handleSubmit}
+            handleInputChange={handleInputChange}
+            input={input}
+          />
         </TabsContent>
         <TabsContent value="flash-cards">
-          <FlashCardsTab />
+          <FlashCardsTab chatId={chatId} />
         </TabsContent>
       </Tabs>
     </div>
