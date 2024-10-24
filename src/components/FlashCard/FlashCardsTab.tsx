@@ -45,7 +45,12 @@ const FlashCardsTab = ({ chatId }: Props) => {
       setIsLoading(true);
       const response = await axios.get(`/api/flash-cards/get?chatId=${chatId}`);
 
-      if (response.data.error && response.status == 404) {
+      setFlashCardData(response.data.flashCards);
+      setIsLoading(false);
+    }
+     catch (error: any) {
+      console.log(error);
+      if (error.response.data.error && error.response.status == 404) {
         const newFlashCards = await generateFlashCards();
 
         if (!newFlashCards) {
@@ -57,13 +62,7 @@ const FlashCardsTab = ({ chatId }: Props) => {
         setIsLoading(false);
         return;
       }
-
-      setFlashCardData(response.data.flashCards);
-      setIsLoading(false);
-    }
-     catch (error: any) {
-      console.log(error);
-      toast.error('Error fetching flash cards: ' + error.message);
+      // toast.error('Error fetching flash cards: ' + error.message);
       setIsLoading(false);
     }
   }

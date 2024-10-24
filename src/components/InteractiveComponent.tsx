@@ -32,7 +32,7 @@ const InteractiveComponent = ({ chatId, subscription }: Props) => {
 
   return (
     <div
-      className="relative h-screen oveflow-y-scroll flex flex-col"
+      className="relative flex flex-col"
       id="message-container"
     >
       <Tabs defaultValue="chat" className="w-full p-4">

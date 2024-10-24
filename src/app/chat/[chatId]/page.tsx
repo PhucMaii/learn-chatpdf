@@ -73,8 +73,8 @@ const Chat = ({ params: { chatId } }: Props) => {
   };
 
   return (
-    <div className="flex max-h-screen overflow-scroll">
-      <div className="flex w-full max-h-screen overflow-scroll">
+    <div className="flex max-h-screen">
+      <div className="flex w-full max-h-screen">
         {/* Chats sidebar */}
         <div className="flex-[1] max-w-xs border-r-8 border-1-slate-200">
           <ChatSidebar
@@ -92,7 +92,7 @@ const Chat = ({ params: { chatId } }: Props) => {
               <PDFViewer pdfUrl={chat?.pdfUrl || ''} />
             </div>
             {/* chat component */}
-            <div className="flex-[5] border-1-4 border-1-slate-200">
+            <div className="max-h-screen overflow-scroll flex-[5] border-1-4 border-1-slate-200">
               <InteractiveComponent
                 chatId={parseInt(chatId)}
                 subscription={subscription}

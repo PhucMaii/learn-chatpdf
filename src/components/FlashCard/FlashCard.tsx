@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../../styles/FlashCard.css';
 
 type Props = {
@@ -7,6 +7,10 @@ type Props = {
 
 const FlashCard = ({ flashCard }: Props) => {
   const [side, setSide] = useState<'front' | 'back'>('front');
+
+  useEffect(() => {
+    setSide('front');
+  }, [flashCard]);
 
   const handleFlip = () => {
     setSide(side === 'front' ? 'back' : 'front');
