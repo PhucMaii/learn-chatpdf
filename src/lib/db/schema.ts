@@ -57,7 +57,8 @@ export const flashCard = pgTable('flash_card', {
   question: text('question').notNull(),
   answer: text('answer').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  flashCardSetId: integer('flash_card_set_id').references(() => flashCardSet.id, { onDelete: 'cascade' }).notNull()
+  flashCardSetId: integer('flash_card_set_id').references(() => flashCardSet.id, { onDelete: 'cascade' }).notNull(),
+  isKnown: integer('is_known').default(0),
 });
 
 

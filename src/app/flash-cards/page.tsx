@@ -22,7 +22,7 @@ const FlashCardsPage = () => {
             }
 
             console.log(response.data.flashCardSetsWithChats, 'flash card set');
-            setFlashCardSetsWithChats(response.data.flashCardSets);
+            setFlashCardSetsWithChats(response.data.flashCardSetsWithChats);
         } catch (error: any) { 
             console.log(error);
             toast.error('Error fetching flash card sets: ' + error.message);

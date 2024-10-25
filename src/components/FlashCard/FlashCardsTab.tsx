@@ -3,6 +3,7 @@ import FlashCard from './FlashCard';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import {
+  CheckIcon,
   CircleArrowLeftIcon, 
   CircleArrowRightIcon,
   Loader2,
@@ -19,46 +20,71 @@ type Props = {
 const FlashCardsTab = ({ chatId }: Props) => {
   const [currentFlashCardIndex, setCurrentFlashCardIndex] = useState<number>(0);
   const [flashCardData, setFlashCardData] = useState<any>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isAdding, setIsAdding] = useState<boolean>(false);
+  const [loading, setLoading] = useState<any>({});
 
   useEffect(() => {
     handleGetFlashCards();
   }, [])
 
   const generateFlashCards = async () => {
-    setIsAdding(true);
+    setLoading({...loading, isAdding: true});
     try {
       const response = await axios.post('/api/flash-cards', { chatId });
 
       if (response.data.error) {
         toast.error('Error generating flash cards: ' + response.data.error);
-        setIsAdding(false);
+        setLoading({...loading, isAdding: false});
         return;
       }
 
       setFlashCardData(response.data.data);
-      setIsAdding(false);
+      setLoading({...loading, isAdding: false});
       return response.data.data;
     } catch (error: any) {
       console.log(error);
       toast.error('Error fetching flash cards: ' + error.message);
-      setIsAdding(false);
+      setLoading({...loading, isAdding: false});
     }
   };
 
+  const handleCheckCard = async () => {
+    try {
+      setLoading({...loading, isChecking: true});
+      const response = await axios.put('/api/flash-cards/update', {
+        flashCardId: flashCardData[currentFlashCardIndex].id,
+        updatedData: {
+          isKnown: 1,
+        }
+      }); 
+
+      if (response.data.error) {
+        toast.error('Error checking flash card: ' + response.data.error);
+        setLoading({...loading, isChecking: false});
+        return;
+      }
+
+      setCurrentFlashCardIndex(currentFlashCardIndex + 1);
+      toast.success('Flash card checked');
+      setLoading({...loading, isChecking: false});
+    } catch (error: any) {
+      console.log(error);
+      toast.error('Error checking flash card: ' + error.message);
+      setLoading({...loading, isChecking: false});
+    }
+  }
+
   const handleGetFlashCards = async () => {
     try {
-      setIsLoading(true);
+      setLoading({...loading, isFetching: true});
       const response = await axios.get(`/api/flash-cards/get?chatId=${chatId}`);
 
       setFlashCardData(response?.data?.flashCards || []);
-      setIsLoading(false);
+      setLoading({...loading, isFetching: false});
     }
      catch (error: any) {
       console.log(error);
       // toast.error('Error fetching flash cards: ' + error.message);
-      setIsLoading(false);
+      setLoading({...loading, isFetching: false});
     }
   }
 
@@ -87,7 +113,7 @@ const FlashCardsTab = ({ chatId }: Props) => {
           className="bg-white text-emerald-500 border-dashed border-2 border-emerald-500 hover:bg-emerald-500 hover:text-white flex gap-2"
         >
           Generate Flash Cards{' '}
-          {isAdding ? (
+          {loading.isAdding ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : (
             <SquarePenIcon className="w-4 h-4" />
@@ -96,7 +122,7 @@ const FlashCardsTab = ({ chatId }: Props) => {
       </div>
 
       {/* flash card list */}
-      {isLoading ?
+      {loading.isFetching ?
       <div className="flex justify-center items-center h-full w-full">
           <LoadingComponent /> 
       </div> 
@@ -108,7 +134,13 @@ const FlashCardsTab = ({ chatId }: Props) => {
         <div className="relative flex justify-center items-center">
           <FlashCard flashCard={flashCardData[currentFlashCardIndex]} />
         </div>
-      <div className="absolute top-[450px] flex justify-center items-center w-full gap-4">
+        <div 
+          className='absolute flex justify-center items-center top-[400px] w-[500px] left-1/2 transform -translate-x-1/2 rounded-b-3xl h-[50px] bg-indigo-500 hover:shadow-xl'
+          onClick={handleCheckCard}
+        >
+          {loading.isChecking ? <Loader2 className="w-10 h-10 animate-spin text-emerald-100" /> : <CheckIcon className='w-10 h-10 text-emerald-100 text-center' />}
+        </div>
+      <div className="absolute top-[480px] flex justify-center items-center w-full gap-4">
           <CircleArrowLeftIcon className="w-10 h-10 text-emerald-500" onClick={previousCard} />
           <h6 className="text-xl font-bold">
             {currentFlashCardIndex + 1} / {flashCardData.length}

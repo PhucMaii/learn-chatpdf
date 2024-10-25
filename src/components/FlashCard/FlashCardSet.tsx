@@ -19,7 +19,7 @@ const FlashCardSet = ({flashCardSetWithChat}: Props) => {
       </div>
 
       <div className="mt-4">
-        <h6 className="text-sm text-gray-600 font-bold">Created with</h6>
+        <h6 className="text-sm text-gray-600 font-bold">Created with {flashCardSetWithChat.chat.pdfName}</h6>
       </div>
 
     </div>

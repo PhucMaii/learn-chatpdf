@@ -85,7 +85,6 @@ const handler = async (req: Request) => {
     const formattedMessages = JSON.parse(
       completionData.choices[0].message.content,
     );
-    console.log('formatted messages', formattedMessages);
 
     const newFlashCardsSet = await db.insert(flashCardSet).values({
       title: formattedMessages.title,
@@ -94,7 +93,6 @@ const handler = async (req: Request) => {
       userId: userId,
     }).returning();
 
-    console.log(newFlashCardsSet, 'newFlashCardsSet');
 
     const flashCardList = formattedMessages.flashcards.map((question: any) => {
       return {
@@ -104,6 +102,7 @@ const handler = async (req: Request) => {
         chatId: chatId,
         flashCardSetId: newFlashCardsSet[0].id,
         userId: userId,
+        isKnown: 0,
       }
     })
 

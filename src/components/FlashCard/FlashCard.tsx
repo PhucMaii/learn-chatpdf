@@ -19,7 +19,7 @@ const FlashCard = ({ flashCard }: Props) => {
   return (
     <div
       onClick={handleFlip}
-      className="relative flex justify-center items-center w-[500px]"
+      className="relative flex flex-col justify-center items-center w-[500px]"
     >
       <div className={`flipper ${side === 'back' ? 'flip' : ''}`}>
         {/* Front Side */}
