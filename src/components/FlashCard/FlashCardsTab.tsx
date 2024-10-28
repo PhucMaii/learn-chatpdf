@@ -3,7 +3,6 @@ import FlashCard from './FlashCard';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import {
-  CheckIcon,
   CircleArrowLeftIcon, 
   CircleArrowRightIcon,
   Loader2,
@@ -53,7 +52,7 @@ const FlashCardsTab = ({ chatId }: Props) => {
       const response = await axios.put('/api/flash-cards/update', {
         flashCardId: flashCardData[currentFlashCardIndex].id,
         updatedData: {
-          isKnown: 1,
+          isKnown: flashCardData[currentFlashCardIndex]?.isKnown === 0 ? 1 : 0,
         }
       }); 
 
@@ -138,7 +137,7 @@ const FlashCardsTab = ({ chatId }: Props) => {
           className='absolute flex justify-center items-center top-[400px] w-[500px] left-1/2 transform -translate-x-1/2 rounded-b-3xl h-[50px] bg-indigo-500 hover:shadow-xl'
           onClick={handleCheckCard}
         >
-          {loading.isChecking ? <Loader2 className="w-10 h-10 animate-spin text-emerald-100" /> : <CheckIcon className='w-10 h-10 text-emerald-100 text-center' />}
+          {loading.isChecking ? <Loader2 className="w-10 h-10 animate-spin text-emerald-100" /> : flashCardData[currentFlashCardIndex].isKnown === 0 ? <h6 className="text-xl font-bold text-emerald-100">Known</h6> : <h6 className="text-xl font-bold text-emerald-100">Need more practice</h6>}
         </div>
       <div className="absolute top-[480px] flex justify-center items-center w-full gap-4">
           <CircleArrowLeftIcon className="w-10 h-10 text-emerald-500" onClick={previousCard} />

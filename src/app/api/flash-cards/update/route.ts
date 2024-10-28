@@ -12,7 +12,6 @@ interface IBody {
 const handler = async (req: Request) => {
     try {
         const {flashCardId, updatedData}: IBody = await req.json();
-        console.log(flashCardId, updatedData);
 
         if (!flashCardId || !updatedData) {
             return NextResponse.json({ error: 'Missing flashCardId or updatedData' }, { status: 400 });
