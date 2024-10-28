@@ -31,10 +31,7 @@ const InteractiveComponent = ({ chatId, subscription }: Props) => {
   });
 
   return (
-    <div
-      className="relative flex flex-col"
-      id="message-container"
-    >
+    <div className="relative flex flex-col" id="message-container">
       <Tabs defaultValue="chat" className="w-full p-4">
         <TabsList className="w-full flex justify-center">
           <TabsTrigger value="chat" className="flex-1 text-center">

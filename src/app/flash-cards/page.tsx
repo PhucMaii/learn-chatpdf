@@ -1,33 +1,32 @@
 'use client';
 import FlashCardSet from '@/components/FlashCard/FlashCardSet';
-import SidebarWrapper from '@/components/SidebarWrapper'
+import SidebarWrapper from '@/components/SidebarWrapper';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 const FlashCardsPage = () => {
-    const [flashCardSetsWithChats, setFlashCardSetsWithChats] = useState<any>([]);
+  const [flashCardSetsWithChats, setFlashCardSetsWithChats] = useState<any>([]);
 
-    useEffect(() => {
-        handleGetFlashCardSets();
-    }, []);
+  useEffect(() => {
+    handleGetFlashCardSets();
+  }, []);
 
-    const handleGetFlashCardSets = async () => {
-        try {
-            const response = await axios.get('/api/flashcard-set/get');
-            
-            if (response.data.error) {
-                toast.error('Error fetching flash card sets: ' + response.data.error);
-                return;
-            }
+  const handleGetFlashCardSets = async () => {
+    try {
+      const response = await axios.get('/api/flashcard-set/get');
 
-            console.log(response.data.flashCardSetsWithChats, 'flash card set');
-            setFlashCardSetsWithChats(response.data.flashCardSetsWithChats);
-        } catch (error: any) { 
-            console.log(error);
-            toast.error('Error fetching flash card sets: ' + error.message);
-        }
+      if (response.data.error) {
+        toast.error('Error fetching flash card sets: ' + response.data.error);
+        return;
+      }
+
+      setFlashCardSetsWithChats(response.data.flashCardSetsWithChatsAndFlashCards);
+    } catch (error: any) {
+      console.log(error);
+      toast.error('Error fetching flash card sets: ' + error.message);
     }
+  };
 
   return (
     <SidebarWrapper>
@@ -36,15 +35,21 @@ const FlashCardsPage = () => {
         Enhanced reading and learning experience with flash cards
       </h6>
 
-      <div className="grid grid-cols-3 gap-4 mt-8 flex-wrap">
-        {
-          flashCardSetsWithChats.length > 0 && flashCardSetsWithChats.map((flashCardSetsWithChat: any, index: number) => {
-            return <FlashCardSet flashCardSetWithChat={flashCardSetsWithChat} key={index} />
-          })
-        }
+      <div className="flex flex-col gap-4 mt-8 flex-wrap">
+        {flashCardSetsWithChats.length > 0 &&
+          flashCardSetsWithChats.map(
+            (flashCardSetsWithChat: any, index: number) => {
+              return (
+                <FlashCardSet
+                  flashCardSetWithChat={flashCardSetsWithChat}
+                  key={index}
+                />
+              );
+            },
+          )}
       </div>
     </SidebarWrapper>
-  )
-}
+  );
+};
 
-export default FlashCardsPage
+export default FlashCardsPage;

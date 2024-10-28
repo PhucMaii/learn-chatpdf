@@ -86,13 +86,15 @@ const handler = async (req: Request) => {
       completionData.choices[0].message.content,
     );
 
-    const newFlashCardsSet = await db.insert(flashCardSet).values({
-      title: formattedMessages.title,
-      chatId: chatId,
-      createdAt: new Date(),
-      userId: userId,
-    }).returning();
-
+    const newFlashCardsSet = await db
+      .insert(flashCardSet)
+      .values({
+        title: formattedMessages.title,
+        chatId: chatId,
+        createdAt: new Date(),
+        userId: userId,
+      })
+      .returning();
 
     const flashCardList = formattedMessages.flashcards.map((question: any) => {
       return {
@@ -103,12 +105,15 @@ const handler = async (req: Request) => {
         flashCardSetId: newFlashCardsSet[0].id,
         userId: userId,
         isKnown: 0,
-      }
-    })
+      };
+    });
 
     // Save Flash Card into db
     await db.insert(flashCard).values(flashCardList);
-    await db.update(chats).set({ title: formattedMessages.title }).where(eq(chats.id, chatId));
+    await db
+      .update(chats)
+      .set({ title: formattedMessages.title })
+      .where(eq(chats.id, chatId));
 
     return NextResponse.json({ data: formattedMessages.flashcards });
   } catch (error) {
