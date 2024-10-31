@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { chats } from '@/lib/db/schema';
+import { chats, flashCard, flashCardSet } from '@/lib/db/schema';
 import { withAuthGuard } from '@/utils/guard';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
@@ -14,11 +14,45 @@ const handler = async () => {
     }
 
     const userChats = await db
-      .select()
+      .select({
+        chats,
+        // flashCardSet,
+        flashCard
+      })
       .from(chats)
+      .leftJoin(flashCardSet, eq(chats.id, flashCardSet?.chatId))
+      .leftJoin(flashCard, eq(flashCardSet.id, flashCard.flashCardSetId))
       .where(eq(chats.userId, userId));
 
-    return NextResponse.json({ chats: userChats }, { status: 200 });
+    
+    const groupedResult = userChats.reduce((acc: any, chat) => {
+      const {chats, flashCard} = chat;
+
+      if (!acc[chats.id]) {
+        acc[chats.id] = { ...chats, flashCards: [] };
+      }
+
+      if (flashCard) {
+        acc[chats.id].flashCards.push(flashCard);
+      }
+
+      // if (!acc['chats']) {
+      //   acc['chats'] = [];
+      // }
+
+      // if (!acc['flashCardSets']) {
+      //   acc['flashCardSets'] = [];
+      // }
+
+      // if (flashCardSet) {
+      //   acc['flashCardSets'].push(flashCardSet);
+      // }
+
+      // acc['chats'].push(chats);
+      return acc;
+    }, {});
+
+    return NextResponse.json({ data: groupedResult }, { status: 200 });
   } catch (error: any) {
     console.log('Internal Server Error: ', error);
     return NextResponse.json(

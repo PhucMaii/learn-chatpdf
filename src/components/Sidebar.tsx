@@ -22,8 +22,6 @@ const Sidebar = () => {
     fetchUser();
   }, []);
 
-  console.log(user, 'user');
-
   const fetchUser = async () => {
     try {
       const response = await axios.get(`${API_URL.USER}/get-user`);

@@ -9,10 +9,11 @@ import { TabsContent } from '@radix-ui/react-tabs';
 import FlashCardsTab from './FlashCard/FlashCardsTab';
 import { SubscriptionType } from '@/lib/type';
 import { CrownIcon } from 'lucide-react';
+import { DrizzleFlashCard } from '@/lib/db/drizzleType';
 
-type Props = { chatId: number; subscription: SubscriptionType };
+type Props = { chatId: number; subscription: SubscriptionType, flashCards: DrizzleFlashCard[] };
 
-const InteractiveComponent = ({ chatId, subscription }: Props) => {
+const InteractiveComponent = ({ chatId, subscription, flashCards }: Props) => {
   const { data, isLoading } = useQuery({
     queryKey: ['chat', chatId],
     queryFn: async () => {
@@ -58,7 +59,7 @@ const InteractiveComponent = ({ chatId, subscription }: Props) => {
           />
         </TabsContent>
         <TabsContent value="flash-cards">
-          <FlashCardsTab chatId={chatId} />
+          <FlashCardsTab chatId={chatId} flashCards={flashCards} />
         </TabsContent>
       </Tabs>
     </div>

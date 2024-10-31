@@ -1,3 +1,6 @@
+import { DrizzleFlashCard, DrizzleFlashCardSet } from './db/drizzleType';
+import { DrizzleChat } from './db/schema';
+
 export enum API_URL {
   USER = '/api/user',
   CHAT = '/api/chat',
@@ -17,4 +20,9 @@ export enum SUBSCRIPTION_TYPE {
   PRO = 'Pro',
   TRIAL = 'Trial',
   FREE = 'Free',
+}
+
+export interface IFlashCardSet extends DrizzleFlashCardSet {
+  flashCards: DrizzleFlashCard[];
+  chat: DrizzleChat;
 }

@@ -10,6 +10,7 @@ import { API_URL } from '@/lib/type';
 import LoadingComponent from '@/components/LoadingComponent';
 import { useRouter } from 'next/navigation';
 import InteractiveComponent from '@/components/InteractiveComponent';
+import { DrizzleFlashCard } from '@/lib/db/drizzleType';
 
 type Props = {
   params: {
@@ -19,6 +20,7 @@ type Props = {
 
 const Chat = ({ params: { chatId } }: Props) => {
   const [chat, setChat] = useState<DrizzleChat | null>(null);
+  const [flashCards, setFlashCards] = useState<DrizzleFlashCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [subscription, setSubscription] = useState<any>({});
   const [userChatlist, setUserChatList] = useState<DrizzleChat[]>([]);
@@ -55,22 +57,32 @@ const Chat = ({ params: { chatId } }: Props) => {
         return;
       }
 
-      const currentChat = response.data.chats.find(
-        (chat: DrizzleChat) => chat.id === parseInt(chatId),
-      );
+      const chats = response.data.data;
+
+      const currentChat = chats[chatId]
+
+      // if (flashCardSets.length > 0) {
+      //   const currentFlashCardSet = flashCardSets?.find(
+      //     (flashCardSet: DrizzleFlashCardSet) =>
+      //       flashCardSet.chatId === parseInt(chatId),
+      //   );  
+      //   setFlashCardSet(currentFlashCardSet || null);
+      // }
 
       if (!currentChat) {
         toast.error('Chat not found');
         return;
       }
 
+      setFlashCards(currentChat.flashCards);
       setChat(currentChat);
-      setUserChatList(response.data.chats);
+      setUserChatList(Object.values(chats));
     } catch (error: any) {
       console.log('Internal Server Error: ', error);
       toast.error('Internal Server Error: ' + error.message);
     }
   };
+
 
   return (
     <div className="flex max-h-screen">
@@ -96,6 +108,7 @@ const Chat = ({ params: { chatId } }: Props) => {
               <InteractiveComponent
                 chatId={parseInt(chatId)}
                 subscription={subscription}
+                flashCards={flashCards}
               />
             </div>
           </>

@@ -11,19 +11,27 @@ import {
 import ErrorComponent from '../ErrorComponent';
 import LoadingComponent from '../LoadingComponent';
 import { Button } from '../ui/button';
+import { DrizzleFlashCard } from '@/lib/db/drizzleType';
+import FlashCardTrack, { CardStatus } from './FlashCardTrack';
 
 type Props = {
   chatId: number;
+  flashCards: DrizzleFlashCard[];
 };
 
-const FlashCardsTab = ({ chatId }: Props) => {
+const FlashCardsTab = ({ chatId, flashCards }: Props) => {
   const [currentFlashCardIndex, setCurrentFlashCardIndex] = useState<number>(0);
-  const [flashCardData, setFlashCardData] = useState<any>([]);
+  const [flashCardData, setFlashCardData] = useState<any>(flashCards);
   const [loading, setLoading] = useState<any>({});
 
+
   useEffect(() => {
-    handleGetFlashCards();
-  }, []);
+    setFlashCardData(flashCards);
+  }, [flashCards])
+
+  // useEffect(() => {
+  //   handleGetFlashCards();
+  // }, []);
 
   const generateFlashCards = async () => {
     setLoading({ ...loading, isAdding: true });
@@ -72,20 +80,19 @@ const FlashCardsTab = ({ chatId }: Props) => {
     }
   };
 
-  const handleGetFlashCards = async () => {
-    try {
-      setLoading({ ...loading, isFetching: true });
-      const response = await axios.get(`/api/flash-cards/get?chatId=${chatId}`);
+  // const handleGetFlashCards = async () => {
+  //   try {
+  //     setLoading({ ...loading, isFetching: true });
+  //     const response = await axios.get(`/api/flash-cards/get?chatId=${chatId}`);
 
-      setFlashCardData(response?.data?.flashCards || []);
-      setLoading({ ...loading, isFetching: false });
-    } catch (error: any) {
-      console.log(error);
-      // toast.error('Error fetching flash cards: ' + error.message);
-      setLoading({ ...loading, isFetching: false });
-    }
-  };
-
+  //     setFlashCardData(response?.data?.flashCards || []);
+  //     setLoading({ ...loading, isFetching: false });
+  //   } catch (error: any) {
+  //     console.log(error);
+  //     // toast.error('Error fetching flash cards: ' + error.message);
+  //     setLoading({ ...loading, isFetching: false });
+  //   }
+  // };
   const nextCard = () => {
     if (currentFlashCardIndex < flashCardData.length - 1) {
       setCurrentFlashCardIndex(currentFlashCardIndex + 1);
@@ -130,7 +137,7 @@ const FlashCardsTab = ({ chatId }: Props) => {
         <ErrorComponent errorText="No flash cards found" />
       ) : (
         <div className="mt-8">
-          <div className="relative flex justify-center items-center">
+          {/* <div className="relative flex justify-center items-center">
             <FlashCard flashCard={flashCardData[currentFlashCardIndex]} />
           </div>
           <div
@@ -159,7 +166,8 @@ const FlashCardsTab = ({ chatId }: Props) => {
               className="w-10 h-10 text-emerald-500"
               onClick={nextCard}
             />
-          </div>
+          </div> */}
+          {flashCardData.length > 0 && <FlashCardTrack flashCards={flashCardData} />}
         </div>
       )}
     </div>

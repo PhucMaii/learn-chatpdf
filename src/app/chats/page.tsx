@@ -59,9 +59,10 @@ const Chats = () => {
         return;
       }
 
+      console.log(response.data.data.chats, 'data');
       setUserChats({
-        baseData: response.data.chats,
-        displayData: response.data.chats,
+        baseData: Object.values(response.data.data),
+        displayData: Object.values(response.data.data),
       });
 
       setIsLoading(false);

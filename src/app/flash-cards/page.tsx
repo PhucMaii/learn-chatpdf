@@ -2,11 +2,14 @@
 import FlashCardSet from '@/components/FlashCard/FlashCardSet';
 import SidebarWrapper from '@/components/SidebarWrapper';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 const FlashCardsPage = () => {
   const [flashCardSetsWithChats, setFlashCardSetsWithChats] = useState<any>([]);
+
+  const router = useRouter();
 
   useEffect(() => {
     handleGetFlashCardSets();
@@ -21,7 +24,9 @@ const FlashCardsPage = () => {
         return;
       }
 
-      setFlashCardSetsWithChats(response.data.flashCardSetsWithChatsAndFlashCards);
+      setFlashCardSetsWithChats(
+        response.data.flashCardSetsWithChatsAndFlashCards,
+      );
     } catch (error: any) {
       console.log(error);
       toast.error('Error fetching flash card sets: ' + error.message);
@@ -43,6 +48,9 @@ const FlashCardsPage = () => {
                 <FlashCardSet
                   flashCardSetWithChat={flashCardSetsWithChat}
                   key={index}
+                  onClick={() =>
+                    router.push(`/flash-cards/${flashCardSetsWithChat.id}`)
+                  }
                 />
               );
             },
