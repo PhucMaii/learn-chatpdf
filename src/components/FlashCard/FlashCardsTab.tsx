@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import FlashCard from './FlashCard';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import {
-  CircleArrowLeftIcon,
-  CircleArrowRightIcon,
   Loader2,
   SquarePenIcon,
 } from 'lucide-react';
@@ -12,7 +9,7 @@ import ErrorComponent from '../ErrorComponent';
 import LoadingComponent from '../LoadingComponent';
 import { Button } from '../ui/button';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
-import FlashCardTrack, { CardStatus } from './FlashCardTrack';
+import FlashCardTrack from './FlashCardTrack';
 
 type Props = {
   chatId: number;
@@ -20,7 +17,6 @@ type Props = {
 };
 
 const FlashCardsTab = ({ chatId, flashCards }: Props) => {
-  const [currentFlashCardIndex, setCurrentFlashCardIndex] = useState<number>(0);
   const [flashCardData, setFlashCardData] = useState<any>(flashCards);
   const [loading, setLoading] = useState<any>({});
 
@@ -54,61 +50,6 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
     }
   };
 
-  const handleCheckCard = async () => {
-    try {
-      setLoading({ ...loading, isChecking: true });
-      const response = await axios.put('/api/flash-cards/update', {
-        flashCardId: flashCardData[currentFlashCardIndex].id,
-        updatedData: {
-          isKnown: flashCardData[currentFlashCardIndex]?.isKnown === 0 ? 1 : 0,
-        },
-      });
-
-      if (response.data.error) {
-        toast.error('Error checking flash card: ' + response.data.error);
-        setLoading({ ...loading, isChecking: false });
-        return;
-      }
-
-      setCurrentFlashCardIndex(currentFlashCardIndex + 1);
-      toast.success('Flash card checked');
-      setLoading({ ...loading, isChecking: false });
-    } catch (error: any) {
-      console.log(error);
-      toast.error('Error checking flash card: ' + error.message);
-      setLoading({ ...loading, isChecking: false });
-    }
-  };
-
-  // const handleGetFlashCards = async () => {
-  //   try {
-  //     setLoading({ ...loading, isFetching: true });
-  //     const response = await axios.get(`/api/flash-cards/get?chatId=${chatId}`);
-
-  //     setFlashCardData(response?.data?.flashCards || []);
-  //     setLoading({ ...loading, isFetching: false });
-  //   } catch (error: any) {
-  //     console.log(error);
-  //     // toast.error('Error fetching flash cards: ' + error.message);
-  //     setLoading({ ...loading, isFetching: false });
-  //   }
-  // };
-  const nextCard = () => {
-    if (currentFlashCardIndex < flashCardData.length - 1) {
-      setCurrentFlashCardIndex(currentFlashCardIndex + 1);
-    } else {
-      setCurrentFlashCardIndex(0);
-    }
-  };
-
-  const previousCard = () => {
-    if (currentFlashCardIndex > 0) {
-      setCurrentFlashCardIndex(currentFlashCardIndex - 1);
-    } else {
-      setCurrentFlashCardIndex(flashCardData.length - 1);
-    }
-  };
-
   return (
     <div className="w-full h-full">
       <div className="sticky top-0 inset-x-0 p-2 bg-white h-fit flex justify-between">
@@ -137,36 +78,6 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
         <ErrorComponent errorText="No flash cards found" />
       ) : (
         <div className="mt-8">
-          {/* <div className="relative flex justify-center items-center">
-            <FlashCard flashCard={flashCardData[currentFlashCardIndex]} />
-          </div>
-          <div
-            className="absolute flex justify-center items-center top-[400px] w-[500px] left-1/2 transform -translate-x-1/2 rounded-b-3xl h-[50px] bg-indigo-500 hover:shadow-xl"
-            onClick={handleCheckCard}
-          >
-            {loading.isChecking ? (
-              <Loader2 className="w-10 h-10 animate-spin text-emerald-100" />
-            ) : flashCardData[currentFlashCardIndex].isKnown === 0 ? (
-              <h6 className="text-xl font-bold text-emerald-100">Known</h6>
-            ) : (
-              <h6 className="text-xl font-bold text-emerald-100">
-                Need more practice
-              </h6>
-            )}
-          </div>
-          <div className="absolute top-[480px] flex justify-center items-center w-full gap-4">
-            <CircleArrowLeftIcon
-              className="w-10 h-10 text-emerald-500"
-              onClick={previousCard}
-            />
-            <h6 className="text-xl font-bold">
-              {currentFlashCardIndex + 1} / {flashCardData.length}
-            </h6>
-            <CircleArrowRightIcon
-              className="w-10 h-10 text-emerald-500"
-              onClick={nextCard}
-            />
-          </div> */}
           {flashCardData.length > 0 && <FlashCardTrack flashCards={flashCardData} />}
         </div>
       )}

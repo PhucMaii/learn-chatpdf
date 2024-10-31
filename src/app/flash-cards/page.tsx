@@ -33,6 +33,8 @@ const FlashCardsPage = () => {
     }
   };
 
+  console.log(flashCardSetsWithChats, 'flashCardSetsWithChats');
+
   return (
     <SidebarWrapper>
       <h1 className="text-3xl font-bold ">Flash Cards</h1>

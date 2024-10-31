@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import FlashCard from './FlashCard';
-import axios from 'axios';
-import toast from 'react-hot-toast';
 import {
+  ArrowLeft,
+  ArrowRight,
   CircleArrowLeftIcon,
   CircleArrowRightIcon,
+  Loader2,
 } from 'lucide-react';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
-import { IFlashCardSet } from '@/lib/type';
+import { Progress } from '../ui/progress';
+import StatusText from '../StatusText';
+import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
 export enum CardStatus {
   LEARNING = 'LEARNING',
@@ -23,10 +29,13 @@ type Props = {
 const FlashCardTrack = ({ flashCards }: Props) => {
   const [isProgressEnd, setIsProgressEnd] = useState<boolean>(false);
   const [isTrack, setIsTrack] = useState<boolean>(false);
+  const [isCheckingCards, setIsCheckingCards] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [flashCardData, setFlashCardData] = useState<DrizzleFlashCard[]>(flashCards);
   const [learningCards, setLearningCards] = useState<DrizzleFlashCard[]>([]);
   const [knownCards, setKnownCards] = useState<DrizzleFlashCard[]>([]);
+
+  const router = useRouter();
 
   useEffect(() => {
     setFlashCardData(flashCards);
@@ -38,57 +47,37 @@ const FlashCardTrack = ({ flashCards }: Props) => {
     }
   }, [isTrack]);
 
-  // const fetchFlashCards = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `/api/flashcard-set/get?id=${flashCardSetId}`,
-  //     );
-
-  //     if (response.data.error) {
-  //       toast.error('Error fetching flash card sets: ' + response.data.error);
-  //       return;
-  //     }
-
-  //     setFlashCardData(
-  //       response.data.flashCardSetsWithChatsAndFlashCards[0].flashCards,
-  //     );
-  //   } catch (error: any) {
-  //     console.log(error);
-  //     toast.error('Error fetching flash card sets: ' + error.message);
-  //   }
-  // };
-
-  // const handleCheckCard = async () => {
-  //   try {
-  //     setLoading({ ...loading, isChecking: true });
-  //     const response = await axios.put('/api/flash-cards/update', {
-  //       flashCardId: flashCardData[currentIndex].id,
-  //       updatedData: {
-  //         isKnown: flashCardData[currentIndex].isKnown === 0 ? 1 : 0,
-  //       },
-  //     });
-
-  //     if (response.data.error) {
-  //       toast.error('Error checking flash card: ' + response.data.error);
-  //       setLoading({ ...loading, isChecking: false });
-  //       return;
-  //     }
-
-  //     setCurrentIndex(currentIndex + 1);
-  //     toast.success('Flash card checked');
-  //     setLoading({ ...loading, isChecking: false });
-  //   } catch (error: any) {
-  //     console.log(error);
-  //     toast.error('Error checking flash card: ' + error.message);
-  //     setLoading({ ...loading, isChecking: false });
-  //   }
-  // };
+  useEffect(() => {
+    if (isProgressEnd) {
+      handleProgressEnd();
+    }
+  }, [isProgressEnd]);
 
   const checkCard = (status: CardStatus) => {
     if (status === CardStatus.KNOWN) {
       setKnownCards([...knownCards, flashCardData[currentIndex]]);
+      const newFlashCards = flashCardData.map((card: DrizzleFlashCard, index: number)  => {
+          if (index === currentIndex) {
+            return {
+              ...card,
+              isKnown: 1,
+            }
+          } 
+          return card;
+      });
+      setFlashCardData(newFlashCards);
     } else if (status === CardStatus.LEARNING) {
       setLearningCards([...learningCards, flashCardData[currentIndex]]);
+      const newFlashCards = flashCardData.map((card: DrizzleFlashCard, index: number)  => {
+        if (index === currentIndex) {
+          return {
+            ...card,
+            isKnown: 0,
+          }
+        } 
+        return card;
+    });
+    setFlashCardData(newFlashCards);
     }
 
     if (currentIndex < flashCardData.length - 1) {
@@ -113,6 +102,94 @@ const FlashCardTrack = ({ flashCards }: Props) => {
       setCurrentIndex(flashCardData.length - 1);
     }
   };
+  
+
+  // When progress end -> show number of learning cards and known cards
+  // Then insert data into db
+  // Ask if user want to restart learning
+  // Then reset data into db
+  const handleProgressEnd = async (isReset?: boolean) => {
+    setIsCheckingCards(true);
+      try {
+        const formattedFlashCards = flashCardData.map((card: DrizzleFlashCard) => {
+          return {
+            id: card.id,
+            isKnown: isReset ? 0 : card.isKnown
+          }
+        })
+        const response = await axios.put('/api/flash-cards/update/many', {
+          flashCards: formattedFlashCards
+        });
+
+        if (response.data.error) {
+          toast.error('Error checking flash card: ' + response.data.error);
+          setIsCheckingCards(false);
+          return;
+        }
+
+        // toast.success('All flash cards have been checked!');
+        setIsCheckingCards(false);
+        if (isReset) {
+          resetFlashCards();
+        }
+      } catch (error: any) {
+        console.log('There was an error', error);
+        toast.error('Error checking flash card: ' + error.message);
+        setIsCheckingCards(false);
+      }
+  }
+
+  const resetFlashCards = () => {
+    const newFlashCards = flashCardData.map((card: DrizzleFlashCard) => {
+      return {
+        ...card,
+        isKnown: 0
+      }
+    });
+
+    setFlashCardData(newFlashCards);
+    setIsProgressEnd(false);
+    setIsTrack(false);
+    setCurrentIndex(0);
+    setLearningCards([]);
+    setKnownCards([]);
+  }
+
+  if (isProgressEnd) {
+    return (
+      <div className="flex flex-col gap-4 w-full">
+        <div className="flex items-center gap-2">
+          <h6 className="text-xl font-bold text-emerald-600">Congratulations, you have aced all the flash cards!</h6>
+          <h1 className="text-3xl">🎉</h1>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <div className="mt-4 w-full flex flex-col gap-2">
+            <StatusText text={`Known: ${knownCards.length} / ${flashCardData.length}`} type="success" />
+            <Progress value={Math.ceil((knownCards.length / flashCardData.length) * 100)} />
+          </div>
+
+          <div className="mt-4 w-full flex flex-col gap-2">
+            <StatusText text={`Learning: ${learningCards.length} / ${flashCardData.length}`} type="error" />
+            <Progress value={Math.floor((learningCards.length / flashCardData.length) * 100)} />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between w-full">
+          <Button onClick={() => {
+            handleProgressEnd(true);
+          }} className="bg-transparent text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent">
+           {isCheckingCards ? <Loader2 className="w-6 h-6 animate-spin" /> : <ArrowLeft  className="w-6 h-6" />}
+            Learn again
+          </Button>
+          <Button onClick={() => router.push('/flash-cards')} className="bg-transparent text-emerald-500 text-md flex items-center gap-2 font-bold hover:text-blue-600 hover:bg-transparent">
+            Flash cards
+            <ArrowRight className="w-6 h-6 hover:text-blue-600" />
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="mt-8">

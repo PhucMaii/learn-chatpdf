@@ -1,5 +1,4 @@
 'use client';
-import FlashCard from '@/components/FlashCard/FlashCard';
 import FlashCardTrack from '@/components/FlashCard/FlashCardTrack';
 import SidebarWrapper from '@/components/SidebarWrapper';
 import axios from 'axios';
@@ -39,7 +38,7 @@ export default function FlashCardPage() {
         {/* <FlashCard flashCard={flashCardSets?.flashCards[currentCardIndex]}  /> */}
         {flashCardSets && (
           <FlashCardTrack
-            flashCardSetId={Number(id)}
+            flashCards={flashCardSets?.flashCards || []}
             // flashCardData={flashCardSets?.flashCards || []}
             // setCurrentIndex={setCurrentCardIndex}
             // currentIndex={currentCardIndex}

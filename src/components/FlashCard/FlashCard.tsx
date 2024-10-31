@@ -39,9 +39,10 @@ const FlashCard = ({
   return (
     <div
       onClick={handleFlip}
-      className={`flipper-container flex flex-col justify-center items-center w-[500px] h-[600px] ${className}`}
+      className={`relative flipper-container flex flex-col justify-center items-center w-[500px] h-[600px] ${className}`}
     >
       {progress && (
+        <>
         <div className="w-full flex items-center justify-between mb-2">
           <StatusText
             text={`Learning ${learningCards?.length || 0}`}
@@ -52,12 +53,11 @@ const FlashCard = ({
             type="success"
           />
         </div>
-      )}
-      {/* {progress && (
-        <div className="flex items-center gap-1 right-5 top-5 w-fit p-2 z-10 bg-transparent border-2 border-white text-white rounded-xl">
+        <div className="absolute flex items-center gap-1 right-10 top-14 w-fit p-2 z-10 bg-transparent border-2 border-white text-white rounded-xl">
           <h6>{progress}</h6>
         </div>
-      )} */}
+        </>
+      )}
       <div className={`flipper ${side === 'back' ? 'flip' : ''}`}>
         {/* Front Side */}
         <div
