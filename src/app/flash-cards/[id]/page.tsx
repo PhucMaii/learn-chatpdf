@@ -7,7 +7,6 @@ import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function FlashCardPage() {
-  const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [flashCardSets, setFlashCardSets] = useState<any>(null);
 
   const { id } = useParams();
