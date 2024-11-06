@@ -14,7 +14,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     const path = window.location.pathname;
-    const index = tabs.findIndex((tab) => tab.link === path);
+    const index = tabs.findIndex((tab) => tab.params === path.split('/')[1]);
     setSelectedTab(index);
   }, [window.location.pathname]);
 
@@ -42,7 +42,7 @@ const Sidebar = () => {
       {/* Logo and user status */}
       <div className="flex items-center gap-2">
         <img src="images/logo.png" className="w-10 h-10 rounded-full" />
-        <h1 className="text-black font-bold text-xl">LearnPDF</h1>
+        <h1 className="text-black font-bold text-xl">LearnPDF</h1> 
         <StatusText text={user?.status} type="info" />
       </div>
 

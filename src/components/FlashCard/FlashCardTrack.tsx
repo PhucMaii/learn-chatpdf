@@ -6,6 +6,7 @@ import {
   CircleArrowLeftIcon,
   CircleArrowRightIcon,
   Loader2,
+  ShuffleIcon,
 } from 'lucide-react';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
 import { Switch } from '../ui/switch';
@@ -16,6 +17,7 @@ import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { flashCardResults } from '@/lib/constant';
 
 export enum CardStatus {
   LEARNING = 'LEARNING',
@@ -155,12 +157,39 @@ const FlashCardTrack = ({ flashCards }: Props) => {
     setKnownCards([]);
   }
 
+  const shuffleCards = () => {
+    const newCards = [...flashCardData];
+
+    for (let i = newCards.length - 1; i > 0; i--) {
+      // generate a random index from 0 to current i;
+      const j = Math.floor(Math.random() * (i + 1));
+
+      // swap
+      [newCards[i], newCards[j]] = [newCards[j], newCards[i]];
+    }
+
+    setFlashCardData(newCards);
+  }
+
   if (isProgressEnd) {
+    const percentageProgress = Math.ceil((knownCards.length / flashCardData.length) * 100);
+    let resultIndex = 0;
+
+    if (percentageProgress < 100 && percentageProgress >= 80) {
+      resultIndex = 1;
+    } else if (percentageProgress < 80 && percentageProgress >= 50) {
+      resultIndex = 2;
+    } else if (percentageProgress < 50 && percentageProgress >= 20) {
+      resultIndex = 3;
+    } else if (percentageProgress < 20) {
+      resultIndex = 4; 
+    }
+    
     return (
       <div className="flex flex-col gap-4 w-full">
         <div className="flex items-center gap-2">
-          <h6 className="text-xl font-bold text-emerald-600">Congratulations, you have aced all the flash cards!</h6>
-          <h1 className="text-3xl">🎉</h1>
+          <h6 className="text-xl font-bold text-emerald-600">{flashCardResults[resultIndex].text}</h6>
+          <h1 className="text-3xl">{flashCardResults[resultIndex].icon}</h1>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -193,13 +222,6 @@ const FlashCardTrack = ({ flashCards }: Props) => {
 
   return (
     <div className="mt-8">
-      {/* {isTrack && (
-        <div className="w-full flex items-center justify-between">
-          <StatusText text={`Learning ${learningCards.length}`} type="error" />
-          <StatusText text={`Known ${knownCards.length}`} type="success" />
-        </div>
-      )} */}
-
       <div className="flex flex-col gap-2">
         <div className="flex justify-center items-center">
           <FlashCard
@@ -213,7 +235,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
           />
         </div>
 
-        <div className="flex w-full">
+        <div className="flex w-full justify-between items-center">
           <div className="flex-[1] flex items-center space-x-2">
             <Switch
               id="isTrack"
@@ -223,7 +245,6 @@ const FlashCardTrack = ({ flashCards }: Props) => {
             <Label htmlFor="isTrack">Start Learning</Label>
           </div>
           {!isTrack && (
-            <>
               <div className="flex-[1] flex justify-center items-center gap-4">
                 <CircleArrowLeftIcon
                   className="w-10 h-10 text-emerald-500"
@@ -237,9 +258,12 @@ const FlashCardTrack = ({ flashCards }: Props) => {
                   onClick={nextCard}
                 />
               </div>
-              <div className="flex-[1]"></div>
-            </>
           )}
+          <div className="flex-[1] w-full h-full flex items-center justify-end">
+            <Button onClick={shuffleCards} className="bg-transparent border-2 border-emerald-500 rounded-full text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent">
+              <ShuffleIcon className="w-6 h-6 " />
+            </Button>
+          </div>
         </div>
       </div>
 

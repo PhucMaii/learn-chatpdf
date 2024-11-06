@@ -24,11 +24,11 @@ const SidebarWrapper = ({ children }: Props) => {
   }, []);
 
   const subscriptionStatus = useMemo(() => {
-    if (subscription.isPro) {
+    if (subscription?.isPro) {
       return { text: 'Pro', type: COLOR_TYPE.SUCCESS };
     }
 
-    if (subscription.isTrial) {
+    if (subscription?.isTrial) {
       return {
         text: `Your trial is ending on ${new Date(user?.trialEnd).toDateString()}`,
         type: COLOR_TYPE.WARNING,
@@ -47,7 +47,7 @@ const SidebarWrapper = ({ children }: Props) => {
         <Sidebar />
       </div>
       <div className="flex-[8] w-full">
-        {!subscription.isPro && (
+        {!subscription?.isPro && (
           <SubscriptionBanner text={subscriptionStatus.text} />
         )}
         <div className="p-4">{children}</div>
