@@ -17,16 +17,15 @@ const handler = async () => {
       .select({
         chats,
         // flashCardSet,
-        flashCard
+        flashCard,
       })
       .from(chats)
       .leftJoin(flashCardSet, eq(chats.id, flashCardSet?.chatId))
       .leftJoin(flashCard, eq(flashCardSet.id, flashCard.flashCardSetId))
       .where(eq(chats.userId, userId));
 
-    
     const groupedResult = userChats.reduce((acc: any, chat) => {
-      const {chats, flashCard} = chat;
+      const { chats, flashCard } = chat;
 
       if (!acc[chats.id]) {
         acc[chats.id] = { ...chats, flashCards: [] };

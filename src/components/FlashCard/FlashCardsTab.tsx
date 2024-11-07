@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import {
-  Loader2,
-  SquarePenIcon,
-} from 'lucide-react';
+import { Loader2, SquarePenIcon } from 'lucide-react';
 import ErrorComponent from '../ErrorComponent';
 import LoadingComponent from '../LoadingComponent';
 import { Button } from '../ui/button';
@@ -20,14 +17,9 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
   const [flashCardData, setFlashCardData] = useState<any>(flashCards);
   const [loading, setLoading] = useState<any>({});
 
-
   useEffect(() => {
     setFlashCardData(flashCards);
-  }, [flashCards])
-
-  // useEffect(() => {
-  //   handleGetFlashCards();
-  // }, []);
+  }, [flashCards]);
 
   const generateFlashCards = async () => {
     setLoading({ ...loading, isAdding: true });
@@ -78,7 +70,9 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
         <ErrorComponent errorText="No flash cards found" />
       ) : (
         <div className="mt-8">
-          {flashCardData.length > 0 && <FlashCardTrack flashCards={flashCardData} />}
+          {flashCardData.length > 0 && (
+            <FlashCardTrack flashCards={flashCardData} />
+          )}
         </div>
       )}
     </div>

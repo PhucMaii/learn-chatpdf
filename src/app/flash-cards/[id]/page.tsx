@@ -1,35 +1,39 @@
 'use client';
 import FlashCardTrack from '@/components/FlashCard/FlashCardTrack';
 import SidebarWrapper from '@/components/SidebarWrapper';
-import axios from 'axios';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
+import { SWRFetchData } from '../../../../hooks/useSWRFetch';
 
 export default function FlashCardPage() {
   const [flashCardSets, setFlashCardSets] = useState<any>(null);
 
   const { id } = useParams();
 
+  const [flashCards] = SWRFetchData(`/api/flashcard-set/get?id=${id}`);
+
+  console.log(flashCards, 'flashCards');
   useEffect(() => {
-    fetchFlashcardSet();
-  }, []);
-
-  const fetchFlashcardSet = async () => {
-    try {
-      const response = await axios.get(`/api/flashcard-set/get?id=${id}`);
-
-      if (response.data.error) {
-        toast.error('Error fetching flash card sets: ' + response.data.error);
-        return;
-      }
-
-      setFlashCardSets(response.data.flashCardSetsWithChatsAndFlashCards[0]);
-    } catch (error: any) {
-      console.log(error);
-      toast.error('Error fetching flash card sets: ' + error.message);
+    if (flashCards) {
+      setFlashCardSets(flashCards.flashCardSetsWithChatsAndFlashCards[0]);
     }
-  };
+  }, [flashCards]);
+
+  // const fetchFlashcardSet = async () => {
+  //   try {
+  //     const response = await axios.get(`/api/flashcard-set/get?id=${id}`);
+
+  //     if (response.data.error) {
+  //       toast.error('Error fetching flash card sets: ' + response.data.error);
+  //       return;
+  //     }
+
+  //     setFlashCardSets(response.data.flashCardSetsWithChatsAndFlashCards[0]);
+  //   } catch (error: any) {
+  //     console.log(error);
+  //     toast.error('Error fetching flash card sets: ' + error.message);
+  //   }
+  // };
 
   return (
     <SidebarWrapper>

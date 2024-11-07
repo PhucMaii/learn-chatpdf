@@ -1,10 +1,16 @@
 import React, { memo, useEffect, useState } from 'react';
 import '../../../styles/FlashCard.css';
-import { CheckIcon, X } from 'lucide-react';
+import { CheckIcon, Loader2, TrashIcon, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import StatusText from '../StatusText';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
 import { CardStatus } from './FlashCardTrack';
+import { Label } from '../ui/label';
+import { Switch } from '../ui/switch';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
 type Props = {
   flashCard: any;
@@ -13,6 +19,8 @@ type Props = {
   checkCard: (status: CardStatus) => void;
   learningCards: DrizzleFlashCard[];
   knownCards: DrizzleFlashCard[];
+  isEdit: boolean;
+  setIsEdit: any;
 };
 
 const FlashCard = ({
@@ -22,12 +30,17 @@ const FlashCard = ({
   checkCard,
   learningCards,
   knownCards,
+  isEdit,
+  setIsEdit,
 }: Props) => {
+  const [card, setCard] = useState<any>(flashCard);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [side, setSide] = useState<'front' | 'back'>('front');
 
   useEffect(() => {
     if (flashCard) {
       setSide('front');
+      setCard(flashCard);
     }
   }, [flashCard]);
 
@@ -35,75 +48,176 @@ const FlashCard = ({
     setSide(side === 'front' ? 'back' : 'front');
   };
 
+  const handleUpdateCard = async (e: any) => {
+    e.stopPropagation();
+    setIsLoading(true);
+    try {
+      const response: any = await axios.put('/api/flash-cards', {
+        id: card.id,
+        newFlashCard: {
+          question: card.question,
+          answer: card.answer,
+          isKnown: 0
+        },
+      });
+
+      if (response.data.error) {
+        toast.error('Error updating card: ' + response.data.error);
+        setIsLoading(false);
+        return;
+      }
+
+      console.log(response, 'response');
+      setCard(response.data.data);
+
+      toast.success(response.data.message);
+
+      setIsLoading(false);
+    } catch (error: any) {
+      console.log('Error updating card: ', error);
+      toast.error('Error updating card: ' + error?.message);
+      setIsLoading(false);
+    }
+  }
 
   return (
-    <div
-      onClick={handleFlip}
-      className={`relative flipper-container flex flex-col justify-center items-center w-[500px] h-[600px] ${className}`}
-    >
-      {progress && (
-        <>
-        <div className="w-full flex items-center justify-between mb-2">
-          <StatusText
-            text={`Learning ${learningCards?.length || 0}`}
-            type="error"
+    <div className="relative w-full flex flex-col items-center justify-center gap-4">
+      {!progress && (
+        <div className="w-full flex items-center justify-end space-x-2 mb-2">
+          <Switch
+            id="isTrack"
+            checked={isEdit}
+            onCheckedChange={() => setIsEdit(!isEdit)}
           />
-          <StatusText
-            text={`Known ${knownCards?.length || 0}`}
-            type="success"
-          />
+          <Label htmlFor="isTrack">Edit Mode</Label>
         </div>
-        <div className="absolute flex items-center gap-1 right-10 top-14 w-fit p-2 z-10 bg-transparent border-2 border-white text-white rounded-xl">
-          <h6>{progress}</h6>
-        </div>
-        </>
       )}
-      <div className={`flipper ${side === 'back' ? 'flip' : ''}`}>
-        {/* Front Side */}
-        <div
-          className={cn(
-            'front flex justify-center items-center w-full h-full bg-emerald-500 shadow-xl p-6 rounded-t-2xl border-2 border-emerald-500',
-            { 'rounded-b-2xl': !progress },
-          )}
-        >
-          <h6 className="text-xl text-white text-center font-bold ">
-            {flashCard?.question}
-          </h6>
+
+      {isEdit && (
+        <div className="absolute top-8 right-0 flex items-center gap-1 z-10">
+          <Button className="p-3 w-15 h-15 rounded-full bg-red-500 shadow-md">
+            <TrashIcon className="w-6 h-6" />
+          </Button>
+        </div>
+      )}
+      <div
+        className={`relative flipper-container flex flex-col justify-center items-center w-[500px] h-[600px] ${className}`}
+      >
+        {progress && (
+          <>
+            <div className="w-full flex items-center justify-between mb-2">
+              <StatusText
+                text={`Learning ${learningCards?.length || 0}`}
+                type="error"
+              />
+              <StatusText
+                text={`Known ${knownCards?.length || 0}`}
+                type="success"
+              />
+            </div>
+            <div className="absolute flex items-center gap-1 right-10 top-14 w-fit p-2 z-10 bg-transparent border-2 border-white text-white rounded-xl">
+              <h6>{progress}</h6>
+            </div>
+          </>
+        )}
+        <div className={`flipper ${side === 'back' ? 'flip' : ''} mt-2`}>
+          {/* Front Side */}
+          <div
+            className={cn(
+              'front flex justify-center items-center w-full h-full bg-emerald-500 shadow-xl p-6 rounded-t-2xl border-2 border-emerald-500',
+              { 'rounded-b-2xl': !progress },
+            )}
+            onClick={handleFlip}
+          >
+            {isEdit && !progress ? (
+              <div className="flex flex-col w-full gap-2">
+              <Textarea
+                value={card?.question}
+                onChange={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setCard({...card, question: e.target.value});
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                style={{ fontSize: '1.2rem', fontWeight: 'bold' }} 
+                className="bg-white shadow-xl p-6 rounded-2xl border-2 border-emerald-500 text-emerald-500 text-center text-2xl font-bold"
+                placeholder="Question"
+                />
+
+                <Button className="bg-white self-end shadow-xl font-bold text-emerald-500" onClick={handleUpdateCard}>
+                  {isLoading ? (<Loader2 className="w-6 h-6 animate-spin" />) : 'Save'}
+                </Button>
+                </div>
+              ) : (
+              <h6 className="text-xl text-white text-center font-bold ">
+                {card?.question}
+              </h6>
+            )}
+          </div>
+
+          {/* Back Side */}
+          <div
+            className={cn(
+              'back flex justify-center items-center w-full h-full bg-blue-500 shadow-xl p-6 rounded-t-2xl border-2 border-blue-500',
+              { 'rounded-b-2xl': !progress },
+            )}
+            onClick={handleFlip}
+          >
+            {
+              isEdit && !progress ? (
+                <div className="flex flex-col w-full gap-2">
+                <Textarea
+                  value={card?.answer}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setCard({...card, answer: e.target.value});
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  style={{ fontSize: '1.2rem', fontWeight: 'bold' }} 
+                  className="bg-white shadow-xl p-6 rounded-2xl border-2 border-blue-500 text-blue-500 text-center text-2xl font-bold"
+                  placeholder='Answer'
+                />
+                <Button className="bg-white self-end shadow-xl font-bold text-blue-500" onClick={handleUpdateCard}>
+                  {isLoading ? (<Loader2 className="w-6 h-6 animate-spin" />) : 'Save'}
+                </Button>
+                </div>
+              ) : (
+                <h6 className="text-xl text-white text-center font-bold overflow-y-scroll">
+              {card?.answer}
+                </h6>
+              )
+            }
+          </div>
         </div>
 
-        {/* Back Side */}
-        <div
-          className={cn(
-            'back flex justify-center items-center w-full h-full bg-blue-500 shadow-xl p-6 rounded-t-2xl border-2 border-blue-500',
-            { 'rounded-b-2xl': !progress },
-          )}
-        >
-          <h6 className="text-xl text-white text-center font-bold overflow-y-scroll">
-            {flashCard?.answer}
-          </h6>
-        </div>
+        {progress && (
+          <div className="flex justify-center items-center w-full rounded-b-2xl ">
+            <div
+              className="flex-[1] w-full h-full flex items-center justify-center bg-red-500 rounded-bl-2xl hover:bg-red-700 shadow-xl"
+              onClick={() => checkCard(CardStatus.LEARNING)}
+            >
+              <h6 className="text-xl font-bold text-emerald-100 text-center">
+                <X className="w-8 h-8 font-bold text-white" />
+              </h6>
+            </div>
+            <div
+              className="flex-[1] w-full h-full flex items-center justify-center bg-emerald-400 rounded-br-2xl hover:bg-emerald-600 shadow-xl"
+              onClick={() => checkCard(CardStatus.KNOWN)}
+            >
+              <h6 className="text-xl font-bold text-emerald-100 text-center">
+                <CheckIcon className="w-8 h-8 font-bold text-white" />
+              </h6>
+            </div>
+          </div>
+        )}
       </div>
-
-      {progress && (
-        <div className="flex justify-center items-center w-full rounded-b-2xl ">
-          <div
-            className="flex-[1] w-full h-full flex items-center justify-center bg-red-500 rounded-bl-2xl hover:bg-red-700 shadow-xl"
-            onClick={() => checkCard(CardStatus.LEARNING)}
-          >
-            <h6 className="text-xl font-bold text-emerald-100 text-center">
-              <X className="w-8 h-8 font-bold text-white" />
-            </h6>
-          </div>
-          <div
-            className="flex-[1] w-full h-full flex items-center justify-center bg-emerald-400 rounded-br-2xl hover:bg-emerald-600 shadow-xl"
-            onClick={() => checkCard(CardStatus.KNOWN)}
-          >
-            <h6 className="text-xl font-bold text-emerald-100 text-center">
-              <CheckIcon className="w-8 h-8 font-bold text-white" />
-            </h6>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -26,7 +26,9 @@ const handler = async (req: Request) => {
         .from(flashCardSet)
         .innerJoin(chats, eq(flashCardSet.chatId, chats.id))
         .leftJoin(flashCard, eq(flashCard.flashCardSetId, flashCardSet.id))
-        .where(eq(flashCardSet.id, Number(flashCardSetId)));
+        .where(eq(flashCardSet.id, Number(flashCardSetId)))
+        .orderBy(flashCard.id);
+
 
       if (flashCardSetsWithChatsAndFlashCards.length === 0) {
         return NextResponse.json(
@@ -37,7 +39,6 @@ const handler = async (req: Request) => {
       const groupedResult = groupChatToFlashCards(
         flashCardSetsWithChatsAndFlashCards,
       );
-      console.log(groupedResult, 'flashCardSetsWithChatsAndFlashCards');
       return NextResponse.json({
         flashCardSetsWithChatsAndFlashCards: Object.values(groupedResult),
       });

@@ -31,9 +31,11 @@ type Props = {
 const FlashCardTrack = ({ flashCards }: Props) => {
   const [isProgressEnd, setIsProgressEnd] = useState<boolean>(false);
   const [isTrack, setIsTrack] = useState<boolean>(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isCheckingCards, setIsCheckingCards] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [flashCardData, setFlashCardData] = useState<DrizzleFlashCard[]>(flashCards);
+  const [flashCardData, setFlashCardData] =
+    useState<DrizzleFlashCard[]>(flashCards);
   const [learningCards, setLearningCards] = useState<DrizzleFlashCard[]>([]);
   const [knownCards, setKnownCards] = useState<DrizzleFlashCard[]>([]);
 
@@ -58,28 +60,32 @@ const FlashCardTrack = ({ flashCards }: Props) => {
   const checkCard = (status: CardStatus) => {
     if (status === CardStatus.KNOWN) {
       setKnownCards([...knownCards, flashCardData[currentIndex]]);
-      const newFlashCards = flashCardData.map((card: DrizzleFlashCard, index: number)  => {
+      const newFlashCards = flashCardData.map(
+        (card: DrizzleFlashCard, index: number) => {
           if (index === currentIndex) {
             return {
               ...card,
               isKnown: 1,
-            }
-          } 
+            };
+          }
           return card;
-      });
+        },
+      );
       setFlashCardData(newFlashCards);
     } else if (status === CardStatus.LEARNING) {
       setLearningCards([...learningCards, flashCardData[currentIndex]]);
-      const newFlashCards = flashCardData.map((card: DrizzleFlashCard, index: number)  => {
-        if (index === currentIndex) {
-          return {
-            ...card,
-            isKnown: 0,
+      const newFlashCards = flashCardData.map(
+        (card: DrizzleFlashCard, index: number) => {
+          if (index === currentIndex) {
+            return {
+              ...card,
+              isKnown: 0,
+            };
           }
-        } 
-        return card;
-    });
-    setFlashCardData(newFlashCards);
+          return card;
+        },
+      );
+      setFlashCardData(newFlashCards);
     }
 
     if (currentIndex < flashCardData.length - 1) {
@@ -104,7 +110,6 @@ const FlashCardTrack = ({ flashCards }: Props) => {
       setCurrentIndex(flashCardData.length - 1);
     }
   };
-  
 
   // When progress end -> show number of learning cards and known cards
   // Then insert data into db
@@ -112,41 +117,43 @@ const FlashCardTrack = ({ flashCards }: Props) => {
   // Then reset data into db
   const handleProgressEnd = async (isReset?: boolean) => {
     setIsCheckingCards(true);
-      try {
-        const formattedFlashCards = flashCardData.map((card: DrizzleFlashCard) => {
+    try {
+      const formattedFlashCards = flashCardData.map(
+        (card: DrizzleFlashCard) => {
           return {
             id: card.id,
-            isKnown: isReset ? 0 : card.isKnown
-          }
-        })
-        const response = await axios.put('/api/flash-cards/update/many', {
-          flashCards: formattedFlashCards
-        });
+            isKnown: isReset ? 0 : card.isKnown,
+          };
+        },
+      );
+      const response = await axios.put('/api/flash-cards/update/many', {
+        flashCards: formattedFlashCards,
+      });
 
-        if (response.data.error) {
-          toast.error('Error checking flash card: ' + response.data.error);
-          setIsCheckingCards(false);
-          return;
-        }
-
-        // toast.success('All flash cards have been checked!');
+      if (response.data.error) {
+        toast.error('Error checking flash card: ' + response.data.error);
         setIsCheckingCards(false);
-        if (isReset) {
-          resetFlashCards();
-        }
-      } catch (error: any) {
-        console.log('There was an error', error);
-        toast.error('Error checking flash card: ' + error.message);
-        setIsCheckingCards(false);
+        return;
       }
-  }
+
+      // toast.success('All flash cards have been checked!');
+      setIsCheckingCards(false);
+      if (isReset) {
+        resetFlashCards();
+      }
+    } catch (error: any) {
+      console.log('There was an error', error);
+      toast.error('Error checking flash card: ' + error.message);
+      setIsCheckingCards(false);
+    }
+  };
 
   const resetFlashCards = () => {
     const newFlashCards = flashCardData.map((card: DrizzleFlashCard) => {
       return {
         ...card,
-        isKnown: 0
-      }
+        isKnown: 0,
+      };
     });
 
     setFlashCardData(newFlashCards);
@@ -155,7 +162,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
     setCurrentIndex(0);
     setLearningCards([]);
     setKnownCards([]);
-  }
+  };
 
   const shuffleCards = () => {
     const newCards = [...flashCardData];
@@ -169,10 +176,12 @@ const FlashCardTrack = ({ flashCards }: Props) => {
     }
 
     setFlashCardData(newCards);
-  }
+  };
 
   if (isProgressEnd) {
-    const percentageProgress = Math.ceil((knownCards.length / flashCardData.length) * 100);
+    const percentageProgress = Math.ceil(
+      (knownCards.length / flashCardData.length) * 100,
+    );
     let resultIndex = 0;
 
     if (percentageProgress < 100 && percentageProgress >= 80) {
@@ -182,42 +191,68 @@ const FlashCardTrack = ({ flashCards }: Props) => {
     } else if (percentageProgress < 50 && percentageProgress >= 20) {
       resultIndex = 3;
     } else if (percentageProgress < 20) {
-      resultIndex = 4; 
+      resultIndex = 4;
     }
-    
+
     return (
       <div className="flex flex-col gap-4 w-full">
         <div className="flex items-center gap-2">
-          <h6 className="text-xl font-bold text-emerald-600">{flashCardResults[resultIndex].text}</h6>
+          <h6 className="text-xl font-bold text-emerald-600">
+            {flashCardResults[resultIndex].text}
+          </h6>
           <h1 className="text-3xl">{flashCardResults[resultIndex].icon}</h1>
         </div>
 
         <div className="flex flex-col gap-4">
           <div className="mt-4 w-full flex flex-col gap-2">
-            <StatusText text={`Known: ${knownCards.length} / ${flashCardData.length}`} type="success" />
-            <Progress value={Math.ceil((knownCards.length / flashCardData.length) * 100)} />
+            <StatusText
+              text={`Known: ${knownCards.length} / ${flashCardData.length}`}
+              type="success"
+            />
+            <Progress
+              value={Math.ceil(
+                (knownCards.length / flashCardData.length) * 100,
+              )}
+            />
           </div>
 
           <div className="mt-4 w-full flex flex-col gap-2">
-            <StatusText text={`Learning: ${learningCards.length} / ${flashCardData.length}`} type="error" />
-            <Progress value={Math.floor((learningCards.length / flashCardData.length) * 100)} />
+            <StatusText
+              text={`Learning: ${learningCards.length} / ${flashCardData.length}`}
+              type="error"
+            />
+            <Progress
+              value={Math.floor(
+                (learningCards.length / flashCardData.length) * 100,
+              )}
+            />
           </div>
         </div>
 
         <div className="flex items-center justify-between w-full">
-          <Button onClick={() => {
-            handleProgressEnd(true);
-          }} className="bg-transparent text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent">
-           {isCheckingCards ? <Loader2 className="w-6 h-6 animate-spin" /> : <ArrowLeft  className="w-6 h-6" />}
+          <Button
+            onClick={() => {
+              handleProgressEnd(true);
+            }}
+            className="bg-transparent text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent"
+          >
+            {isCheckingCards ? (
+              <Loader2 className="w-6 h-6 animate-spin" />
+            ) : (
+              <ArrowLeft className="w-6 h-6" />
+            )}
             Learn again
           </Button>
-          <Button onClick={() => router.push('/flash-cards')} className="bg-transparent text-emerald-500 text-md flex items-center gap-2 font-bold hover:text-blue-600 hover:bg-transparent">
+          <Button
+            onClick={() => router.push('/flash-cards')}
+            className="bg-transparent text-emerald-500 text-md flex items-center gap-2 font-bold hover:text-blue-600 hover:bg-transparent"
+          >
             Flash cards
             <ArrowRight className="w-6 h-6 hover:text-blue-600" />
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -232,6 +267,8 @@ const FlashCardTrack = ({ flashCards }: Props) => {
             checkCard={checkCard}
             learningCards={learningCards}
             knownCards={knownCards}
+            isEdit={isEdit}
+            setIsEdit={setIsEdit}
           />
         </div>
 
@@ -245,22 +282,25 @@ const FlashCardTrack = ({ flashCards }: Props) => {
             <Label htmlFor="isTrack">Start Learning</Label>
           </div>
           {!isTrack && (
-              <div className="flex-[1] flex justify-center items-center gap-4">
-                <CircleArrowLeftIcon
-                  className="w-10 h-10 text-emerald-500"
-                  onClick={previousCard}
-                />
-                <h6 className="text-xl font-bold">
-                  {currentIndex + 1} / {flashCardData.length}
-                </h6>
-                <CircleArrowRightIcon
-                  className="w-10 h-10 text-emerald-500"
-                  onClick={nextCard}
-                />
-              </div>
+            <div className="flex-[1] flex justify-center items-center gap-4">
+              <CircleArrowLeftIcon
+                className="w-10 h-10 text-emerald-500"
+                onClick={previousCard}
+              />
+              <h6 className="text-xl font-bold">
+                {currentIndex + 1} / {flashCardData.length}
+              </h6>
+              <CircleArrowRightIcon
+                className="w-10 h-10 text-emerald-500"
+                onClick={nextCard}
+              />
+            </div>
           )}
           <div className="flex-[1] w-full h-full flex items-center justify-end">
-            <Button onClick={shuffleCards} className="bg-transparent border-2 border-emerald-500 rounded-full text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent">
+            <Button
+              onClick={shuffleCards}
+              className="bg-transparent border-2 border-emerald-500 rounded-full text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent"
+            >
               <ShuffleIcon className="w-6 h-6 " />
             </Button>
           </div>

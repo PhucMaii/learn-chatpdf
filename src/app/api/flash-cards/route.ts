@@ -125,3 +125,25 @@ const handler = async (req: Request) => {
 };
 
 export const POST = withAuthGuard(handler);
+
+// PUT
+const putHandler = async (req: Request) => {
+  try {
+    const {id, newFlashCard } = await req.json();
+
+    const existingFlashCard = await db.select().from(flashCard).where(eq(flashCard.id, id));
+
+    if (existingFlashCard.length === 0) {
+      return NextResponse.json({ error: 'Flash card not found' }, { status: 404 });
+    }
+
+    const updatedFlashCard = await db.update(flashCard).set(newFlashCard).where(eq(flashCard.id, id)).returning();
+
+    return NextResponse.json({ data: updatedFlashCard[0], message: 'Flash card updated successfully' });
+
+  } catch (error: any) {
+    console.log('Internal Server Error: ', error);
+  }
+};
+
+export const PUT = withAuthGuard(putHandler);

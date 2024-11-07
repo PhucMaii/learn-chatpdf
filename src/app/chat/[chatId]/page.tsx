@@ -5,12 +5,12 @@ import { DrizzleChat } from '@/lib/db/schema';
 import { checkSubscription } from '@/lib/subscription';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import axios from 'axios';
 import { API_URL } from '@/lib/type';
 import LoadingComponent from '@/components/LoadingComponent';
 import { useRouter } from 'next/navigation';
 import InteractiveComponent from '@/components/InteractiveComponent';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
+import { SWRFetchData } from '../../../../hooks/useSWRFetch';
 
 type Props = {
   params: {
@@ -26,8 +26,9 @@ const Chat = ({ params: { chatId } }: Props) => {
   const [userChatlist, setUserChatList] = useState<DrizzleChat[]>([]);
   const router = useRouter();
 
+  const [chats] = SWRFetchData(`${API_URL.USER}/chats`);
+
   useEffect(() => {
-    fetchChats();
     const checkIsPro = async () => {
       setIsLoading(true);
       const fetchedSubscription = await checkSubscription();
@@ -48,41 +49,53 @@ const Chat = ({ params: { chatId } }: Props) => {
     checkIsPro();
   }, []);
 
-  const fetchChats = async () => {
-    try {
-      const response = await axios.get(`${API_URL.USER}/chats`);
-
-      if (response.data.error) {
-        toast.error(response.data.error);
-        return;
-      }
-
-      const chats = response.data.data;
-
-      const currentChat = chats[chatId]
-
-      // if (flashCardSets.length > 0) {
-      //   const currentFlashCardSet = flashCardSets?.find(
-      //     (flashCardSet: DrizzleFlashCardSet) =>
-      //       flashCardSet.chatId === parseInt(chatId),
-      //   );  
-      //   setFlashCardSet(currentFlashCardSet || null);
-      // }
-
+  useEffect(() => {
+    if (chats) {
+      const currentChat = chats?.data[chatId];
       if (!currentChat) {
         toast.error('Chat not found');
         return;
       }
-
       setFlashCards(currentChat.flashCards);
       setChat(currentChat);
-      setUserChatList(Object.values(chats));
-    } catch (error: any) {
-      console.log('Internal Server Error: ', error);
-      toast.error('Internal Server Error: ' + error.message);
+      setUserChatList(Object.values(chats?.data));
     }
-  };
+  }, [chats]);
 
+  // const fetchChats = async () => {
+  //   try {
+  //     const response = await axios.get(`${API_URL.USER}/chats`);
+
+  //     if (response.data.error) {
+  //       toast.error(response.data.error);
+  //       return;
+  //     }
+
+  //     const chats = response.data.data;
+
+  //     const currentChat = chats[chatId];
+
+  //     // if (flashCardSets.length > 0) {
+  //     //   const currentFlashCardSet = flashCardSets?.find(
+  //     //     (flashCardSet: DrizzleFlashCardSet) =>
+  //     //       flashCardSet.chatId === parseInt(chatId),
+  //     //   );
+  //     //   setFlashCardSet(currentFlashCardSet || null);
+  //     // }
+
+  //     if (!currentChat) {
+  //       toast.error('Chat not found');
+  //       return;
+  //     }
+
+  //     setFlashCards(currentChat.flashCards);
+  //     setChat(currentChat);
+  //     setUserChatList(Object.values(chats));
+  //   } catch (error: any) {
+  //     console.log('Internal Server Error: ', error);
+  //     toast.error('Internal Server Error: ' + error.message);
+  //   }
+  // };
 
   return (
     <div className="flex max-h-screen">

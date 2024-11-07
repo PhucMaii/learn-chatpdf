@@ -48,31 +48,30 @@ export const pricingTabs = [
 
 export const MAX_FILE_UPLOAD_IN_TRIAL = 2;
 
-
 export const flashCardResults = [
   {
     text: 'Congratulations, you have aced all the flash cards!',
     percentage: 100,
-    icon: '🎉'
+    icon: '🎉',
   },
   {
     text: 'Almost there! Just a few more to go!',
     percentage: 80,
-    icon: '🚀'
+    icon: '🚀',
   },
   {
     text: 'Not bad! Lets try again to get some more practice!',
     percentage: 50,
-    icon: '💪'
+    icon: '💪',
   },
   {
     text: 'Not quite there yet, but you can do it better!',
     percentage: 20,
-    icon: '✊'
+    icon: '✊',
   },
   {
     text: 'I know you can do it! Keep up the good work!',
     percentage: 0,
-    icon: '👍'
+    icon: '👍',
   },
-]
+];

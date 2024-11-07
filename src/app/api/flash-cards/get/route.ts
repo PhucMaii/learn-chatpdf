@@ -25,7 +25,6 @@ const handler = async (req: Request) => {
       );
     }
 
-    console.log(flashCards, 'flashCards');
     return NextResponse.json({ flashCards });
   } catch (error: any) {
     console.log('Internal Server Error: ', error);

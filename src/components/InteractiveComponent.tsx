@@ -11,7 +11,11 @@ import { SubscriptionType } from '@/lib/type';
 import { CrownIcon } from 'lucide-react';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
 
-type Props = { chatId: number; subscription: SubscriptionType, flashCards: DrizzleFlashCard[] };
+type Props = {
+  chatId: number;
+  subscription: SubscriptionType;
+  flashCards: DrizzleFlashCard[];
+};
 
 const InteractiveComponent = ({ chatId, subscription, flashCards }: Props) => {
   const { data, isLoading } = useQuery({
