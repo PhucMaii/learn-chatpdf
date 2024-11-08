@@ -60,7 +60,6 @@ const handler = async (req: Request) => {
       flashCardSetsWithChatsAndFlashCards,
     );
 
-    // const knownCards = flashCardSetsWithChatsAndFlashCards.flashCardSet.flashCard.filter((card: any) => card.isKnown === 1);
     return NextResponse.json({
       flashCardSetsWithChatsAndFlashCards: Object.values(groupedResult),
     });

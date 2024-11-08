@@ -29,10 +29,13 @@ type Props = {
 };
 
 const FlashCardTrack = ({ flashCards }: Props) => {
-  const [isProgressEnd, setIsProgressEnd] = useState<boolean>(false);
-  const [isTrack, setIsTrack] = useState<boolean>(false);
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [isCheckingCards, setIsCheckingCards] = useState<boolean>(false);
+  const [bool, setBool] = useState<any>({
+    isProgressEnd: false,
+    isTrack: false,
+    isEdit: false,
+    isCheckingCards: false,
+    isDeleting: false,
+  })
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [flashCardData, setFlashCardData] =
     useState<DrizzleFlashCard[]>(flashCards);
@@ -46,16 +49,19 @@ const FlashCardTrack = ({ flashCards }: Props) => {
   }, [flashCards]);
 
   useEffect(() => {
-    if (isTrack) {
+    if (bool.isTrack) {
       setCurrentIndex(0);
+    } else {
+      setLearningCards([]);
+      setKnownCards([]);
     }
-  }, [isTrack]);
+  }, [bool.isTrack]);
 
   useEffect(() => {
-    if (isProgressEnd) {
+    if (bool.isProgressEnd) {
       handleProgressEnd();
     }
-  }, [isProgressEnd]);
+  }, [bool.isProgressEnd]);
 
   const checkCard = (status: CardStatus) => {
     if (status === CardStatus.KNOWN) {
@@ -91,7 +97,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
     if (currentIndex < flashCardData.length - 1) {
       nextCard();
     } else {
-      setIsProgressEnd(true);
+      setBool({...bool, isProgressEnd: true});
     }
   };
 
@@ -116,7 +122,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
   // Ask if user want to restart learning
   // Then reset data into db
   const handleProgressEnd = async (isReset?: boolean) => {
-    setIsCheckingCards(true);
+    setBool({...bool, isCheckingCards: true});
     try {
       const formattedFlashCards = flashCardData.map(
         (card: DrizzleFlashCard) => {
@@ -132,19 +138,19 @@ const FlashCardTrack = ({ flashCards }: Props) => {
 
       if (response.data.error) {
         toast.error('Error checking flash card: ' + response.data.error);
-        setIsCheckingCards(false);
+        setBool({...bool, isCheckingCards: false});
         return;
       }
 
       // toast.success('All flash cards have been checked!');
-      setIsCheckingCards(false);
+      setBool({...bool, isCheckingCards: false});
       if (isReset) {
         resetFlashCards();
       }
     } catch (error: any) {
       console.log('There was an error', error);
       toast.error('Error checking flash card: ' + error.message);
-      setIsCheckingCards(false);
+      setBool({...bool, isCheckingCards: false});
     }
   };
 
@@ -157,8 +163,9 @@ const FlashCardTrack = ({ flashCards }: Props) => {
     });
 
     setFlashCardData(newFlashCards);
-    setIsProgressEnd(false);
-    setIsTrack(false);
+    // setIsProgressEnd(false);
+    // setIsTrack(false);
+    setBool({...bool, isTrack: false, isProgressEnd: false});
     setCurrentIndex(0);
     setLearningCards([]);
     setKnownCards([]);
@@ -178,7 +185,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
     setFlashCardData(newCards);
   };
 
-  if (isProgressEnd) {
+  if (bool.isProgressEnd) {
     const percentageProgress = Math.ceil(
       (knownCards.length / flashCardData.length) * 100,
     );
@@ -236,7 +243,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
             }}
             className="bg-transparent text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent"
           >
-            {isCheckingCards ? (
+            {bool.isCheckingCards ? (
               <Loader2 className="w-6 h-6 animate-spin" />
             ) : (
               <ArrowLeft className="w-6 h-6" />
@@ -262,13 +269,13 @@ const FlashCardTrack = ({ flashCards }: Props) => {
           <FlashCard
             flashCard={flashCardData[currentIndex]}
             progress={
-              isTrack ? `${currentIndex + 1}/${flashCardData.length}` : ''
+              bool.isTrack ? `${currentIndex + 1}/${flashCardData.length}` : ''
             }
             checkCard={checkCard}
             learningCards={learningCards}
             knownCards={knownCards}
-            isEdit={isEdit}
-            setIsEdit={setIsEdit}
+            isEdit={bool.isEdit}
+            setIsEdit={(value: boolean) => setBool({...bool, isEdit: value})}
           />
         </div>
 
@@ -276,12 +283,12 @@ const FlashCardTrack = ({ flashCards }: Props) => {
           <div className="flex-[1] flex items-center space-x-2">
             <Switch
               id="isTrack"
-              checked={isTrack}
-              onCheckedChange={() => setIsTrack(!isTrack)}
+              checked={bool.isTrack}
+              onCheckedChange={() => setBool({...bool, isTrack: !bool.isTrack})}
             />
             <Label htmlFor="isTrack">Start Learning</Label>
           </div>
-          {!isTrack && (
+          {!bool.isTrack && (
             <div className="flex-[1] flex justify-center items-center gap-4">
               <CircleArrowLeftIcon
                 className="w-10 h-10 text-emerald-500"

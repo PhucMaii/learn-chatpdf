@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import '../../../styles/FlashCard.css';
-import { CheckIcon, Loader2, TrashIcon, X } from 'lucide-react';
+import { CheckIcon, Loader2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import StatusText from '../StatusText';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
@@ -11,6 +11,7 @@ import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import AddCard from '../Dialogs/AddCard';
 
 type Props = {
   flashCard: any;
@@ -34,6 +35,7 @@ const FlashCard = ({
   setIsEdit,
 }: Props) => {
   const [card, setCard] = useState<any>(flashCard);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [side, setSide] = useState<'front' | 'back'>('front');
 
@@ -47,6 +49,28 @@ const FlashCard = ({
   const handleFlip = () => {
     setSide(side === 'front' ? 'back' : 'front');
   };
+
+  const deleteCard = async () => {
+    setIsDeleting(true);
+    try {
+      const response = await axios.delete('/api/flash-cards', {data: {
+        id: flashCard.id
+      }});
+
+      if (response.data.error) {
+        toast.error('Fail to delete card');
+        setIsDeleting(false);
+        return;
+      }
+
+      toast.success('Delete card successfully');
+      setIsDeleting(false);
+    } catch (error: any) {
+      console.log('Fail to delete card', error);
+      toast.error('Fail to delete card');
+      setIsDeleting(false);
+    }
+  }
 
   const handleUpdateCard = async (e: any) => {
     e.stopPropagation();
@@ -67,7 +91,6 @@ const FlashCard = ({
         return;
       }
 
-      console.log(response, 'response');
       setCard(response.data.data);
 
       toast.success(response.data.message);
@@ -81,7 +104,7 @@ const FlashCard = ({
   }
 
   return (
-    <div className="relative w-full flex flex-col items-center justify-center gap-4">
+    <div className="relative w-full flex flex-col items-center justify-center">
       {!progress && (
         <div className="w-full flex items-center justify-end space-x-2 mb-2">
           <Switch
@@ -93,11 +116,17 @@ const FlashCard = ({
         </div>
       )}
 
-      {isEdit && (
-        <div className="absolute top-8 right-0 flex items-center gap-1 z-10">
-          <Button className="p-3 w-15 h-15 rounded-full bg-red-500 shadow-md">
-            <TrashIcon className="w-6 h-6" />
-          </Button>
+      {isEdit && !progress && (
+        <div className="flex justify-between w-full items-center">
+          <div className="self-end">
+            <Button onClick={deleteCard} className="p-3 w-15 h-15 bg-red-500 shadow-md font-bold">
+              {isDeleting ? <Loader2 className="w-6 h-6 text-white animate-spin" /> : "Delete" }
+            </Button>
+          </div>
+          <div className="self-start">
+            {/* <Button className="bg-black text-white font-bold">+ New Card</Button> */}
+            <AddCard flashCardSetId={flashCard.flashCardSetId} chatId={flashCard.chatId}/>
+          </div>
         </div>
       )}
       <div
@@ -120,7 +149,7 @@ const FlashCard = ({
             </div>
           </>
         )}
-        <div className={`flipper ${side === 'back' ? 'flip' : ''} mt-2`}>
+        <div className={`flipper ${side === 'back' ? 'flip' : ''} mt-1`}>
           {/* Front Side */}
           <div
             className={cn(
