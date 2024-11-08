@@ -4,18 +4,22 @@ import SidebarWrapper from '@/components/SidebarWrapper';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { SWRFetchData } from '../../../../hooks/useSWRFetch';
+import LoadingComponent from '@/components/LoadingComponent';
 
 export default function FlashCardPage() {
   const [flashCardSets, setFlashCardSets] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const { id } = useParams();
 
   const [flashCards] = SWRFetchData(`/api/flashcard-set/get?id=${id}`);
 
-  console.log(flashCards, 'flashCards');
   useEffect(() => {
     if (flashCards) {
       setFlashCardSets(flashCards.flashCardSetsWithChatsAndFlashCards[0]);
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
     }
   }, [flashCards]);
 
@@ -39,7 +43,7 @@ export default function FlashCardPage() {
     <SidebarWrapper>
       <div className="flex flex-col items-center justify-center">
         {/* <FlashCard flashCard={flashCardSets?.flashCards[currentCardIndex]}  /> */}
-        {flashCardSets && (
+        {isLoading ? (<LoadingComponent />) : flashCardSets && (
           <FlashCardTrack
             flashCards={flashCardSets?.flashCards || []}
             // flashCardData={flashCardSets?.flashCards || []}

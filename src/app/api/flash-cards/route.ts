@@ -143,7 +143,31 @@ const putHandler = async (req: Request) => {
 
   } catch (error: any) {
     console.log('Internal Server Error: ', error);
+    
+    return NextResponse.json({ error: 'An error occurred' }, { status: 500 });
   }
 };
 
 export const PUT = withAuthGuard(putHandler);
+
+
+const deleteHandler = async (req: Request) => {
+  try {
+    const { id } = await req.json();
+
+    const existingFlashCard = await db.select().from(flashCard).where(eq(flashCard.id, id));
+
+    if (existingFlashCard.length === 0) {
+      return NextResponse.json({ error: 'Flash card not found' }, { status: 404 });
+    }
+
+    await db.delete(flashCard).where(eq(flashCard.id, id));
+    return NextResponse.json({ message: 'Flash card deleted successfully' });
+  } catch (error: any) {
+    console.log('Internal Server Error: ', error);
+    
+    return NextResponse.json({ error: 'An error occurred' }, { status: 500 });
+  }
+}
+
+export const DELETE = withAuthGuard(deleteHandler);
