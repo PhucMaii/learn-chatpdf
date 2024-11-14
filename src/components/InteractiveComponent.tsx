@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { Message, useChat } from 'ai/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -18,6 +18,8 @@ type Props = {
 };
 
 const InteractiveComponent = ({ chatId, subscription, flashCards }: Props) => {
+  const [language, setLanguage] = useState<string>('English');
+
   const { data, isLoading } = useQuery({
     queryKey: ['chat', chatId],
     queryFn: async () => {
@@ -31,6 +33,8 @@ const InteractiveComponent = ({ chatId, subscription, flashCards }: Props) => {
     api: '/api/chat',
     body: {
       chatId,
+      language,
+      isAnswerOutOfContext: false,
     },
     initialMessages: data || [],
   });
@@ -60,6 +64,8 @@ const InteractiveComponent = ({ chatId, subscription, flashCards }: Props) => {
             handleSubmit={handleSubmit}
             handleInputChange={handleInputChange}
             input={input}
+            language={language}
+            setLanguage={setLanguage}
           />
         </TabsContent>
         <TabsContent value="flash-cards">

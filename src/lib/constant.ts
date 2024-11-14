@@ -75,3 +75,31 @@ export const flashCardResults = [
     icon: '👍',
   },
 ];
+
+export const languages = [
+  "English",
+  "Spanish",
+  "French",
+  "German",
+  "Mandarin",
+  "Hindi",
+  "Portuguese",
+  "Russian",
+  "Japanese",
+  "Korean",
+  "Arabic",
+  "Italian",
+  "Dutch",
+  "Swedish",
+  "Turkish",
+  "Persian",
+  "Polish",
+  "Danish",
+  "Norwegian",
+  "Finnish",
+  "Greek",
+  "Hebrew",
+  "Thai",
+  "Indonesian",
+  "Vietnamese"
+]

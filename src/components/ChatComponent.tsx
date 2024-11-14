@@ -3,6 +3,8 @@ import MessageList from './MessageList';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Send } from 'lucide-react';
+import SelectComponent from './SelectComponent';
+import { languages } from '@/lib/constant';
 
 type Props = {
   messages: any[];
@@ -10,6 +12,8 @@ type Props = {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   input: string;
+  language: string;
+  setLanguage: any;
 };
 
 const ChatComponent = ({
@@ -18,7 +22,11 @@ const ChatComponent = ({
   handleSubmit,
   handleInputChange,
   input,
+  language,
+  setLanguage,
 }: Props) => {
+  // const [language, setLanguage] = useState<string>('English');
+
   useEffect(() => {
     const messageContainer = document.getElementById('message-container');
     if (messageContainer) {
@@ -42,15 +50,27 @@ const ChatComponent = ({
         className="sticky bottom-0 inset-x-0 px-2 py-4 bg-white  "
       >
         <div className="flex items-center gap-1">
-          <Input
-            value={input}
-            onChange={handleInputChange}
-            placeholder="Ask any question..."
-            className="w-full"
-          />
-          <Button className="ml-2">
-            <Send className="w-4 h-4" />
-          </Button>
+          <div className="flex-[1]">
+            <SelectComponent
+              label="Select a language"
+              title="Language"
+              items={languages}
+              value={language}
+              onChange={(value) => setLanguage(value)}
+            />
+          </div>
+
+          <div className="flex-[12] flex items-center">
+            <Input
+              value={input}
+              onChange={handleInputChange}
+              placeholder="Ask any question..."
+              className="w-full"
+            />
+            <Button className="ml-2" type="submit">
+              <Send className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </form>
     </>
