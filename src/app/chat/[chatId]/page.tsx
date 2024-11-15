@@ -53,7 +53,8 @@ const Chat = ({ params: { chatId } }: Props) => {
     if (chats) {
       const currentChat = chats?.data[chatId];
       if (!currentChat) {
-        toast.error('Chat not found');
+        toast.error('Uh uh, you are not allowed to access this chat');
+        window.location.href = '/chats';
         return;
       }
       setFlashCards(currentChat.flashCards);
@@ -61,41 +62,6 @@ const Chat = ({ params: { chatId } }: Props) => {
       setUserChatList(Object.values(chats?.data));
     }
   }, [chats]);
-
-  // const fetchChats = async () => {
-  //   try {
-  //     const response = await axios.get(`${API_URL.USER}/chats`);
-
-  //     if (response.data.error) {
-  //       toast.error(response.data.error);
-  //       return;
-  //     }
-
-  //     const chats = response.data.data;
-
-  //     const currentChat = chats[chatId];
-
-  //     // if (flashCardSets.length > 0) {
-  //     //   const currentFlashCardSet = flashCardSets?.find(
-  //     //     (flashCardSet: DrizzleFlashCardSet) =>
-  //     //       flashCardSet.chatId === parseInt(chatId),
-  //     //   );
-  //     //   setFlashCardSet(currentFlashCardSet || null);
-  //     // }
-
-  //     if (!currentChat) {
-  //       toast.error('Chat not found');
-  //       return;
-  //     }
-
-  //     setFlashCards(currentChat.flashCards);
-  //     setChat(currentChat);
-  //     setUserChatList(Object.values(chats));
-  //   } catch (error: any) {
-  //     console.log('Internal Server Error: ', error);
-  //     toast.error('Internal Server Error: ' + error.message);
-  //   }
-  // };
 
   return (
     <div className="flex max-h-screen">

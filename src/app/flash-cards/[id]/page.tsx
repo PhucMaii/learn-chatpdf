@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import FlashCardTrack from '@/components/FlashCard/FlashCardTrack';
 import SidebarWrapper from '@/components/SidebarWrapper';
@@ -12,32 +13,18 @@ export default function FlashCardPage() {
 
   const { id } = useParams();
 
-  const [flashCards] = SWRFetchData(`/api/flashcard-set/get?id=${id}`);
+  const [flashCards, _mutate, isValidating] = SWRFetchData(`/api/flashcard-set/get?id=${id}`);
 
   useEffect(() => {
     if (flashCards) {
       setFlashCardSets(flashCards.flashCardSetsWithChatsAndFlashCards[0]);
       setIsLoading(false);
-    } else {
-      setIsLoading(true);
     }
-  }, [flashCards]);
 
-  // const fetchFlashcardSet = async () => {
-  //   try {
-  //     const response = await axios.get(`/api/flashcard-set/get?id=${id}`);
-
-  //     if (response.data.error) {
-  //       toast.error('Error fetching flash card sets: ' + response.data.error);
-  //       return;
-  //     }
-
-  //     setFlashCardSets(response.data.flashCardSetsWithChatsAndFlashCards[0]);
-  //   } catch (error: any) {
-  //     console.log(error);
-  //     toast.error('Error fetching flash card sets: ' + error.message);
-  //   }
-  // };
+    if (!isValidating && !flashCards) {
+      window.location.href = '/flash-cards';
+    }
+  }, [flashCards, isValidating]);
 
   return (
     <SidebarWrapper>
@@ -46,9 +33,6 @@ export default function FlashCardPage() {
         {isLoading ? (<LoadingComponent />) : flashCardSets && (
           <FlashCardTrack
             flashCards={flashCardSets?.flashCards || []}
-            // flashCardData={flashCardSets?.flashCards || []}
-            // setCurrentIndex={setCurrentCardIndex}
-            // currentIndex={currentCardIndex}
           />
         )}
       </div>

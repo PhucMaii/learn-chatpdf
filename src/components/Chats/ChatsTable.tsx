@@ -115,6 +115,7 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
                     <DropdownMenuItem
                       onClick={(e) => handleDeleteChat(e, chat)}
                       className="text-red-600"
+                      disabled={!subscription?.isPro}
                     >
                       {isDeleting ? 'Deleting...' : 'Remove chat'}
                     </DropdownMenuItem>

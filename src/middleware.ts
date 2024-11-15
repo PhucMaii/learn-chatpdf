@@ -4,6 +4,8 @@ const isProtectedRoute = createRouteMatcher([
   '/chat(.*)',
   '/create-chat(.*)',
   '/chats',
+  '/flash-cards(.*)',
+  
 ]);
 
 export default clerkMiddleware((auth, req) => {
