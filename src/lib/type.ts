@@ -26,3 +26,15 @@ export interface IFlashCardSet extends DrizzleFlashCardSet {
   flashCards: DrizzleFlashCard[];
   chat: DrizzleChat;
 }
+
+export interface IFeature {
+  title: string;
+  description: string;
+  image: string;
+}
+
+export interface IGain {
+  title: string;
+  description: string;
+  icon: any;
+}

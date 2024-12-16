@@ -13,7 +13,7 @@ const NavBar = ({ landingPage }: Props) => {
   const { user }: any = useContext(UserContext);
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between mx-4">
       <div className="flex items-center gap-2">
         <Link href={'/'}>
           <img src="images/logo.png" className="w-10 h-10 rounded-full" />
