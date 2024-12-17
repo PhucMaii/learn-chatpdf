@@ -11,13 +11,14 @@ import { useRouter } from 'next/navigation';
 import { SubscriptionType } from '@/lib/type';
 
 type Props = {
-  chats: DrizzleChat[];
+  chats: any; // {date: [{chatId: number, flashcard, etc}]}
   chatId: number;
   subscription: SubscriptionType;
 };
 
 export default function ChatSidebar({ chats, chatId, subscription }: Props) {
   const router = useRouter();
+  console.log(chats, 'chats');
 
   return (
     <div className="w-full h-screen p-4 text-gray-200 bg-white">
@@ -33,7 +34,7 @@ export default function ChatSidebar({ chats, chatId, subscription }: Props) {
         disabled={
           !subscription?.isPro &&
           !subscription?.isAbleToAddMoreChats &&
-          chats.length === MAX_FILE_UPLOAD_IN_TRIAL
+          chats?.length === MAX_FILE_UPLOAD_IN_TRIAL
         }
         className="w-full border-dashed border-2 border-black text-black bg-white hover:bg-emerald-500 hover:text-white"
         onClick={() => router.push('/create-chat')}
@@ -43,24 +44,33 @@ export default function ChatSidebar({ chats, chatId, subscription }: Props) {
       </Button>
 
       <div className="flex flex-col gap-2 mt-4">
-        {chats.map((chat) => (
-          <Link href={`/chat/${chat.id}`} key={chat.id}>
-            <div
-              className={cn(
-                'rounded-lg p-3 text-slate-400 flex items-center gap-2 font-semibold',
-                {
-                  'text-emerald-500': chat.id === chatId,
-                  'hover:text-emerald-500': chat.id !== chatId,
-                },
-              )}
-            >
-              <MessageCircleMoreIcon className="w-6 h-6" />
-              <p className="w-full overflow-hidden text-md truncate whitespace-nowrap text-ellipsis">
-                {chat.pdfName}
-              </p>
-            </div>
-          </Link>
-        ))}
+        {
+          chats && Object.keys(chats).map((date: string) => {
+            return (
+              <>
+                <h4 className="font-semibold text-md text-gray-500">{date}</h4>
+                {chats[date].map((chat: DrizzleChat) => (
+                  <Link href={`/chat/${chat.id}`} key={chat.id}>
+                    <div
+                      className={cn(
+                        'rounded-lg p-3 text-slate-400 flex items-center gap-2 font-semibold',
+                        {
+                          'text-emerald-500': chat.id === chatId,
+                          'hover:text-emerald-500': chat.id !== chatId,
+                        },
+                      )}
+                    >
+                      <MessageCircleMoreIcon className="w-6 h-6" />
+                      <p className="w-full overflow-hidden text-md truncate whitespace-nowrap text-ellipsis">
+                        {chat.pdfName}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </>
+            )
+          })
+        }
       </div>
     </div>
   );

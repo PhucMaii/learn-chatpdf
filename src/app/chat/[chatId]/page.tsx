@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import InteractiveComponent from '@/components/InteractiveComponent';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
 import { SWRFetchData } from '../../../../hooks/useSWRFetch';
+import axios from 'axios';
 
 type Props = {
   params: {
@@ -59,9 +60,31 @@ const Chat = ({ params: { chatId } }: Props) => {
       }
       setFlashCards(currentChat.flashCards);
       setChat(currentChat);
-      setUserChatList(Object.values(chats?.data));
+      setUserChatList(chats?.groupedChatByDate);
     }
   }, [chats]);
+
+  useEffect(() => {
+    if (chatId) {
+      udpateOpenChat();
+    }
+  }, [chatId]);
+
+  const udpateOpenChat = async () => {
+    try {
+      const responnse = await axios.post(
+        `${API_URL.USER}/chats/open`, {chatId});
+
+      if (responnse.data.error) {
+        toast.error('There was an error in updating open chat: ' + responnse.data.error);
+        return;
+      }
+
+    } catch (error: any) {
+      console.log('There was an error in updating open chat: ', error);
+      toast.error('There was an error in updating open chat: ' + error.message);
+    }
+  }
 
   return (
     <div className="flex max-h-screen">

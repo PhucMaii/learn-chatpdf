@@ -2,7 +2,8 @@ import { db } from '@/lib/db';
 import { chats, flashCard, flashCardSet } from '@/lib/db/schema';
 import { withAuthGuard } from '@/utils/guard';
 import { auth } from '@clerk/nextjs/server';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
+import moment from 'moment';
 import { NextResponse } from 'next/server';
 
 const handler = async () => {
@@ -13,18 +14,31 @@ const handler = async () => {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userChats = await db
+    const userChats: any = await db
       .select({
         chats,
         // flashCardSet,
-        flashCard,
+        // flashCard,
       })
       .from(chats)
       .leftJoin(flashCardSet, eq(chats.id, flashCardSet?.chatId))
       .leftJoin(flashCard, eq(flashCardSet.id, flashCard.flashCardSetId))
-      .where(eq(chats.userId, userId));
+      .where(eq(chats.userId, userId))
+      .groupBy(chats.id)
+      .orderBy(desc(chats.lastOpenedAt));
 
-    const groupedResult = userChats.reduce((acc: any, chat) => {
+    const groupedChatByDate: any = userChats.reduce((acc: any, chat: any) => {
+      const { chats, flashCard } = chat;
+        const dateKey = moment(chat.chats?.lastOpenedAt).format('ll') || moment(chat.chats.createdAt).format('ll');
+        if (!acc[dateKey]) {
+          acc[dateKey] = [];
+        }
+        acc[dateKey].push({...chats, flashCards: flashCard || []});
+        return acc;
+    }, {});
+
+
+    const groupedResult = userChats.reduce((acc: any, chat: any) => {
       const { chats, flashCard } = chat;
 
       if (!acc[chats.id]) {
@@ -35,23 +49,22 @@ const handler = async () => {
         acc[chats.id].flashCards.push(flashCard);
       }
 
-      // if (!acc['chats']) {
-      //   acc['chats'] = [];
+      // console.log(chat, 'chat')
+      // // Push to groupedChatByDate
+      // const dateKey: any = chats?.lastOpenedAt?.toISOString().split('T')[0] || chats.createdAt.toISOString().split('T')[0];
+      // if (!groupedChatByDate[dateKey]) {
+      //   groupedChatByDate[dateKey] = [];
       // }
 
-      // if (!acc['flashCardSets']) {
-      //   acc['flashCardSets'] = [];
-      // }
+      // groupedChatByDate[dateKey].push({...chats, flashCards: flashCard || []});
 
-      // if (flashCardSet) {
-      //   acc['flashCardSets'].push(flashCardSet);
-      // }
-
-      // acc['chats'].push(chats);
       return acc;
     }, {});
 
-    return NextResponse.json({ data: groupedResult }, { status: 200 });
+    // console.log(groupedChatByDate, 'groupedChatByDate');
+    
+
+    return NextResponse.json({ data: groupedResult, groupedChatByDate }, { status: 200 });
   } catch (error: any) {
     console.log('Internal Server Error: ', error);
     return NextResponse.json(
