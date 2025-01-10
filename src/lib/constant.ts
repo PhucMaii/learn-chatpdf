@@ -1,8 +1,8 @@
 import {
   ArrowUpWideNarrowIcon,
   BookCopyIcon,
-  CircleHelpIcon,
   ClockArrowDownIcon,
+  ContactRound,
   FacebookIcon,
   GraduationCapIcon,
   InstagramIcon,
@@ -28,10 +28,10 @@ export const tabs = [
     params: 'flash-cards',
   },
   {
-    name: 'Help',
-    icon: CircleHelpIcon,
-    link: '/help',
-    params: 'help',
+    name: 'Contact Us',
+    icon: ContactRound,
+    link: '/contact-us',
+    params: 'contact-us',
   },
 ];
 

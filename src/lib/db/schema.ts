@@ -85,3 +85,12 @@ export const userSubscriptions = pgTable('user_subscriptions', {
   stripePriceId: varchar('stripe_price_id', { length: 256 }).notNull(),
   stripeCurrentPeriodEnd: timestamp('stripe_current_period_end'),
 });
+
+export const contacts = pgTable('contacts', {
+  id: serial('id').primaryKey(),
+  userId: varchar('user_id', { length: 256 }),
+  name: varchar('name', { length: 256 }).notNull(),
+  email: varchar('email', { length: 256 }).notNull(),
+  message: varchar('message', { length: 256 }).notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+})
