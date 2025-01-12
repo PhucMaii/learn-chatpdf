@@ -17,6 +17,7 @@ const handler = async (req: Request) => {
     const { searchParams } = new URL(req.url);
     const price: any = searchParams.get('price');
     const plan: any = searchParams.get('plan');
+    const discountId: any = searchParams.get('discountId');
 
     const user = await currentUser();
 
@@ -55,13 +56,18 @@ const handler = async (req: Request) => {
               name: 'ChatPDF Pro',
               description: 'Unlimited PDF Sessions',
             },
-            unit_amount: Number(price) * 100,
+            unit_amount: plan === 'year' ? 7999 : price * 100,
             recurring: {
               interval: plan,
             },
           },
           quantity: 1,
         },
+      ],
+      discounts: [
+        {
+          promotion_code: discountId || undefined,
+        }
       ],
       metadata: {
         userId,

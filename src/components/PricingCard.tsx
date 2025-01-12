@@ -1,9 +1,10 @@
 'use client';
 import { cn } from '@/lib/utils';
 import { BadgeCheck } from 'lucide-react';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Button } from './ui/button';
 import { handleSubscription } from '@/utils/subscription';
+import { DrizzleDiscountCode } from '@/lib/db/drizzleType';
 
 type Props = {
   price: number;
@@ -11,9 +12,23 @@ type Props = {
   isPopular?: boolean;
   plan: string;
   save?: string[];
+  discount?: DrizzleDiscountCode;
 };
 
-const PricingCard = ({ price, title, isPopular, plan, save }: Props) => {
+const PricingCard = ({ price, title, isPopular, plan, save, discount }: Props) => {
+  const finalPrice = useMemo(() => {
+    if (!discount) {
+      return price;
+    }
+
+    if (discount.type === 'percent') {
+      return (price - (price * (discount.value / 100)))?.toFixed(2);
+    }
+
+    return (price - discount.value)?.toFixed(2);
+  }, [price, discount]);
+
+
   return (
     <div className="relative w-96 border-2 border-gray-300 p-8 rounded-3xl">
       <div className="absolute w-full flex items-center justify-between top-2 left-2 px-4 p-2 text-blue-500 w-full rounded-full">
@@ -24,7 +39,14 @@ const PricingCard = ({ price, title, isPopular, plan, save }: Props) => {
         >
           {title}
         </h1>
-        {isPopular && (
+        {
+          finalPrice !== price && (
+            <div className="bg-red-600 px-4 py-1 rounded-full">
+              <h1 className="text-xl font-bold text-white">🔥 90% OFF 💰</h1>
+            </div>
+          )
+        }
+        {isPopular && finalPrice === price && (
           <div className="w-auto bg-blue-500 px-4 py-1 rounded-full">
             <h1 className="text-sm font-bold text-white">Popular</h1>
           </div>
@@ -32,7 +54,8 @@ const PricingCard = ({ price, title, isPopular, plan, save }: Props) => {
       </div>
 
       <div className="flex items-end justify-start mt-12">
-        <h1 className="text-5xl font-bold">${price}</h1>
+        {finalPrice !== price && <h1 className="text-2xl text-gray-300 line-through">${price}</h1>}
+        <h1 className="text-5xl font-bold">${finalPrice}</h1>
         <h6 className="text-xl font-semibold text-gray-400">/{plan}</h6>
       </div>
 
@@ -68,7 +91,7 @@ const PricingCard = ({ price, title, isPopular, plan, save }: Props) => {
       </div>
 
       <Button
-        onClick={() => handleSubscription(price, plan)}
+        onClick={() => handleSubscription(price, plan, discount?.id)}
         className="w-full mt-8 text-xl font-bold border-2 text-emerald-500 border-emerald-500 bg-white rounded-full hover:bg-emerald-500 hover:text-white"
       >
         Select
