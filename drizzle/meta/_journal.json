@@ -15,6 +15,13 @@
       "when": 1736526364410,
       "tag": "0001_fuzzy_bastion",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1736527221607,
+      "tag": "0002_fixed_tyger_tiger",
+      "breakpoints": true
     }
   ]
 }

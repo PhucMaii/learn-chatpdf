@@ -84,6 +84,7 @@ export const userSubscriptions = pgTable('user_subscriptions', {
   }).unique(),
   stripePriceId: varchar('stripe_price_id', { length: 256 }).notNull(),
   stripeCurrentPeriodEnd: timestamp('stripe_current_period_end'),
+  stripePromotionCode: varchar('stripe_promotion_code', { length: 256 }),
 });
 
 export const contacts = pgTable('contacts', {
@@ -94,3 +95,12 @@ export const contacts = pgTable('contacts', {
   message: varchar('message', { length: 256 }).notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 })
+
+export const discountCodes = pgTable('discount_codes', {
+  id: varchar('id', { length: 256 }).primaryKey(),
+  code: varchar('code', { length: 256 }).notNull().unique(),
+  value: integer('value').notNull(),
+  type: varchar('type', { length: 256 }).notNull(),
+  quantity: integer('quantity').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
