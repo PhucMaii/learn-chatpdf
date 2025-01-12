@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { discountCodes } from "@/lib/db/schema";
+import { discountCodes, userSubscriptions } from "@/lib/db/schema";
 import { withAuthGuard } from "@/utils/guard";
 import { getQueryParams } from "@/utils/query";
 import { eq } from "drizzle-orm";
@@ -19,11 +19,17 @@ const handler = async (req: Request) => {
             return NextResponse.json({ error: 'Discount code not found' }, { status: 404 });
         }
 
+        const userSubscription = await db.select().from(userSubscriptions).where(eq(userSubscriptions.stripePromotionCode, existingCode[0].id));
+
+        if (userSubscription.length >= existingCode[0].quantity) {
+            return NextResponse.json({ error: 'Invalid discount code' }, { status: 400 });
+        }
+
         return NextResponse.json({ data: existingCode[0] }, { status: 200 });
     } catch (error: any) {
         console.log('Internal Server Error: ', error);
         return NextResponse.json(
-            { error: 'Internal Server Error: ' + error },
+            { error: 'Invalid Discount Code: ' + error },
             { status: 500 },
         );
     }

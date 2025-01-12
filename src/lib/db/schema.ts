@@ -101,6 +101,6 @@ export const discountCodes = pgTable('discount_codes', {
   code: varchar('code', { length: 256 }).notNull().unique(),
   value: integer('value').notNull(),
   type: varchar('type', { length: 256 }).notNull(),
-  quantity: integer('quantity'),
+  quantity: integer('quantity').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
