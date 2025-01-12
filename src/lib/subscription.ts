@@ -68,7 +68,7 @@ export const checkSubscription = async () => {
 
     return {
       isPro,
-      isAbleToAddMoreChats: isTrial.isAbleToAddMoreChats,
+      isAbleToAddMoreChats: isPro ? true : isTrial.isAbleToAddMoreChats,
       isTrial: isTrial.isTrial,
     };
   } catch (error: any) {

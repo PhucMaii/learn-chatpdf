@@ -19,6 +19,7 @@ const handler = async (req: Request) => {
       process.env.STRIPE_WEBHOOK_SIGNING_SECRET as string,
     );
     const session = event.data.object as Stripe.Checkout.Session;
+    console.log({event, session}, 'event');
   
     // new subscription
     if (event.type === 'checkout.session.completed') {
@@ -35,6 +36,7 @@ const handler = async (req: Request) => {
         stripeSubscriptionId: subscription.id as string,
         stripePriceId: subscription.items.data[0].price.id,
         stripeCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        stripePromotionCode: subscription?.discount?.promotion_code as string,
       });
     }
   
@@ -54,12 +56,11 @@ const handler = async (req: Request) => {
         .where(eq(userSubscriptions.stripeSubscriptionId, subscription.id));
     }
   
-    return new NextResponse(`Webhook received `, { status: 200 });
+    return new NextResponse(null, { status: 200 });
   } catch (error: any) {
     console.log(error);
     return new NextResponse('webhook error' + error, { status: 400 });
   }
-
 };
 
 export const POST = handler;
