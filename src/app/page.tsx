@@ -23,8 +23,8 @@ export default async function Home() {
   }
 
   return (
-    <div className="w-screen min-h-screen bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black flex justify-center">
-      <div className="py-8">
+    <div className="max-w-screen min-h-screen bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black flex justify-center">
+      <div className="py-8 w-full m-0">
         {/* Nav bar */}
         <NavBar landingPage />
         <Introduction userId={userId} />

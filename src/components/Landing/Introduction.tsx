@@ -5,14 +5,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function Introduction({userId}: any) {
   return (
-    <div className='mx-4 py-4 h-screen'>
+    <div className='2xl:max-w-screen-2xl 2xl:mx-auto mx-4 py-4 h-screen'>
     {/* Headline */}
-    <div className="w-full max-h-full flex gap-4 mt-8">
-          <div className="flex-[1] mx-auto">
-            <h1 className="text-5xl font-bold text-white">
+      <div className="w-full max-h-full flex sm:flex-row flex-col items-center gap-4 mt-8">
+          <div className="flex-[1] flex flex-col items-center w-full">
+            <h1 className="text-5xl font-bold text-white sm:text-left text-center">
               Enhance Your Learning Experience Today
             </h1>
-            <h6 className="text-lg text-white mt-2">
+            <h6 className="text-lg text-white mt-2 text-center sm:text-left">
               Say goodbye to bad marks and hello to incredible results in marks
               with our innovative AI app, designed to retrieve information
               faster, boost productivity, save reading time and help students
@@ -23,13 +23,15 @@ export default function Introduction({userId}: any) {
             <div className="w-full h-full bg-white"></div>
           </div>
         </div>
-        <Link href={`/chats`}>
-          <Button className="mt-4 p-6 hover:bg-primary-500">
-            <h1 className="text-lg text-white font-bold">
-              {userId ? 'Go To Chats' : 'Start Free Trial'}
-            </h1>
-          </Button>
-        </Link>
+        <div className="flex justify-center sm:justify-start">
+          <Link href={`/chats`}>
+            <Button className="mt-4 p-6 hover:bg-primary-500 items-center">
+              <h1 className="text-lg text-white font-bold">
+                {userId ? 'Go To Chats' : 'Start Free Trial'}
+              </h1>
+            </Button>
+          </Link>
+        </div>
 
         {/* Users */}
         <div className="flex items-center gap-2 mt-6">

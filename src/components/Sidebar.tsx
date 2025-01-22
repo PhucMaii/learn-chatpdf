@@ -7,10 +7,13 @@ import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { API_URL } from '@/lib/type';
+import { useRouter } from 'next/navigation';
 
 const Sidebar = () => {
   const [user, setUser] = useState<any>(null);
   const [selectedTab, setSelectedTab] = useState<number>(0);
+
+  const router = useRouter();
 
   useEffect(() => {
     const path = window.location.pathname;
@@ -40,7 +43,7 @@ const Sidebar = () => {
   return (
     <div className="w-full h-screen p-4 text-gray-200 bg-white">
       {/* Logo and user status */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2" onClick={() => router.push('/')}>
         <img src="images/logo.png" className="w-10 h-10 rounded-full" />
         <h1 className="text-black font-bold text-xl">LearnPDF</h1>
         <StatusText text={user?.status} type="info" />

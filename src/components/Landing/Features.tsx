@@ -8,7 +8,7 @@ export default function Features() {
     <div className="w-full bg-white p-8">
         <h1 className="text-center text-5xl font-bold">Features</h1>
         
-        <div className="w-full flex flex-row items-center justify-center gap-4 mt-8">
+        <div className="w-full flex sm:flex-row flex-col items-center justify-center gap-4 mt-8">
             {
               features.map((feature: IFeature, index: number) => (
                 <FeatureCard key={index} card={feature} />

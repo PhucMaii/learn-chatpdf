@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
-import { userSubscriptions } from '@/lib/db/schema';
+import { users, userSubscriptions } from '@/lib/db/schema';
 import { stripe } from '@/lib/stripe';
+import { SUBSCRIPTION_TYPE } from '@/lib/type';
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
@@ -30,6 +31,7 @@ const handler = async (req: Request) => {
         return new NextResponse('No User Id', { status: 400 });
       }
   
+      // Create user subscription
       await db.insert(userSubscriptions).values({
         userId: session.metadata.userId,
         stripeCustomerId: subscription.customer as string,
@@ -38,6 +40,14 @@ const handler = async (req: Request) => {
         stripeCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
         stripePromotionCode: subscription?.discount?.promotion_code as string,
       });
+
+      // Update user subscription status
+      await db
+        .update(users)
+        .set({
+          status: SUBSCRIPTION_TYPE.PRO,
+        })
+        .where(eq(users.id, session.metadata.userId));
     }
   
     if (event.type === 'invoice.payment_succeeded') {
