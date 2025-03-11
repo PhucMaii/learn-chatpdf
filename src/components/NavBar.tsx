@@ -4,7 +4,7 @@ import Link from 'next/link';
 import React, { useContext } from 'react';
 import { Button } from './ui/button';
 import { UserContext } from '../../context/UserProvider';
-import { MenuIcon } from 'lucide-react';
+import NavDialog from './Dialogs/NavDialog';
 
 type Props = {
   landingPage?: boolean;
@@ -23,7 +23,8 @@ const NavBar = ({ landingPage }: Props) => {
       </div>
 
       <div className="md:hidden flex">
-        <MenuIcon className="w-8 h-8 text-emerald-500" />
+        {/* <MenuIcon className="w-8 h-8 text-emerald-500" /> */}
+        <NavDialog user={user} />
       </div>
 
       <div className="hidden md:flex items-center gap-8 mr-2">

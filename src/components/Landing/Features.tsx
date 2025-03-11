@@ -6,7 +6,7 @@ import { IFeature } from '@/lib/type';
 export default function Features() {
   return (
     <div className={`w-full ${greyBackground} p-8`}>
-      <div className="w-[2000px] mx-auto">
+      <div className="max-w-[2000px] mx-auto">
         <h1 className="text-center text-5xl font-bold">Features</h1>
         
         <div className="w-full flex sm:flex-row flex-col items-center justify-center gap-4 mt-8">

@@ -12,11 +12,13 @@ export default function Introduction({ userId }: any) {
           <h1 className="text-5xl font-bold text-white text-center">
             Enhance Your Learning Experience Today
           </h1>
-          <h6 className="text-xl text-gray-300 font-semibold mt-2 text-center">
-            Say goodbye to bad marks and hello to incredible results in marks
-            with our innovative AI app, designed to retrieve information <br />
-            faster, boost productivity, save reading time and help students
-            achieve academic success effortlessly.
+          <h6 className="text-xl max-w-5xl text-gray-300 font-semibold mt-2 text-center">
+            Say goodbye to the tedious, time-consuming process of making
+            flashcards manually! Our innovative AI app lets you generate
+            targeted flashcards in seconds and no more hours of boring prep that
+            only helps for exams. Now, you can instantly create study cards
+            tailored to your lessons, making learning faster, smarter, and more
+            effective.
           </h6>
         </div>
         <div className="flex-1">

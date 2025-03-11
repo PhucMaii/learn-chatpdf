@@ -16,21 +16,21 @@ import { IFeature } from './type';
 
 export const tabs = [
   {
-    name: 'Chats',
+    title: 'Chats',
     icon: MessageCircleMoreIcon,
-    link: '/chats',
+    url: '/chats',
     params: 'chats',
   },
   {
-    name: 'Flash Cards',
+    title: 'Flash Cards',
     icon: BookCopyIcon,
-    link: '/flash-cards',
+    url: '/flash-cards',
     params: 'flash-cards',
   },
   {
-    name: 'Contact Us',
+    title: 'Contact Us',
     icon: ContactRound,
-    link: '/contact-us',
+    url: '/contact-us',
     params: 'contact-us',
   },
 ];

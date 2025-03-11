@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import Sidebar from './Sidebar';
+import Sidebar from './AppSidebar';
 import { checkSubscription } from '@/lib/subscription';
 import SubscriptionBanner from './SubscriptionBanner';
 import { COLOR_TYPE } from './StatusText';
@@ -43,7 +43,7 @@ const SidebarWrapper = ({ children }: Props) => {
 
   return (
     <div className="flex">
-      <div className="flex-1 max-w-[300px] p-4 border-r-4 border-1-slate-200">
+      <div className="flex-1 max-w-[300px] p-4">
         <Sidebar />
       </div>
       <div className="flex-8 w-full">

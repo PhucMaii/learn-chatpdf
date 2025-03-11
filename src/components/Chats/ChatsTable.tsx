@@ -95,43 +95,54 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
               <TableCell className="font-bold text-md">
                 {chat?.pdfName}
               </TableCell>
-              <TableCell className="font-bold text-md text-gray-600">
+              <TableCell className="font-medium text-md">
                 {moment(new Date(chat?.createdAt)).calendar()}
               </TableCell>
-              <TableCell className="font-bold text-md text-gray-600">
+              <TableCell className="font-medium text-md">
                 {moment(
                   new Date(chat?.lastOpenedAt || chat.createdAt),
                 ).fromNow()}
               </TableCell>
               <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-200">
-                      <span className="sr-only">Open menu</span>
-                      <MoreVerticalIcon className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-white">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem
-                      onClick={(e) => handleDeleteChat(e, chat)}
-                      className="text-red-600"
-                      disabled={!subscription?.isPro}
+                {/* <div className="relative"> */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <Button
+                        variant="ghost"
+                        className="h-8 w-8 p-0 hover:bg-gray-200"
+                      >
+                      <>
+                        <span className="sr-only">Open menu</span>
+                        <MoreVerticalIcon className="h-4 w-4" />
+                      </>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      className="bg-white z-50"
+                      // style={{ position: 'absolute', }}
                     >
-                      {isDeleting ? 'Deleting...' : 'Remove chat'}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() =>
-                        router.push(
-                          `${subscription?.isPro || subscription?.isTrial ? `/chat/${chat.id}` : '/pricing'}`,
-                        )
-                      }
-                    >
-                      Go to chat
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuItem
+                        onClick={(e) => handleDeleteChat(e, chat)}
+                        className="text-red-600"
+                        disabled={!subscription?.isPro}
+                      >
+                        {isDeleting ? 'Deleting...' : 'Remove chat'}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() =>
+                          router.push(
+                            `${subscription?.isPro || subscription?.isTrial ? `/chat/${chat.id}` : '/pricing'}`,
+                          )
+                        }
+                      >
+                        Go to chat
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                {/* </div> */}
               </TableCell>
             </TableRow>
           ))}
