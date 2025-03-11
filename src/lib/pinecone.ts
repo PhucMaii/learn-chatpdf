@@ -41,8 +41,14 @@ export async function loadS3IntoPinecone(fileKey: string) {
     throw new Error('Failed to download file');
   }
 
+  console.log({fileName, fileKey});
+
   const loader = new PDFLoader(fileName);
   const pages = (await loader.load()) as PDFPage[];
+
+  if (pages.length === 0) {
+    throw new Error('The file is empty, invalid or corrupted. Please upload a Standard PDF file.');
+  }
 
   // 2. Split and segment the pdf
   const documents = await Promise.all(
@@ -68,8 +74,10 @@ export async function loadS3IntoPinecone(fileKey: string) {
 
 async function embedDocuments(doc: Document) {
   try {
+    console.log({ doc }, 'doc in embeddings');
     const embeddings = await getEmbeddings(doc.pageContent);
     const hash = md5(doc.pageContent);
+
 
     return {
       id: hash,
@@ -116,6 +124,11 @@ async function chunkedUpsert(
   namespace: string,
   chunkSize = 10,
 ) {
+  if (vectors.length === 0) {
+    console.log('No vectors to upsert');
+    throw new Error('No vectors to upsert');
+  }
+
   if (vectors.length <= 10) {
     await pineconeIndex.namespace(namespace).upsert([...vectors]);
     return;

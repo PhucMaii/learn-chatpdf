@@ -280,16 +280,17 @@ const FlashCardTrack = ({ flashCards }: Props) => {
         </div>
 
         <div className="flex w-full justify-between items-center">
-          <div className="flex-[1] flex items-center space-x-2">
+          <div className="flex-1 flex items-center space-x-2">
             <Switch
               id="isTrack"
               checked={bool.isTrack}
               onCheckedChange={() => setBool({...bool, isTrack: !bool.isTrack})}
+              className=""
             />
             <Label htmlFor="isTrack">Start Learning</Label>
           </div>
           {!bool.isTrack && (
-            <div className="flex-[1] flex justify-center items-center gap-4">
+            <div className="flex-1 flex justify-center items-center gap-4">
               <CircleArrowLeftIcon
                 className="w-10 h-10 text-emerald-500"
                 onClick={previousCard}
@@ -303,7 +304,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
               />
             </div>
           )}
-          <div className="flex-[1] w-full h-full flex items-center justify-end">
+          <div className="flex-1 w-full h-full flex items-center justify-end">
             <Button
               onClick={shuffleCards}
               className="bg-transparent border-2 border-emerald-500 rounded-full text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent"
@@ -317,7 +318,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
       {/* {isTrack && (
         <div className="flex justify-center items-center rounded-b-3xl">
           <div
-            className="flex-[1] w-full h-full flex items-center justify-center bg-red-500 rounded-bl-3xl hover:bg-red-700 hover:shadow-lg"
+            className="flex-1 w-full h-full flex items-center justify-center bg-red-500 rounded-bl-3xl hover:bg-red-700 hover:shadow-lg"
             onClick={() => checkCard(CardStatus.LEARNING)}
           >
             <h6 className="text-xl font-bold text-emerald-100 text-center">
@@ -325,7 +326,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
             </h6>
           </div>
           <div
-            className="flex-[1] w-full h-full flex items-center justify-center bg-emerald-400 rounded-br-3xl hover:bg-emerald-600 hover:shadow-lg"
+            className="flex-1 w-full h-full flex items-center justify-center bg-emerald-400 rounded-br-3xl hover:bg-emerald-600 hover:shadow-lg"
             onClick={() => checkCard(CardStatus.KNOWN)}
           >
             <h6 className="text-xl font-bold text-emerald-100 text-center">

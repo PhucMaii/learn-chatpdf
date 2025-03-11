@@ -43,13 +43,13 @@ const InteractiveComponent = ({ chatId, subscription, flashCards }: Props) => {
     <div className="relative flex flex-col" id="message-container">
       <Tabs defaultValue="chat" className="w-full p-4">
         <TabsList className="w-full flex justify-center">
-          <TabsTrigger value="chat" className="flex-1 text-center">
+          <TabsTrigger value="chat" className="flex-1 text-center data-[state=active]:bg-gray-100 transition-all duration-300">
             Chat
           </TabsTrigger>
           <TabsTrigger
             disabled={!subscription?.isPro && !subscription?.isTrial}
             value="flash-cards"
-            className="flex-1 text-center flex gap-1"
+            className="flex-1 text-center flex gap-1 data-[state=active]:bg-gray-100 transition-all duration-300"
           >
             Flash Cards{' '}
             {!subscription?.isPro && !subscription?.isTrial && (

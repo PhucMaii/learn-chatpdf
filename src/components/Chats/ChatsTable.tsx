@@ -87,6 +87,7 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
                   `${subscription?.isPro || subscription?.isTrial ? `/chat/${chat.id}` : '/pricing'}`,
                 )
               }
+              className="hover:bg-gray-100 cursor-pointer"
             >
               <TableCell>
                 <FileTextIcon />
@@ -105,12 +106,12 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
+                    <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-200">
                       <span className="sr-only">Open menu</span>
                       <MoreVerticalIcon className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align="end" className="bg-white">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuItem
                       onClick={(e) => handleDeleteChat(e, chat)}

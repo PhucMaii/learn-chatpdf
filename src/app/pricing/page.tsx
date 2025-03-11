@@ -40,14 +40,14 @@ const Pricing = () => {
 
       <div className="w-full flex flex-col items-start justify-center mt-12">
         <div className="w-full flex items-center">
-          <div className="flex-[1]" />
-          <div className="flex-[1] flex flex-col gap-2">
+          <div className="flex-1" />
+          <div className="flex-1 flex flex-col gap-2">
             <h1 className="text-5xl font-bold text-center">Find Your Right Plan</h1>
             <h6 className="text-xl font-semibold text-gray-400 text-center">
               Our plans are designed to meet your needs.
             </h6>
           </div>
-          <div className="flex-[1] flex justify-end items-center gap-2">
+          <div className="flex-1 flex justify-end items-center gap-2">
             {/* <AddDiscountCode /> */}
             <h4 className="font-bold text-lg text-gray-500">Coupon Code</h4>
             <Input 

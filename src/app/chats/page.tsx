@@ -82,18 +82,19 @@ const Chats = () => {
       </h6>
 
       {/* Search bar */}
-      <div className="flex gap-2 w-full mt-6">
+      <div className="flex gap-2 w-full mt-6 rounded-lg">
         <Input
           placeholder="Search chats..."
           value={searchKeywords}
           onChange={(e) => setSearchKeywords(e.target.value)}
+          className="rounded-md border-1 border-gray-300"
         />
         {subscription?.isPro || subscription?.isAbleToAddMoreChats ? (
           <Link href="/create-chat">
-            <Button className="bg-black">+ New Chat</Button>
+            <Button className="bg-black text-white">+ New Chat</Button>
           </Link>
         ) : (
-          <Button disabled className="bg-black cursor-not-allowed">
+          <Button disabled className="bg-[#1E1E1E] text-white cursor-not-allowed">
             + New Chat
           </Button>
         )}

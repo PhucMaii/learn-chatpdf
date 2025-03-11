@@ -12,7 +12,7 @@ type Props = {
 export default function SelectComponent({label, title , items, onChange, value}: Props) {
   return (
     <Select onValueChange={onChange} value={value}>
-        <SelectTrigger>
+        <SelectTrigger className="border-gray-300">
             <SelectValue placeholder={label}/>
         </SelectTrigger>
         <SelectContent>

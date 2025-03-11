@@ -50,7 +50,7 @@ const ChatComponent = ({
         className="sticky bottom-0 inset-x-0 px-2 py-4 bg-white  "
       >
         <div className="flex items-center gap-1">
-          <div className="flex-[1]">
+          <div className="flex-1">
             <SelectComponent
               label="Select a language"
               title="Language"
@@ -60,15 +60,15 @@ const ChatComponent = ({
             />
           </div>
 
-          <div className="flex-[12] flex items-center">
+          <div className="flex-12 flex items-center">
             <Input
               value={input}
               onChange={handleInputChange}
               placeholder="Ask any question..."
-              className="w-full"
+              className="w-full border-gray-300"
             />
-            <Button className="ml-2" type="submit">
-              <Send className="w-4 h-4" />
+            <Button className="ml-2 hover:bg-emerald-500 hover:text-white hover:scale-102 transition-all duration-300" type="submit">
+              <Send className="w-4 h-4 text-white" />
             </Button>
           </div>
         </div>

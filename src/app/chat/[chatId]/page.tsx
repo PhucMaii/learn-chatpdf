@@ -90,7 +90,7 @@ const Chat = ({ params: { chatId } }: Props) => {
     <div className="flex max-h-screen">
       <div className="flex w-full max-h-screen">
         {/* Chats sidebar */}
-        <div className="flex-[1] max-w-xs border-r-8 border-1-slate-200">
+        <div className="flex-1 max-w-xs border-r-8 border-1-slate-200">
           <ChatSidebar
             chats={userChatlist}
             chatId={parseInt(chatId)}
@@ -102,11 +102,11 @@ const Chat = ({ params: { chatId } }: Props) => {
         ) : (
           <>
             {/* pdf viewer */}
-            <div className="max-h-screen p-4 overflow-scroll flex-[5]">
+            <div className="max-h-screen p-4 overflow-scroll flex-5">
               <PDFViewer pdfUrl={chat?.pdfUrl || ''} />
             </div>
             {/* chat component */}
-            <div className="max-h-screen overflow-scroll flex-[5] border-1-4 border-1-slate-200">
+            <div className="max-h-screen overflow-scroll flex-5 border-1-4 border-1-slate-200">
               <InteractiveComponent
                 chatId={parseInt(chatId)}
                 subscription={subscription}

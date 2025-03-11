@@ -50,6 +50,7 @@ const handler = async (req: Request) => {
         .where(eq(users.id, session.metadata.userId));
     }
   
+    // update subscription
     if (event.type === 'invoice.payment_succeeded') {
       const subscription = await stripe.subscriptions.retrieve(
         session.subscription as string,

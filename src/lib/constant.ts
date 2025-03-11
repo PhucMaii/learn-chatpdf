@@ -206,3 +206,7 @@ export const contactList = [
   },
   
 ]
+
+export const greyBackground = "bg-[#f1f1f1]";
+
+export const daysOfTrial = 3;

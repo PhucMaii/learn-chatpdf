@@ -42,8 +42,8 @@ const NavBar = ({ landingPage }: Props) => {
         {user && Object.keys(user).length > 0 ? (
           <UserButton />
         ) : (
-          <Link className="text-emerald-500 font-semibold hidden md:block" href="/sign-in">
-            <Button>Login</Button>
+          <Link className="text-white hidden md:block" href="/sign-in">
+            <Button className="rounded-xl font-semibold text-md">Login</Button>
           </Link>
         )}
       </div>

@@ -119,7 +119,7 @@ const FlashCard = ({
       {isEdit && !progress && (
         <div className="flex justify-between w-full items-center">
           <div className="self-end">
-            <Button onClick={deleteCard} className="p-3 w-15 h-15 bg-red-500 shadow-md font-bold">
+            <Button onClick={deleteCard} className="px-4 py-2 bg-red-500 text-white shadow-md font-semibold transition-all duration-200 hover:bg-red-600 hover:text-white hover:scale-102">
               {isDeleting ? <Loader2 className="w-6 h-6 text-white animate-spin" /> : "Delete" }
             </Button>
           </div>
@@ -229,7 +229,7 @@ const FlashCard = ({
         {progress && (
           <div className="flex justify-center items-center w-full rounded-b-2xl ">
             <div
-              className="flex-[1] w-full h-full flex items-center justify-center bg-red-500 rounded-bl-2xl hover:bg-red-700 shadow-xl"
+              className="flex-1 w-full h-full flex items-center justify-center bg-red-500 rounded-bl-2xl hover:bg-red-700 shadow-xl"
               onClick={() => checkCard(CardStatus.LEARNING)}
             >
               <h6 className="text-xl font-bold text-emerald-100 text-center">
@@ -237,7 +237,7 @@ const FlashCard = ({
               </h6>
             </div>
             <div
-              className="flex-[1] w-full h-full flex items-center justify-center bg-emerald-400 rounded-br-2xl hover:bg-emerald-600 shadow-xl"
+              className="flex-1 w-full h-full flex items-center justify-center bg-emerald-400 rounded-br-2xl hover:bg-emerald-600 shadow-xl"
               onClick={() => checkCard(CardStatus.KNOWN)}
             >
               <h6 className="text-xl font-bold text-emerald-100 text-center">

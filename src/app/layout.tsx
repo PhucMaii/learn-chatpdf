@@ -5,11 +5,41 @@ import { ClerkProvider } from '@clerk/nextjs';
 import Providers from '@/components/Providers';
 import { Toaster } from 'react-hot-toast';
 
-const geistSans = localFont({
-  src: './fonts/Inter-Regular.ttf',
-  variable: '--font-geist-sans',
-  weight: '100 900',
-});
+// const geistSans = localFont({
+//   src: './fonts/Inter-Regular.ttf',
+//   variable: '--font-geist-sans',
+//   weight: '100 900',
+// });
+
+const teachers = localFont({
+  src: [
+    {
+      path: './fonts/Teachers-Regular.ttf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: './fonts/Teachers-Medium.ttf',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: './fonts/Teachers-SemiBold.ttf',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: './fonts/Teachers-Bold.ttf',
+      weight: '800',
+      style: 'normal',
+    },
+    {
+      path: './fonts/Teachers-ExtraBold.ttf',
+      weight: '900',
+      style: 'normal',
+    },
+  ],
+})
 
 export const metadata: Metadata = {
   title: 'Learn ChatPDF',
@@ -25,7 +55,8 @@ export default function RootLayout({
     <ClerkProvider afterSignOutUrl="/">
       <Providers>
         <html lang="en">
-          <body className={`${geistSans.variable} antialiased`}>
+         
+          <body className={`${teachers.className} antialiased`}>
             {children}
           </body>
           <Toaster />

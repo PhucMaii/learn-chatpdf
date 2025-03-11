@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { WebhookEvent } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { DrizzleUser, users } from '@/lib/db/schema';
+import { daysOfTrial } from '@/lib/constant';
 
 const handler = async (req: Request) => {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -64,7 +65,7 @@ const handler = async (req: Request) => {
     }
 
     const createdAt = new Date(created_at);
-    const trialEnd = new Date(createdAt.getTime() + 31 * 24 * 60 * 60 * 1000);
+    const trialEnd = new Date(createdAt.getTime() + daysOfTrial * 24 * 60 * 60 * 1000);
 
     const user = {
       id,

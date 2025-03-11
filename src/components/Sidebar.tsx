@@ -53,7 +53,7 @@ const Sidebar = () => {
       <div className="flex flex-col gap-4 mt-4">
         {tabs.map((tab, index) => (
           <Link href={tab.link} key={index}>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 cursor-pointer hover:scale-102 transition-transform duration-200 ">
               <tab.icon
                 className={cn('w-8 h-8 text-gray-400', {
                   'text-emerald-500': index === selectedTab,

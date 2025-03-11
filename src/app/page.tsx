@@ -9,6 +9,7 @@ import FeatureDetails from '@/components/Landing/FeatureDetails';
 import Gain from '@/components/Landing/Gain';
 import InvitationCard from '@/components/Landing/InvitationCard';
 import Footer from '@/components/Landing/Footer';
+import { greyBackground } from '@/lib/constant';
 
 export default async function Home() {
   const { userId } = await auth();
@@ -23,7 +24,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="max-w-screen min-h-screen bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black flex justify-center">
+    <div className="max-w-screen min-h-screen bg-[radial-gradient(ellipse_at_center,_#374151,_#111827,_#000000)] flex justify-center">
       <div className="py-8 w-full m-0">
         {/* Nav bar */}
         <NavBar landingPage />
@@ -31,7 +32,7 @@ export default async function Home() {
         <Features />
         <FeatureDetails />
         <Gain />
-        <div className="bg-white w-full p-16">
+        <div className={`${greyBackground} w-full p-16`}>
           <InvitationCard />
         </div>
         <Footer />
