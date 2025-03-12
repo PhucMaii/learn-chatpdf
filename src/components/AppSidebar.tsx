@@ -9,7 +9,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -56,12 +55,9 @@ const AppSidebar = () => {
 
   return (
     <SidebarProvider
-    // style={{
-    //   '--sidebar-width': '20rem',
-    //   '--sidebar-width-mobile': '20rem',
-    // }}
+    
     >
-      <Sidebar>
+      <Sidebar collapsible='icon'>
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Logo />
@@ -71,7 +67,6 @@ const AppSidebar = () => {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Application</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {tabs.map((tab, index) => (

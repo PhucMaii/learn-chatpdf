@@ -9,16 +9,15 @@ export default function Introduction({ userId }: any) {
       {/* Headline */}
       <div className="w-full max-h-full flex flex-col items-center justify-center gap-8 mt-8">
         <div className="flex-1 flex flex-col items-center w-full">
-          <h1 className="text-5xl font-bold text-white text-center">
-            Enhance Your Learning Experience Today
+          <h1 className="text-5xl max-w-4xl font-bold text-white text-center leading-[3.5rem]">
+            Struggling to Study? <br />
+            Get the help you need to pass with confidence!
           </h1>
-          <h6 className="text-xl max-w-5xl text-gray-300 font-semibold mt-2 text-center">
-            Say goodbye to the tedious, time-consuming process of making
-            flashcards manually! Our innovative AI app lets you generate
-            targeted flashcards in seconds and no more hours of boring prep that
-            only helps for exams. Now, you can instantly create study cards
-            tailored to your lessons, making learning faster, smarter, and more
-            effective.
+          <h6 className="text-xl max-w-5xl text-gray-300 font-medium mt-2 text-center">
+            Studying doesn&apos;t have to be stressful. Get quick answers, smart
+            flashcards, and the support you need to stay on top of your game.
+            With AI-powered tools and expert guidance, you&apos;ll study
+            smarter, learn faster, and walk into your exam with confidence.
           </h6>
         </div>
         <div className="flex-1">
@@ -27,7 +26,7 @@ export default function Introduction({ userId }: any) {
       </div>
       <div className="flex flex-row justify-center">
         <Link href={`/chats`}>
-          <Button className="mt-4 px-12 py-10 rounded-xl hover:bg-primary-500 items-center">
+          <Button className="mt-4 px-10 py-8 rounded-xl hover:bg-emerald-600 items-center">
             <h1 className="text-2xl text-white font-semibold">
               {userId ? 'Go To Chats' : 'Start Free Trial'}
             </h1>

@@ -17,27 +17,30 @@ const handler = async () => {
     const userChats: any = await db
       .select({
         chats,
-        // flashCardSet,
-        // flashCard,
+        flashCard
       })
       .from(chats)
-      .leftJoin(flashCardSet, eq(chats.id, flashCardSet?.chatId))
-      .leftJoin(flashCard, eq(flashCardSet.id, flashCard.flashCardSetId))
       .where(eq(chats.userId, userId))
-      .groupBy(chats.id)
+      .leftJoin(flashCardSet, eq(chats.id, flashCardSet.chatId))
+      .leftJoin(flashCard, eq(flashCardSet.id, flashCard.flashCardSetId))
+      .groupBy(chats.id, flashCard.id)
       .orderBy(desc(chats.lastOpenedAt));
 
+    // For displaying in /chat/[chatId] and group by date
     const groupedChatByDate: any = userChats.reduce((acc: any, chat: any) => {
       const { chats, flashCard } = chat;
         const dateKey = moment(chat.chats?.lastOpenedAt).format('ll') || moment(chat.chats.createdAt).format('ll');
         if (!acc[dateKey]) {
           acc[dateKey] = [];
         }
+
+        const isChatExisted = acc[dateKey].find((existedChat: any) => existedChat.id === chats.id);
+        if (isChatExisted) return acc;
         acc[dateKey].push({...chats, flashCards: flashCard || []});
         return acc;
     }, {});
 
-
+    // For displaying in /chats and also get the flashcard of each chat
     const groupedResult = userChats.reduce((acc: any, chat: any) => {
       const { chats, flashCard } = chat;
 
@@ -62,7 +65,6 @@ const handler = async () => {
     }, {});
 
     // console.log(groupedChatByDate, 'groupedChatByDate');
-    
 
     return NextResponse.json({ data: groupedResult, groupedChatByDate }, { status: 200 });
   } catch (error: any) {

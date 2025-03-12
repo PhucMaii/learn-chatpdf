@@ -50,7 +50,7 @@ const SidebarWrapper = ({ children }: Props) => {
         {!subscription?.isPro && (
           <SubscriptionBanner text={subscriptionStatus.text} />
         )}
-        <div className="p-4">{children}</div>
+        <div className="p-1">{children}</div>
       </div>
     </div>
   );

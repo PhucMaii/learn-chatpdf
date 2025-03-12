@@ -1,6 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai-edge';
 import { NextResponse } from 'next/server';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { getContext } from '@/lib/context';
 import { db } from '@/lib/db';
 import { chats, flashCard, flashCardSet } from '@/lib/db/schema';
@@ -71,7 +71,7 @@ const handler = async (req: Request) => {
             `,
     };
     const response: any = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o-mini',
       messages: [
         prompt,
         {
@@ -85,6 +85,18 @@ const handler = async (req: Request) => {
     const formattedMessages = JSON.parse(
       completionData.choices[0].message.content,
     );
+
+    // Delete the current flash card set if there is any
+    // const existingFlashCardSet = (await db
+    //   .select()
+    //   .from(flashCardSet)
+    //   .where(eq(flashCardSet.chatId, Number(chatId)))) ?? [];
+
+    // if (existingFlashCardSet.length > 0) {
+    //   await db
+    //   .delete(flashCardSet)
+    //   .where(inArray(flashCardSet.id, existingFlashCardSet.map((set) => set.id)));    
+    // }
 
     const newFlashCardsSet = await db
       .insert(flashCardSet)
@@ -114,7 +126,6 @@ const handler = async (req: Request) => {
       .update(chats)
       .set({ title: formattedMessages.title })
       .where(eq(chats.id, chatId));
-
     return NextResponse.json({ data: formattedMessages.flashcards });
   } catch (error) {
     console.error(error);
@@ -129,45 +140,62 @@ export const POST = withAuthGuard(handler);
 // PUT
 const putHandler = async (req: Request) => {
   try {
-    const {id, newFlashCard } = await req.json();
+    const { id, newFlashCard } = await req.json();
 
-    const existingFlashCard = await db.select().from(flashCard).where(eq(flashCard.id, id));
+    const existingFlashCard = await db
+      .select()
+      .from(flashCard)
+      .where(eq(flashCard.id, id));
 
     if (existingFlashCard.length === 0) {
-      return NextResponse.json({ error: 'Flash card not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Flash card not found' },
+        { status: 404 },
+      );
     }
 
-    const updatedFlashCard = await db.update(flashCard).set(newFlashCard).where(eq(flashCard.id, id)).returning();
+    const updatedFlashCard = await db
+      .update(flashCard)
+      .set(newFlashCard)
+      .where(eq(flashCard.id, id))
+      .returning();
 
-    return NextResponse.json({ data: updatedFlashCard[0], message: 'Flash card updated successfully' });
-
+    return NextResponse.json({
+      data: updatedFlashCard[0],
+      message: 'Flash card updated successfully',
+    });
   } catch (error: any) {
     console.log('Internal Server Error: ', error);
-    
+
     return NextResponse.json({ error: 'An error occurred' }, { status: 500 });
   }
 };
 
 export const PUT = withAuthGuard(putHandler);
 
-
 const deleteHandler = async (req: Request) => {
   try {
     const { id } = await req.json();
 
-    const existingFlashCard = await db.select().from(flashCard).where(eq(flashCard.id, id));
+    const existingFlashCard = await db
+      .select()
+      .from(flashCard)
+      .where(eq(flashCard.id, id));
 
     if (existingFlashCard.length === 0) {
-      return NextResponse.json({ error: 'Flash card not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Flash card not found' },
+        { status: 404 },
+      );
     }
 
     await db.delete(flashCard).where(eq(flashCard.id, id));
     return NextResponse.json({ message: 'Flash card deleted successfully' });
   } catch (error: any) {
     console.log('Internal Server Error: ', error);
-    
+
     return NextResponse.json({ error: 'An error occurred' }, { status: 500 });
   }
-}
+};
 
 export const DELETE = withAuthGuard(deleteHandler);
