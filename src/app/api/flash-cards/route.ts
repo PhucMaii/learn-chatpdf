@@ -1,6 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai-edge';
 import { NextResponse } from 'next/server';
-import { eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { getContext } from '@/lib/context';
 import { db } from '@/lib/db';
 import { chats, flashCard, flashCardSet } from '@/lib/db/schema';
