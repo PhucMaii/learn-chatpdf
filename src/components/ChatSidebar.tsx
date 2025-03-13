@@ -18,7 +18,6 @@ type Props = {
 
 export default function ChatSidebar({ chats, chatId, subscription }: Props) {
   const router = useRouter();
-  console.log(chats, 'chats');
 
   return (
     <div className="w-full h-screen p-4 text-gray-200 bg-white">

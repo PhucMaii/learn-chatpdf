@@ -41,8 +41,6 @@ export async function loadS3IntoPinecone(fileKey: string) {
     throw new Error('Failed to download file');
   }
 
-  console.log({fileName, fileKey});
-
   const loader = new PDFLoader(fileName);
   const pages = (await loader.load()) as PDFPage[];
 
@@ -62,19 +60,15 @@ export async function loadS3IntoPinecone(fileKey: string) {
   const client = await getPineconeClient();
   const pineconeIndex = client.Index('learn-chatpdf');
 
-  console.log('inserting vectors into Pinecone');
   const namespace = convertToAscii(fileKey);
 
-  console.log({ pineconeIndex, vectors, namespace }, 'pinecone');
   await chunkedUpsert(pineconeIndex, vectors, namespace, 10);
 
-  console.log('upsert successfully');
   return documents[0];
 }
 
 async function embedDocuments(doc: Document) {
   try {
-    console.log({ doc }, 'doc in embeddings');
     const embeddings = await getEmbeddings(doc.pageContent);
     const hash = md5(doc.pageContent);
 

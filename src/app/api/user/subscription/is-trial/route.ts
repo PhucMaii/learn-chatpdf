@@ -17,12 +17,6 @@ const handler = async () => {
     const dbUser = await db.select().from(users).where(eq(users.id, userId));
 
     const isTrialEnd = dbUser[0].trialEnd?.getTime() < Date.now();
-    console.log({
-      isTrialEnd,
-      trial: dbUser[0].trialEnd?.getTime(),
-      now: Date.now(),
-      isTrial: !isTrialEnd,
-    });
     const userChats = await db
       .select()
       .from(chats)

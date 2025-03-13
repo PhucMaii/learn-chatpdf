@@ -20,7 +20,6 @@ const handler = async (req: Request) => {
       process.env.STRIPE_WEBHOOK_SIGNING_SECRET as string,
     );
     const session = event.data.object as Stripe.Checkout.Session;
-    console.log({event, session}, 'event');
   
     // new subscription
     if (event.type === 'checkout.session.completed') {
