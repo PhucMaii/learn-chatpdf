@@ -70,7 +70,7 @@ export async function loadS3IntoPinecone(fileKey: string) {
   await chunkedUpsert(pineconeIndex, vectors, namespace, 10);
 
   console.log('upsert successfully', documents[0]);
-  return documents[0];
+  return vectors;
 }
 
 async function embedDocuments(doc: Document) {

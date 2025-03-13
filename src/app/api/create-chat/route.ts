@@ -21,7 +21,7 @@ const handler = async (req: Request) => {
     const body = await req.json();
     const { fileKey, fileName } = body;
 
-    await loadS3IntoPinecone(fileKey);
+    const vectors = await loadS3IntoPinecone(fileKey);
     const chatId = await db
       .insert(chats)
       .values({
@@ -36,7 +36,7 @@ const handler = async (req: Request) => {
 
     // Create flashCards for this chat
     // console.log(chatId, 'chatId');
-    // await createFlashCards(fileKey, chatId[0].insertedId, userId);
+    await createFlashCards(fileKey, chatId[0].insertedId, userId, vectors);
 
     return NextResponse.json({ chatId: chatId[0].insertedId }, { status: 200 });
   } catch (error) {
@@ -47,8 +47,13 @@ const handler = async (req: Request) => {
 
 export const POST = withAuthGuard(handler);
 
-export const createFlashCards = async (fileKey: string, chatId: number, userId: string) => {
-  const context = await getContext(flashCardPrompt, fileKey);
+export const createFlashCards = async (
+  fileKey: string,
+  chatId: number,
+  userId: string,
+  vectors: any = null
+) => {
+  const context = await getContext(flashCardPrompt, fileKey, vectors);
   console.log(context, 'context');
 
   const prompt: any = {
@@ -118,3 +123,27 @@ export const createFlashCards = async (fileKey: string, chatId: number, userId: 
 
   return formattedMessages;
 };
+
+// const checkPineconeReady = async (pineconeIndex, namespace) => {
+//   let retries = 10; // Retry 10 times
+//   let ready = false;
+
+//   while (retries > 0 && !ready) {
+//     try {
+//       // Check if Pinecone index is ready for querying (example of a health check)
+//       const status = await pineconeIndex.describeIndexStats();
+//       if (status.ready) {
+//         ready = true;
+//       }
+//     } catch (error) {
+//       console.log('Error checking Pinecone status:', error);
+//     }
+
+//     if (!ready) {
+//       await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait for 5 seconds before retrying
+//       retries--;
+//     }
+//   }
+
+//   return ready;
+// };

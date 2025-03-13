@@ -60,11 +60,11 @@ const Chat = ({ params: { chatId } }: Props) => {
         return;
       }
 
-      if (currentChat.flashCards && currentChat.flashCards.length > 0) {
-        setFlashCards(currentChat.flashCards);
-      } else {
-        generateFlashCards();
-      }
+      setFlashCards(currentChat.flashCards);
+      // if (currentChat.flashCards && currentChat.flashCards.length > 0) {
+      // } else {
+      //   generateFlashCards();
+      // }
       setIsInitializing(false);
       setChat(currentChat);
       setUserChatList(chats?.groupedChatByDate);
@@ -77,25 +77,25 @@ const Chat = ({ params: { chatId } }: Props) => {
     }
   }, [chatId]);
 
-  const generateFlashCards = async () => {
-    setIsInitializing(true);
-    try {
-      const response = await axios.post('/api/flash-cards', { chatId });
+  // const generateFlashCards = async () => {
+  //   setIsInitializing(true);
+  //   try {
+  //     const response = await axios.post('/api/flash-cards', { chatId });
 
-      if (response.data.error) {
-        toast.error('Fail to generate flash cards');
-        return;
-      }
+  //     if (response.data.error) {
+  //       toast.error('Fail to generate flash cards');
+  //       return;
+  //     }
 
-      setFlashCards(response.data.data);
-      return response.data.data;
-    } catch (error: any) {
-      console.log(error);
-      toast.error('Fail to generate flash cards');
-    } finally {
-      setIsInitializing(false);
-    }
-  }
+  //     setFlashCards(response.data.data);
+  //     return response.data.data;
+  //   } catch (error: any) {
+  //     console.log(error);
+  //     toast.error('Fail to generate flash cards');
+  //   } finally {
+  //     setIsInitializing(false);
+  //   }
+  // }
 
   const udpateOpenChat = async () => {
     try {
