@@ -55,7 +55,7 @@ const Chats = () => {
       const response = await axios.get(`${API_URL.USER}/chats`);
 
       if (response.data.error) {
-        toast.error('Error fetching user chats: ' + response.data.error);
+        toast.error('Something went wrong in fetching user chats');
         return;
       }
 
@@ -68,7 +68,7 @@ const Chats = () => {
       setIsLoading(false);
     } catch (error: any) {
       console.log(error);
-      toast.error('Error fetching user chats: ' + error.message);
+      toast.error('Something went wrong in fetching user chats');
       setIsLoading(false);
     }
   };

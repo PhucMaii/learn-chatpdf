@@ -35,7 +35,7 @@ const handler = async (req: Request) => {
   } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { error: 'Internal Server Error: ' + error },
+      { error },
       { status: 500 },
     );
   }

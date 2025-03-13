@@ -86,7 +86,7 @@ const FlashCard = ({
       });
 
       if (response.data.error) {
-        toast.error('Error updating card: ' + response.data.error);
+        toast.error('Fail to update card');
         setIsLoading(false);
         return;
       }
@@ -98,7 +98,7 @@ const FlashCard = ({
       setIsLoading(false);
     } catch (error: any) {
       console.log('Error updating card: ', error);
-      toast.error('Error updating card: ' + error?.message);
+      toast.error('Fail to update card');
       setIsLoading(false);
     }
   }

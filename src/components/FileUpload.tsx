@@ -44,7 +44,9 @@ const FileUpload = () => {
         setIsUploading(true);
         const data = await uploadToS3(file);
         if (!data?.fileKey || !data?.fileName) {
-          toast.error('Something went wrong');
+          toast.error(
+            'Oops! Looks like the file is not uploaded correctly. Please try again later.',
+          );
           return;
         }
         mutate(data, {
@@ -52,8 +54,8 @@ const FileUpload = () => {
             toast.success('Chat Created');
             router.push(`/chat/${chatId}`);
           },
-          onError: (error) => {
-            toast.error('Error creating chat');
+          onError: (error: any) => {
+            toast.error('Oops! Looks like you have an invalid PDF file');
             console.log(error);
           },
         });

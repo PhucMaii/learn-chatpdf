@@ -137,7 +137,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
       });
 
       if (response.data.error) {
-        toast.error('Error checking flash card: ' + response.data.error);
+        toast.error('Fail to check flash cards');
         setBool({...bool, isCheckingCards: false});
         return;
       }
@@ -149,7 +149,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
       }
     } catch (error: any) {
       console.log('There was an error', error);
-      toast.error('Error checking flash card: ' + error.message);
+      toast.error('Fail to check flash cards');
       setBool({...bool, isCheckingCards: false});
     }
   };

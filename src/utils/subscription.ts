@@ -12,14 +12,13 @@ export const handleSubscription = async (price: number, plan: string, discountId
     });
 
     if (response.data.error) {
-      toast.error('Error fetching subscription: ' + response.data.error);
+      toast.error('Fail to check subscription');
       return;
     }
 
     window.location.href = response.data.url;
   } catch (error: any) {
     console.log(error);
-
-    toast.error('Error fetching subscription: ' + error.response.data.error);
+    toast.error('Fail to check subscription');
   }
 };

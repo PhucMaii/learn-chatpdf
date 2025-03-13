@@ -106,15 +106,12 @@ const handler = async (req: Request) => {
         },
       ],
     });
-    console.log(response, 'response');
     const completionData = await response.json();
-    console.log(completionData.choices, 'completiojn data');
     // const formattedMessages = JSON.parse(
     //   completionData.choices[0].message.content,
     // );
 
     const formattedMessages = JSON.parse(completionData.choices[0].message.content);
-    console.log(formattedMessages);
     // Delete the current flash card set if there is any
     // const existingFlashCardSet = (await db
     //   .select()

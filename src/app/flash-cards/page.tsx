@@ -23,7 +23,7 @@ const FlashCardsPage = () => {
       const response = await axios.get('/api/flashcard-set/get');
 
       if (response.data.error) {
-        toast.error('Error fetching flash card sets: ' + response.data.error);
+        toast.error('Something went wrong in fetching flash card sets');
         setIsLoading(false);
         return;
       }
@@ -35,7 +35,7 @@ const FlashCardsPage = () => {
       setIsLoading(false);
     } catch (error: any) {
       console.log(error);
-      toast.error('Error fetching flash card sets: ' + error.message);
+      toast.error('Something went wrong in fetching flash card sets');
       setIsLoading(false);
     }
   };

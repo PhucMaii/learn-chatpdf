@@ -48,7 +48,7 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
       });
 
       if (response.data.error) {
-        toast.error('Error deleting chat: ' + response.data.error);
+        toast.error('Something went wrong deleting chat');
         return;
       }
 
@@ -58,8 +58,9 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
       // router.refresh();
 
       setIsDeleting(false);
-    } catch (error) {
-      toast.error('Error deleting chat: ' + error);
+    } catch (error: any) {
+      console.log(error);
+      toast.error('Something went wrong deleting chat');
       setIsDeleting(false);
     }
   };

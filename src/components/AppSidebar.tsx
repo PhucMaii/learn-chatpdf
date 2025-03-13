@@ -43,7 +43,7 @@ const AppSidebar = () => {
       const response = await axios.get(`${API_URL.USER}/get-user`);
 
       if (response.data.error) {
-        toast.error('Error fetching user: ' + response.data.error);
+        toast.error('Something went wrong in fetching user');
         return;
       }
 

@@ -76,13 +76,13 @@ const Chat = ({ params: { chatId } }: Props) => {
         `${API_URL.USER}/chats/open`, {chatId});
 
       if (responnse.data.error) {
-        toast.error('There was an error in updating open chat: ' + responnse.data.error);
+        toast.error('Something went wrong');
         return;
       }
 
     } catch (error: any) {
       console.log('There was an error in updating open chat: ', error);
-      toast.error('There was an error in updating open chat: ' + error.message);
+      toast.error('Something went wrong');
     }
   }
 

@@ -9,14 +9,14 @@ export const checkIsPro = async () => {
     const response = await axios.get(`${API_URL.USER}/subscription/is-pro`);
 
     if (response.data.error) {
-      toast.error('Error fetching subscription: ' + response.data.error);
+      toast.error('Fail to check subscription');
       return;
     }
 
     return response.data.isPro;
   } catch (error) {
     console.log(error);
-    toast.error('Error fetching subscription: ' + error);
+    toast.error('Fail to check subscription');
   }
 };
 
@@ -25,7 +25,7 @@ export const checkIsValidToAddMoreChats = async () => {
     const response = await axios.get(`${API_URL.USER}/subscription/is-pro`);
 
     if (response.data.error) {
-      toast.error('Error fetching subscription: ' + response.data.error);
+      toast.error('Fail to check subscription');
       return;
     }
 
@@ -41,7 +41,7 @@ export const checkIsValidToAddMoreChats = async () => {
     return trial.isAbleToAddMoreChats;
   } catch (error) {
     console.log(error);
-    toast.error('Error fetching subscription: ' + error);
+    toast.error('Fail to check subscription');
   }
 };
 
@@ -50,14 +50,14 @@ export const getIsTrial = async () => {
     const response = await axios.get(`${API_URL.USER}/subscription/is-trial`);
 
     if (response.data.error) {
-      toast.error('Error fetching subscription: ' + response.data.error);
+      toast.error('Fail to check subscription');
       return;
     }
 
     return response.data;
   } catch (error) {
     console.log(error);
-    toast.error('Error fetching subscription: ' + error);
+    toast.error('Fail to check subscription');
   }
 };
 
@@ -73,6 +73,6 @@ export const checkSubscription = async () => {
     };
   } catch (error: any) {
     console.log(error);
-    toast.error('Error fetching subscription: ' + error);
+    toast.error('Fail to check subscription');
   }
 };

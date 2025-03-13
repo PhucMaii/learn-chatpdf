@@ -27,7 +27,7 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
       const response = await axios.post('/api/flash-cards', { chatId });
 
       if (response.data.error) {
-        toast.error('Error generating flash cards: ' + response.data.error);
+        toast.error('Fail to generate flash cards');
         setLoading({ ...loading, isAdding: false });
         return;
       }
@@ -37,7 +37,7 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
       return response.data.data;
     } catch (error: any) {
       console.log(error);
-      toast.error('Error fetching flash cards: ' + error.message);
+      toast.error('Fail to generate flash cards');
       setLoading({ ...loading, isAdding: false });
     }
   };

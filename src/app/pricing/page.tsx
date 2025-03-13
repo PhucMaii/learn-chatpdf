@@ -19,7 +19,7 @@ const Pricing = () => {
       const response = await axios.get(`/api/discount/get-code?code=${code}`);
 
       if (response.data.error) {
-        toast.error('Error fetching discount code: ' + response.data.error);
+        toast.error('Code not found or already used');
         setIsLoading(false);
         return;
       }
@@ -29,7 +29,7 @@ const Pricing = () => {
       setIsLoading(false);
     } catch (error: any) {
       console.log('Internal Server Error: ', error);
-      toast.error('Something went wrong: ' + error?.response?.data?.error);
+      toast.error('Code not found or already used');
       setIsLoading(false);
     }
   }
