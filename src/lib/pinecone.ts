@@ -37,6 +37,7 @@ export async function loadS3IntoPinecone(fileKey: string) {
   // 1. Obtain the pdf -> download and read from pdf
   console.log('downloading s3 into file system');
   const fileName = await downloadFromS3(fileKey);
+  console.log(fileName);
   if (!fileName) {
     throw new Error('Failed to download file');
   }
@@ -68,7 +69,7 @@ export async function loadS3IntoPinecone(fileKey: string) {
   console.log({ pineconeIndex, vectors, namespace }, 'pinecone');
   await chunkedUpsert(pineconeIndex, vectors, namespace, 10);
 
-  console.log('upsert successfully');
+  console.log('upsert successfully', documents[0]);
   return documents[0];
 }
 

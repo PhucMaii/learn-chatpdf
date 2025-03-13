@@ -12,11 +12,16 @@ export async function getMatchesFromEmbeddings(
 
   try {
     const namespace = convertToAscii(fileKey);
+    console.log(namespace, 'namespace')
     const queryResult = await index.namespace(namespace).query({
-      topK: 5,
+      topK: 10,
       vector: embeddings,
       includeMetadata: true,
     });
+
+
+    
+    console.log({queryResult, fileKey, embeddings});
 
     return queryResult.matches || [];
   } catch (error) {
@@ -26,12 +31,13 @@ export async function getMatchesFromEmbeddings(
 
 export async function getContext(query: string, fileKey: string) {
   const queryEmbeddings = await getEmbeddings(query);
+  console.log(queryEmbeddings, 'queryEmbeddings');
   const matches = await getMatchesFromEmbeddings(queryEmbeddings, fileKey);
 
   console.log({matches, queryEmbeddings});
 
   const qualifyingDocs = matches.filter(
-    (match: any) => match.score && match.score > 0.7,
+    (match: any) => match.score && match.score > 0.5,
   );
 
   type Metadata = {
