@@ -7,6 +7,7 @@ import { pricingTabs } from '@/lib/constant';
 import axios from 'axios';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 const Pricing = () => {
   const [code, setCode] = useState<string>('');
@@ -32,54 +33,74 @@ const Pricing = () => {
       toast.error('Code not found or already used');
       setIsLoading(false);
     }
-  }
+  };
+
+  const pageVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 1, ease: 'easeOut' },
+    },
+  };
 
   return (
-    <div className="p-8 w-screen">
-      <NavBar />
+    <motion.div 
+      variants={pageVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <div className="p-8 w-screen ">
+        <NavBar />
 
-      <div className="w-full flex flex-col items-start justify-center mt-12">
-        <div className="w-full flex items-center">
-          <div className="flex-1" />
-          <div className="flex-1 flex flex-col gap-2">
-            <h1 className="text-5xl font-bold text-center">Find Your Right Plan</h1>
-            <h6 className="text-xl font-semibold text-gray-400 text-center">
-              Our plans are designed to meet your needs.
-            </h6>
+        <div className="w-full flex flex-col items-start justify-center mt-12">
+          <div className="w-full flex items-center">
+            <div className="flex-1" />
+            <div className="flex-1 flex flex-col gap-2">
+              <h1 className="text-5xl font-bold text-center">
+                Find Your Right Plan
+              </h1>
+              <h6 className="text-xl font-semibold text-gray-400 text-center">
+                Our plans are designed to meet your needs.
+              </h6>
+            </div>
+            <div className="flex-1 flex justify-end items-center gap-2">
+              {/* <AddDiscountCode /> */}
+              <h4 className="font-bold text-lg text-gray-500">Coupon Code</h4>
+              <Input
+                aria-label="Discount Code"
+                placeholder="Enter code..."
+                // className='w-full'
+                className="w-fit"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+              />
+              <Button
+                onClick={() => handleGetCode()}
+                className="w-fit bg-blue-500 text-white font-bold text-md"
+              >
+                {isLoading ? 'Applying...' : 'Apply'}
+              </Button>
+            </div>
           </div>
-          <div className="flex-1 flex justify-end items-center gap-2">
-            {/* <AddDiscountCode /> */}
-            <h4 className="font-bold text-lg text-gray-500">Coupon Code</h4>
-            <Input 
-              aria-label='Discount Code'
-              placeholder='Enter code...'
-              // className='w-full'
-              className="w-fit"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-            />
-            <Button onClick={() => handleGetCode()} className='w-fit bg-blue-500 text-white font-bold text-md'>
-              {isLoading ? 'Applying...' : 'Apply'}
-            </Button>
 
+          <div className="w-full flex items-center justify-center gap-8 mt-8">
+            {pricingTabs.map((tab, index) => (
+              <PricingCard
+                key={index}
+                price={tab.price}
+                title={tab.title}
+                isPopular={tab.isPopular}
+                plan={tab.plan}
+                save={tab.save}
+                discount={retrievedCode}
+              />
+            ))}
           </div>
-        </div>
-
-        <div className="w-full flex items-center justify-center gap-8 mt-8">
-          {pricingTabs.map((tab, index) => (
-            <PricingCard
-              key={index}
-              price={tab.price}
-              title={tab.title}
-              isPopular={tab.isPopular}
-              plan={tab.plan}
-              save={tab.save}
-              discount={retrievedCode}
-            />
-          ))}
         </div>
       </div>
-    </div>
+
+    </motion.div>
   );
 };
 
