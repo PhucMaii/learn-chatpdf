@@ -8,15 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { FileTextIcon, MoreVerticalIcon } from 'lucide-react';
+import { FileTextIcon, Loader2, Trash2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DrizzleChat } from '@/lib/db/schema';
 import { useRouter } from 'next/navigation';
@@ -32,13 +24,16 @@ type Props = {
 };
 
 const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
-  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<any>({
+    id: null,
+    isDeleting: false,
+  });
   const router = useRouter();
 
   const handleDeleteChat = async (e: any, chat: DrizzleChat) => {
     e.stopPropagation();
 
-    setIsDeleting(true);
+    setDeleting({ id: chat.id, isDeleting: true });
     try {
       const response = await axios.delete(`${API_URL.DELETE_CHAT}`, {
         data: {
@@ -56,12 +51,11 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
       setUserChats({ baseData: newChats, displayData: newChats });
       toast.success('Chat deleted successfully');
       // router.refresh();
-
-      setIsDeleting(false);
     } catch (error: any) {
       console.log(error);
       toast.error('Something went wrong deleting chat');
-      setIsDeleting(false);
+    } finally {
+      setDeleting({ id: null, isDeleting: false });
     }
   };
 
@@ -105,8 +99,20 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
                 ).fromNow()}
               </TableCell>
               <TableCell>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => handleDeleteChat(e, chat)}
+                  className="h-8 w-8 p-0 hover:bg-red-200 hover:text-red-500 active:scale-98 transition-all duration-300"
+                >
+                  {deleting.isDeleting && deleting.id === chat.id ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Trash2Icon className="w-4 h-4 text-gray-500" />
+                  )}
+                </Button>
                 {/* <div className="relative"> */}
-                  <DropdownMenu>
+                {/* <DropdownMenu>
                     <DropdownMenuTrigger>
                       <Button
                         variant="ghost"
@@ -142,7 +148,7 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
                         Go to chat
                       </DropdownMenuItem>
                     </DropdownMenuContent>
-                  </DropdownMenu>
+                  </DropdownMenu> */}
                 {/* </div> */}
               </TableCell>
             </TableRow>

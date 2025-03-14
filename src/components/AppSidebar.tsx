@@ -72,14 +72,14 @@ const AppSidebar = () => {
                 {tabs.map((tab, index) => (
                   <SidebarMenuItem
                     key={tab.title}
-                    className={cn('font-semibold', {
+                    className={cn('font-semibold text-gray-400 p-1', {
                       'text-primary': index === selectedTab,
                     })}
                   >
-                    <SidebarMenuButton asChild className="p-4">
+                    <SidebarMenuButton asChild className="p-4 active:scale-90 transition-all duration-300">
                       <a href={tab.url}>
-                        <tab.icon className="w-30 h-30" />
-                        <span>{tab.title}</span>
+                        <tab.icon className="w-12 h-12" />
+                        <span className="text-lg">{tab.title}</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

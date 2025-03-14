@@ -101,17 +101,17 @@ const Chat = ({ params: { chatId } }: Props) => {
           <LoadingComponent />
         ) : (
           <>
-            {/* pdf viewer */}
-            <div className="max-h-screen p-4 overflow-scroll flex-5">
-              <PDFViewer pdfUrl={chat?.pdfUrl || ''} />
-            </div>
             {/* chat component */}
-            <div className="max-h-screen overflow-scroll flex-5 border-1-4 border-1-slate-200">
+            <div className="max-h-screen overflow-scroll flex-8 border-1-4 border-1-slate-200">
               <InteractiveComponent
                 chatId={parseInt(chatId)}
                 subscription={subscription}
                 flashCards={flashCards}
               />
+            </div>
+            {/* pdf viewer */}
+            <div className="max-h-screen p-4 overflow-scroll flex-5">
+              <PDFViewer pdfUrl={chat?.pdfUrl || ''} />
             </div>
           </>
         )}

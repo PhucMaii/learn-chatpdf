@@ -90,7 +90,7 @@ const Chats = () => {
         />
         {subscription?.isPro || subscription?.isAbleToAddMoreChats ? (
           <Link href="/create-chat">
-            <Button className="bg-black text-white">+ New Chat</Button>
+            <Button className="bg-black text-white font-semibold transition-all duration-300 active:scale-90">+ New Chat</Button>
           </Link>
         ) : (
           <Button disabled className="bg-[#1E1E1E] text-white cursor-not-allowed">

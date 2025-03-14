@@ -22,7 +22,7 @@ export default function ChatSidebar({ chats, chatId, subscription }: Props) {
   return (
     <div className="w-full h-screen p-4 text-gray-200 bg-white">
       <div className="flex items-center gap-2 mb-4">
-        <Link href="/chats" className="hover:scale-105 transition-all duration-300">
+        <Link href="/chats" className="hover:scale-105 active:scale-90 transition-all duration-300">
           <ArrowLeftIcon className="w-8 h-8 text-black" />
         </Link>
         <h6 className="text-lg font-semibold text-black">Chats</h6>
@@ -35,7 +35,7 @@ export default function ChatSidebar({ chats, chatId, subscription }: Props) {
           !subscription?.isAbleToAddMoreChats &&
           chats?.length === MAX_FILE_UPLOAD_IN_TRIAL
         }
-        className="w-full border-dashed border-2 border-black text-black bg-white hover:bg-emerald-500 hover:text-white"
+        className="w-full border-dashed border-2 border-gray-800 text-black bg-white hover:bg-emerald-500 hover:text-white active:scale-90 transition-all duration-300"
         onClick={() => router.push('/create-chat')}
       >
         <PlusCircle className="mr-2 w-4 h-4" />
@@ -52,7 +52,7 @@ export default function ChatSidebar({ chats, chatId, subscription }: Props) {
                   <Link href={`/chat/${chat.id}`} key={chat.id}>
                     <div
                       className={cn(
-                        'rounded-lg p-3 text-slate-400 flex items-center gap-2 font-semibold',
+                        'rounded-lg p-3 text-slate-400 flex items-center gap-2 font-semibold active:scale-90 transition-all duration-300',
                         {
                           'text-emerald-500': chat.id === chatId,
                           'hover:text-emerald-500': chat.id !== chatId,

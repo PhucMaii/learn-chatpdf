@@ -21,7 +21,7 @@ const FlashCardSet = ({ flashCardSetWithChat, onClick }: Props) => {
   }, [flashCardSetWithChat]);
 
   return (
-    <div className="bg-gray-50 rounded-xl p-4 shadow-sm hover:bg-gray-200 transition-all duration-300" onClick={onClick}>
+    <div className="bg-gray-50 rounded-xl p-4 shadow-sm hover:bg-gray-200 active:scale-98 transition-all duration-300" onClick={onClick}>
       <div className="w-full flex justify-between items-center ">
         <div className="flex flex-col">
           <h6 className="text-md flex-8 font-semibold">

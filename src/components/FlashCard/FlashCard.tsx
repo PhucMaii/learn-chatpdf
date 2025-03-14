@@ -119,11 +119,11 @@ const FlashCard = ({
       {isEdit && !progress && (
         <div className="flex justify-between w-full items-center">
           <div className="self-end">
-            <Button onClick={deleteCard} className="px-4 py-2 bg-red-500 text-white shadow-md font-semibold transition-all duration-200 hover:bg-red-600 hover:text-white hover:scale-102">
+            <Button onClick={deleteCard} className="px-4 py-2 bg-red-500 text-white shadow-md font-semibold transition-all duration-300 hover:bg-red-600 hover:text-white hover:scale-102 active:scale-90">
               {isDeleting ? <Loader2 className="w-6 h-6 text-white animate-spin" /> : "Delete" }
             </Button>
           </div>
-          <div className="self-start">
+          <div className="self-start transition-all duration-300 hover:scale-105 active:scale-90 cursor-pointer">
             {/* <Button className="bg-black text-white font-bold">+ New Card</Button> */}
             <AddCard flashCardSetId={flashCard.flashCardSetId} chatId={flashCard.chatId}/>
           </div>
@@ -176,7 +176,7 @@ const FlashCard = ({
                 placeholder="Question"
                 />
 
-                <Button className="bg-white self-end shadow-xl font-bold text-emerald-500" onClick={handleUpdateCard}>
+                <Button className="bg-white self-end shadow-xl font-bold text-emerald-500 hover:bg-gray-200 active:scale-90 transition-all duration-300" onClick={handleUpdateCard}>
                   {isLoading ? (<Loader2 className="w-6 h-6 animate-spin" />) : 'Save'}
                 </Button>
                 </div>

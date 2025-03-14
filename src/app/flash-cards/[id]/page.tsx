@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { SWRFetchData } from '../../../../hooks/useSWRFetch';
 import LoadingComponent from '@/components/LoadingComponent';
+import FlashCardEdit from '@/components/FlashCard/FlashCardEdit';
 
 export default function FlashCardPage() {
   const [flashCardSets, setFlashCardSets] = useState<any>(null);
@@ -30,11 +31,12 @@ export default function FlashCardPage() {
     <SidebarWrapper>
       <div className="flex flex-col items-center justify-center">
         {/* <FlashCard flashCard={flashCardSets?.flashCards[currentCardIndex]}  /> */}
-        {isLoading ? (<LoadingComponent />) : flashCardSets && (
+        {/* {isLoading ? (<LoadingComponent />) : flashCardSets && (
           <FlashCardTrack
             flashCards={flashCardSets?.flashCards || []}
           />
-        )}
+        )} */}
+        <FlashCardEdit />
       </div>
     </SidebarWrapper>
   );
