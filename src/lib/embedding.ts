@@ -15,6 +15,7 @@ export async function getEmbeddings(text: string) {
 
     const result = await response.json();
 
+    console.log('result', {result});
     return result.data[0].embedding as number[];
   } catch (error) {
     console.log('Error calling OpenAI embeddings api: ', error);

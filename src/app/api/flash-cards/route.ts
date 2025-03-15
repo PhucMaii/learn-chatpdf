@@ -1,11 +1,11 @@
 import { Configuration, OpenAIApi } from 'openai-edge';
 import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
-import { getContext } from '@/lib/context';
 import { db } from '@/lib/db';
-import { chats, flashCard, flashCardSet } from '@/lib/db/schema';
+import { chats, flashCard } from '@/lib/db/schema';
 import { withAuthGuard } from '@/utils/guard';
 import { auth } from '@clerk/nextjs/server';
+import { createFlashCards } from '../create-chat/route';
 
 export const runtime = 'nodejs';
 
@@ -13,9 +13,9 @@ const config = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const openai = new OpenAIApi(config);
+export const openai = new OpenAIApi(config);
 
-const flashCardPrompt = `You are an AI assistant specializing in generating flashcards for students. 
+export const flashCardPrompt = `You are an AI assistant specializing in generating flashcards for students. 
 Your task is to generate **up to 20** high-quality flashcards in JSON format based on the provided document.
 
 ### **Instructions:**
@@ -73,85 +73,8 @@ const handler = async (req: Request) => {
     }
 
     const fileKey = _chats[0].fileKey;
-    // const lastMessage = messages[messages.length - 1];
-    const context = await getContext(flashCardPrompt, fileKey);
 
-    const prompt: any = {
-      role: 'system',
-      content: `AI assistant is a brand new, powerful, human-like artificial intelligence.
-            The traits of AI include expert knowledge, helpfulness, cleverness, and articulateness.
-            AI is a well-behaved and well-mannered individual.
-            AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.
-            AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
-            AI assistant is a big fan of Pinecone and Vercel.
-            You are only allowed to answer questions strictly based on the CONTEXT BLOCK provided below.
-            If the context does not provide an answer, you must explicitly say: "I'm sorry, but I don't know the answer to that question."
-            You must not use external knowledge outside of the CONTEXT BLOCK.
-            START CONTEXT BLOCK
-            ${context}
-            END CONTEXT BLOCK
-            AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
-            If the context does not provide the answer to question, the AI assistant will say, "I'm sorry, but I don't know the answer to that question".
-            AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
-            AI assistant will not invent anything that is not drawn directly from the context.
-            `,
-    };
-    const response: any = await openai.createChatCompletion({
-      model: 'gpt-4o-mini',
-      messages: [
-        prompt,
-        {
-          role: 'user',
-          content: flashCardPrompt,
-        },
-      ],
-    });
-    const completionData = await response.json();
-    // const formattedMessages = JSON.parse(
-    //   completionData.choices[0].message.content,
-    // );
-
-    const formattedMessages = JSON.parse(completionData.choices[0].message.content);
-    // Delete the current flash card set if there is any
-    // const existingFlashCardSet = (await db
-    //   .select()
-    //   .from(flashCardSet)
-    //   .where(eq(flashCardSet.chatId, Number(chatId)))) ?? [];
-
-    // if (existingFlashCardSet.length > 0) {
-    //   await db
-    //   .delete(flashCardSet)
-    //   .where(inArray(flashCardSet.id, existingFlashCardSet.map((set) => set.id)));
-    // }
-
-    const newFlashCardsSet = await db
-      .insert(flashCardSet)
-      .values({
-        title: formattedMessages.title,
-        chatId: chatId,
-        createdAt: new Date(),
-        userId: userId,
-      })
-      .returning();
-
-    const flashCardList = formattedMessages.flashcards.map((question: any) => {
-      return {
-        question: question.question,
-        answer: question.answer,
-        createdAt: new Date(),
-        chatId: chatId,
-        flashCardSetId: newFlashCardsSet[0].id,
-        userId: userId,
-        isKnown: 0,
-      };
-    });
-
-    // Save Flash Card into db
-    await db.insert(flashCard).values(flashCardList);
-    await db
-      .update(chats)
-      .set({ title: formattedMessages.title })
-      .where(eq(chats.id, chatId));
+    const formattedMessages = await createFlashCards(fileKey, chatId, userId);
     return NextResponse.json({ data: formattedMessages.flashcards });
   } catch (error) {
     console.error(error);

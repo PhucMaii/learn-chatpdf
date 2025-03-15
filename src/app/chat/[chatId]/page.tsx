@@ -25,6 +25,7 @@ const Chat = ({ params: { chatId } }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [subscription, setSubscription] = useState<any>({});
   const [userChatlist, setUserChatList] = useState<DrizzleChat[]>([]);
+  const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const router = useRouter();
 
   const [chats] = SWRFetchData(`${API_URL.USER}/chats`);
@@ -58,7 +59,13 @@ const Chat = ({ params: { chatId } }: Props) => {
         window.location.href = '/chats';
         return;
       }
+
       setFlashCards(currentChat.flashCards);
+      // if (currentChat.flashCards && currentChat.flashCards.length > 0) {
+      // } else {
+      //   generateFlashCards();
+      // }
+      setIsInitializing(false);
       setChat(currentChat);
       setUserChatList(chats?.groupedChatByDate);
     }
@@ -69,6 +76,26 @@ const Chat = ({ params: { chatId } }: Props) => {
       udpateOpenChat();
     }
   }, [chatId]);
+
+  // const generateFlashCards = async () => {
+  //   setIsInitializing(true);
+  //   try {
+  //     const response = await axios.post('/api/flash-cards', { chatId });
+
+  //     if (response.data.error) {
+  //       toast.error('Fail to generate flash cards');
+  //       return;
+  //     }
+
+  //     setFlashCards(response.data.data);
+  //     return response.data.data;
+  //   } catch (error: any) {
+  //     console.log(error);
+  //     toast.error('Fail to generate flash cards');
+  //   } finally {
+  //     setIsInitializing(false);
+  //   }
+  // }
 
   const udpateOpenChat = async () => {
     try {
@@ -97,7 +124,7 @@ const Chat = ({ params: { chatId } }: Props) => {
             subscription={subscription}
           />
         </div>
-        {isLoading ? (
+        {isLoading || isInitializing ? (
           <LoadingComponent />
         ) : (
           <>

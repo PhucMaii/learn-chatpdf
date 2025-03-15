@@ -30,13 +30,12 @@ export default function FlashCardPage() {
   return (
     <SidebarWrapper>
       <div className="flex flex-col items-center justify-center">
-        {/* <FlashCard flashCard={flashCardSets?.flashCards[currentCardIndex]}  /> */}
-        {/* {isLoading ? (<LoadingComponent />) : flashCardSets && (
+        {isLoading ? (<LoadingComponent />) : flashCardSets && (
           <FlashCardTrack
             flashCards={flashCardSets?.flashCards || []}
           />
-        )} */}
-        <FlashCardEdit />
+        )}
+        {/* <FlashCardEdit /> */}
       </div>
     </SidebarWrapper>
   );
