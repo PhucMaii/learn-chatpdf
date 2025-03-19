@@ -275,7 +275,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
             learningCards={learningCards}
             knownCards={knownCards}
             isEdit={bool.isEdit}
-            setIsEdit={(value: boolean) => setBool({ ...bool, isEdit: value })}
+            // setIsEdit={(value: boolean) => setBool({ ...bool, isEdit: value })}
           />
         </div>
 

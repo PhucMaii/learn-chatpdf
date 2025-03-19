@@ -1,17 +1,16 @@
 import React, { memo, useEffect, useState } from 'react';
 import '../../../styles/FlashCard.css';
-import { CheckIcon, Loader2, X } from 'lucide-react';
+import { CheckIcon, Edit, Loader2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import StatusText from '../StatusText';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
 import { CardStatus } from './FlashCardTrack';
-import { Label } from '../ui/label';
-import { Switch } from '../ui/switch';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import AddCard from '../Dialogs/AddCard';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   flashCard: any;
@@ -21,7 +20,7 @@ type Props = {
   learningCards: DrizzleFlashCard[];
   knownCards: DrizzleFlashCard[];
   isEdit: boolean;
-  setIsEdit: any;
+  // setIsEdit: any;
 };
 
 const FlashCard = ({
@@ -32,12 +31,13 @@ const FlashCard = ({
   learningCards,
   knownCards,
   isEdit,
-  setIsEdit,
 }: Props) => {
   const [card, setCard] = useState<any>(flashCard);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [side, setSide] = useState<'front' | 'back'>('front');
+
+  const router = useRouter();
 
   useEffect(() => {
     if (flashCard) {
@@ -107,12 +107,18 @@ const FlashCard = ({
     <div className="relative w-full flex flex-col items-center justify-center">
       {!progress && (
         <div className="w-full flex items-center justify-end space-x-2 mb-2">
-          <Switch
+          <Button className="bg-gray-100" onClick={() => router.push(`/flash-cards/${flashCard.flashCardSetId}/edit`)}>
+            <div className="flex items-center space-x-2">
+              <Edit className="w-6 h-6" />
+              <h6 className="text-lg">Edit</h6>
+            </div>
+          </Button>
+          {/* <Switch
             id="isTrack"
             checked={isEdit}
             onCheckedChange={() => setIsEdit(!isEdit)}
           />
-          <Label htmlFor="isTrack">Edit Mode</Label>
+          <Label htmlFor="isTrack">Edit Mode</Label> */}
         </div>
       )}
 

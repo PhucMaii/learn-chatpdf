@@ -9,7 +9,7 @@ import LoadingComponent from '@/components/LoadingComponent';
 import FlashCardEdit from '@/components/FlashCard/FlashCardEdit';
 
 export default function FlashCardPage() {
-  const [flashCardSets, setFlashCardSets] = useState<any>(null);
+  const [flashCardSet, setFlashCardSet] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const { id } = useParams();
@@ -18,7 +18,7 @@ export default function FlashCardPage() {
 
   useEffect(() => {
     if (flashCards) {
-      setFlashCardSets(flashCards.flashCardSetsWithChatsAndFlashCards[0]);
+      setFlashCardSet(flashCards.flashCardSetsWithChatsAndFlashCards[0]);
       setIsLoading(false);
     }
 
@@ -30,12 +30,12 @@ export default function FlashCardPage() {
   return (
     <SidebarWrapper>
       <div className="flex flex-col items-center justify-center">
-        {isLoading ? (<LoadingComponent />) : flashCardSets && (
+        {isLoading ? (<LoadingComponent />) : flashCardSet && (
           <FlashCardTrack
-            flashCards={flashCardSets?.flashCards || []}
+            flashCards={flashCardSet?.flashCards || []}
           />
         )}
-        {/* <FlashCardEdit /> */}
+        {/* <FlashCardEdit flashCardSet={flashCardSet}/> */}
       </div>
     </SidebarWrapper>
   );
