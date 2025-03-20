@@ -1,5 +1,5 @@
 .flip-container {
-  perspective: 1000px; /*Add perspective to make 3D effect more realistic */
+  perspective: 1200px; /*Add perspective to make 3D effect more realistic */
   cursor: pointer;
   position: 'relative';
 }

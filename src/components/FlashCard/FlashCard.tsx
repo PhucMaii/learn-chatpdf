@@ -104,7 +104,7 @@ const FlashCard = ({
   }
 
   return (
-    <div className="relative w-full flex flex-col items-center justify-center">
+    <div className="relative max-w-[1000px] h-[800px] flex flex-col items-center justify-center">
       {!progress && (
         <div className="w-full flex items-center justify-end space-x-2 mb-2">
           <Button className="bg-gray-100" onClick={() => router.push(`/flash-cards/${flashCard.flashCardSetId}/edit`)}>
@@ -136,7 +136,7 @@ const FlashCard = ({
         </div>
       )}
       <div
-        className={`relative flipper-container flex flex-col justify-center items-center w-[500px] h-[600px] ${className}`}
+        className={`relative flipper-container flex flex-col justify-center items-center w-[1000px] h-[800px] ${className}`}
       >
         {progress && (
           <>
@@ -187,7 +187,7 @@ const FlashCard = ({
                 </Button>
                 </div>
               ) : (
-              <h6 className="text-xl text-white text-center font-bold ">
+              <h6 className="text-3xl text-white text-center font-bold ">
                 {card?.question}
               </h6>
             )}
@@ -224,7 +224,7 @@ const FlashCard = ({
                 </Button>
                 </div>
               ) : (
-                <h6 className="text-xl text-white text-center font-bold overflow-y-scroll">
+                <h6 className="text-3xl text-white text-center font-bold overflow-y-scroll">
               {card?.answer}
                 </h6>
               )

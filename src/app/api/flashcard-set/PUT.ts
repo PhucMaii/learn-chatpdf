@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
 import { flashCard, flashCardSet } from '@/lib/db/schema';
-import { eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 interface IBody {
@@ -42,8 +42,8 @@ const PUT = async (req: Request) => {
       .from(flashCard)
       .where(eq(flashCard.flashCardSetId, id));
 
-    console.log('dbCards', dbCards);
-    console.log(flashcards)
+    // console.log('dbCards', dbCards);
+    // console.log(flashcards)
 
     let trackDeletedCard = [...dbCards];
     // Categorize flashcard to ADD, UPDATE AND DELETE
@@ -60,6 +60,7 @@ const PUT = async (req: Request) => {
         };
         await db.insert(flashCard).values(newCard);
       } else {
+        console.log({ dbCard, card });
         if (
           dbCard.question !== card.question ||
           dbCard.answer !== card.answer
