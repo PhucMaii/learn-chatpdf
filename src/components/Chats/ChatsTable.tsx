@@ -87,13 +87,13 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
               <TableCell>
                 <FileTextIcon />
               </TableCell>
-              <TableCell className="font-bold text-md">
+              <TableCell className="font-semibold text-lg">
                 {chat?.pdfName}
               </TableCell>
-              <TableCell className="font-medium text-md">
+              <TableCell className="font-medium text-lg">
                 {moment(new Date(chat?.createdAt)).calendar()}
               </TableCell>
-              <TableCell className="font-medium text-md">
+              <TableCell className="font-medium text-lg">
                 {moment(
                   new Date(chat?.lastOpenedAt || chat.createdAt),
                 ).fromNow()}

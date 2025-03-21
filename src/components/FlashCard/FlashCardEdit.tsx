@@ -45,7 +45,7 @@ const SingleCardEdit = ({
         </div>
       </div>
       <Separator className="my-4" />
-      <div className="flex w-full gap-4 mt-2">
+      <div className="flex flex-col md:flex-row w-full gap-4 mt-2">
         <div className="flex-[1] flex-col gap-1">
           <h6>Front</h6>
           <Textarea

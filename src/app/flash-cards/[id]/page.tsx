@@ -6,7 +6,6 @@ import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { SWRFetchData } from '../../../../hooks/useSWRFetch';
 import LoadingComponent from '@/components/LoadingComponent';
-import FlashCardEdit from '@/components/FlashCard/FlashCardEdit';
 
 export default function FlashCardPage() {
   const [flashCardSet, setFlashCardSet] = useState<any>(null);

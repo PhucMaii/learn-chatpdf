@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import Sidebar from './AppSidebar';
 import { checkSubscription } from '@/lib/subscription';
 import SubscriptionBanner from './SubscriptionBanner';
 import { COLOR_TYPE } from './StatusText';
 import { UserContext } from '../../context/UserProvider';
+import { AppSidebar } from './app-sidebar';
 
 type Props = {
   children: React.ReactNode;
@@ -42,11 +42,11 @@ const SidebarWrapper = ({ children }: Props) => {
   }, [subscription]);
 
   return (
-    <div className="flex">
+    <div className="flex flex-col md:flex-row">
       <div className="flex-1 max-w-[300px] p-4">
-        <Sidebar />
+        <AppSidebar />
       </div>
-      <div className="flex-8 w-full">
+      <div className="flex-8 w-full flex flex-col gap-4">
         {!subscription?.isPro && (
           <SubscriptionBanner text={subscriptionStatus.text} />
         )}

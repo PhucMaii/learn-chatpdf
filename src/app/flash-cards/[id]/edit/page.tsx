@@ -4,12 +4,10 @@ import SidebarWrapper from '@/components/SidebarWrapper';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { SWRFetchData } from '../../../../../hooks/useSWRFetch';
-import toast from 'react-hot-toast';
-import axios from 'axios';
 
 export default function EditCardPage() {
   const [flashCardSet, setFlashCardSet] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  // const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const { id } = useParams();
 
@@ -21,7 +19,7 @@ export default function EditCardPage() {
   useEffect(() => {
     if (flashCards) {
       setFlashCardSet(flashCards.flashCardSetsWithChatsAndFlashCards[0]);
-      setIsLoading(false);
+      // setIsLoading(false);
     }
 
     if (!isValidating && !flashCards) {

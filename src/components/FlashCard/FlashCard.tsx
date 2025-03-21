@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import '../../../styles/FlashCard.css';
-import { CheckIcon, Edit, Loader2, X } from 'lucide-react';
+import { ArrowLeft, CheckIcon, Edit, Loader2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import StatusText from '../StatusText';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
@@ -106,9 +106,20 @@ const FlashCard = ({
   };
 
   return (
-    <div className="relative max-w-[1000px] h-[800px] flex flex-col items-center justify-center">
+    <div className="relative xl:w-[1000px] md:w-[800px] sm:w-[600px] w-[400px] h-[800px] flex flex-col items-center justify-center">
       {!progress && (
-        <div className="w-full flex items-center justify-end space-x-2 mb-2">
+        <div className="w-full flex items-center justify-between space-x-2 mb-2">
+          <Button
+            className="bg-gray-100"
+            onClick={() =>
+              router.push(`/flash-cards`)
+            }
+          >
+            <div className="flex items-center space-x-2">
+              <ArrowLeft className="w-6 h-6" />
+              <h6 className="text-lg">Back to set</h6>
+            </div>
+          </Button>
           <Button
             className="bg-gray-100"
             onClick={() =>
@@ -153,7 +164,7 @@ const FlashCard = ({
         </div>
       )}
       <div
-        className={`relative flipper-container flex flex-col justify-center items-center xl:w-[1000px] md:w-[800px] sm:w-[600px] xs:w-[400px] h-[800px] ${className}`}
+        className={`relative flipper-container flex flex-col justify-center items-center xl:w-[1000px] md:w-[800px] sm:w-[600px] w-[400px] h-[800px] ${className}`}
       >
         {progress && (
           <>

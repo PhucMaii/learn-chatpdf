@@ -12,6 +12,9 @@ import InteractiveComponent from '@/components/InteractiveComponent';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
 import { SWRFetchData } from '../../../../hooks/useSWRFetch';
 import axios from 'axios';
+import { Button } from '@/components/ui/button';
+import { TableOfContents } from 'lucide-react';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 
 type Props = {
   params: {
@@ -26,9 +29,18 @@ const Chat = ({ params: { chatId } }: Props) => {
   const [subscription, setSubscription] = useState<any>({});
   const [userChatlist, setUserChatList] = useState<DrizzleChat[]>([]);
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
+  const [isSmDown, setIsSmDown] = useState(false);
+  const [isChatSidebarOpen, setIsChatSidebarOpen] = useState<boolean>(false);
   const router = useRouter();
 
   const [chats] = SWRFetchData(`${API_URL.USER}/chats`);
+
+  useEffect(() => {
+    const checkScreenSize = () => setIsSmDown(window.innerWidth < 640);
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   useEffect(() => {
     const checkIsPro = async () => {
@@ -99,51 +111,78 @@ const Chat = ({ params: { chatId } }: Props) => {
 
   const udpateOpenChat = async () => {
     try {
-      const responnse = await axios.post(
-        `${API_URL.USER}/chats/open`, {chatId});
+      const responnse = await axios.post(`${API_URL.USER}/chats/open`, {
+        chatId,
+      });
 
       if (responnse.data.error) {
         toast.error('Something went wrong');
         return;
       }
-
     } catch (error: any) {
       console.log('There was an error in updating open chat: ', error);
       toast.error('Something went wrong');
     }
-  }
+  };
 
   return (
-    <div className="flex max-h-screen">
-      <div className="flex w-full max-h-screen">
-        {/* Chats sidebar */}
-        <div className="flex-1 max-w-xs border-r-8 border-1-slate-200">
+    <>
+      <Sheet open={isChatSidebarOpen} onOpenChange={setIsChatSidebarOpen}>
+        <SheetContent
+          side="left"
+          className="flex flex-col h-full w-full max-w-xs border-r-1 border-1-slate-200"
+        >
           <ChatSidebar
             chats={userChatlist}
             chatId={parseInt(chatId)}
             subscription={subscription}
           />
-        </div>
-        {isLoading || isInitializing ? (
-          <LoadingComponent />
-        ) : (
-          <>
-            {/* chat component */}
-            <div className="max-h-screen overflow-scroll flex-8 border-1-4 border-1-slate-200">
-              <InteractiveComponent
+        </SheetContent>
+      </Sheet>
+      <div className="flex flex-col max-h-screen">
+        {isSmDown && (
+          <div>
+            <Button
+              variant="ghost"
+              className="h-fit"
+              onClick={() => setIsChatSidebarOpen(true)}
+            >
+              <TableOfContents style={{ width: '24px', height: '24px' }} />
+            </Button>
+          </div>
+        )}
+        <div className="flex flex-col-reverse md:flex-row w-full max-h-screen">
+          {/* Chats sidebar */}
+          {!isSmDown && (
+            <div className="flex-1 max-w-xs border-r-1">
+              <ChatSidebar
+                chats={userChatlist}
                 chatId={parseInt(chatId)}
                 subscription={subscription}
-                flashCards={flashCards}
               />
             </div>
-            {/* pdf viewer */}
-            <div className="max-h-screen p-4 overflow-scroll flex-5">
-              <PDFViewer pdfUrl={chat?.pdfUrl || ''} />
-            </div>
-          </>
-        )}
+          )}
+          {isLoading || isInitializing ? (
+            <LoadingComponent />
+          ) : (
+            <>
+              {/* chat component */}
+              <div className="max-h-screen overflow-scroll flex-3 border-1-4 border-1-slate-200">
+                <InteractiveComponent
+                  chatId={parseInt(chatId)}
+                  subscription={subscription}
+                  flashCards={flashCards}
+                />
+              </div>
+              {/* pdf viewer */}
+              <div className="max-h-screen p-4 overflow-scroll flex-1 md:flex-2">
+                <PDFViewer pdfUrl={chat?.pdfUrl || ''} />
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
