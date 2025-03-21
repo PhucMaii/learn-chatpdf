@@ -53,9 +53,11 @@ const FlashCard = ({
   const deleteCard = async () => {
     setIsDeleting(true);
     try {
-      const response = await axios.delete('/api/flash-cards', {data: {
-        id: flashCard.id
-      }});
+      const response = await axios.delete('/api/flash-cards', {
+        data: {
+          id: flashCard.id,
+        },
+      });
 
       if (response.data.error) {
         toast.error('Fail to delete card');
@@ -70,7 +72,7 @@ const FlashCard = ({
       toast.error('Fail to delete card');
       setIsDeleting(false);
     }
-  }
+  };
 
   const handleUpdateCard = async (e: any) => {
     e.stopPropagation();
@@ -81,7 +83,7 @@ const FlashCard = ({
         newFlashCard: {
           question: card.question,
           answer: card.answer,
-          isKnown: 0
+          isKnown: 0,
         },
       });
 
@@ -101,13 +103,18 @@ const FlashCard = ({
       toast.error('Fail to update card');
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="relative max-w-[1000px] h-[800px] flex flex-col items-center justify-center">
       {!progress && (
         <div className="w-full flex items-center justify-end space-x-2 mb-2">
-          <Button className="bg-gray-100" onClick={() => router.push(`/flash-cards/${flashCard.flashCardSetId}/edit`)}>
+          <Button
+            className="bg-gray-100"
+            onClick={() =>
+              router.push(`/flash-cards/${flashCard.flashCardSetId}/edit`)
+            }
+          >
             <div className="flex items-center space-x-2">
               <Edit className="w-6 h-6" />
               <h6 className="text-lg">Edit</h6>
@@ -125,18 +132,28 @@ const FlashCard = ({
       {isEdit && !progress && (
         <div className="flex justify-between w-full items-center">
           <div className="self-end">
-            <Button onClick={deleteCard} className="px-4 py-2 bg-red-500 text-white shadow-md font-semibold transition-all duration-300 hover:bg-red-600 hover:text-white hover:scale-102 active:scale-90">
-              {isDeleting ? <Loader2 className="w-6 h-6 text-white animate-spin" /> : "Delete" }
+            <Button
+              onClick={deleteCard}
+              className="px-4 py-2 bg-red-500 text-white shadow-md font-semibold transition-all duration-300 hover:bg-red-600 hover:text-white hover:scale-102 active:scale-90"
+            >
+              {isDeleting ? (
+                <Loader2 className="w-6 h-6 text-white animate-spin" />
+              ) : (
+                'Delete'
+              )}
             </Button>
           </div>
           <div className="self-start transition-all duration-300 hover:scale-105 active:scale-90 cursor-pointer">
             {/* <Button className="bg-black text-white font-bold">+ New Card</Button> */}
-            <AddCard flashCardSetId={flashCard.flashCardSetId} chatId={flashCard.chatId}/>
+            <AddCard
+              flashCardSetId={flashCard.flashCardSetId}
+              chatId={flashCard.chatId}
+            />
           </div>
         </div>
       )}
       <div
-        className={`relative flipper-container flex flex-col justify-center items-center w-[1000px] h-[800px] ${className}`}
+        className={`relative flipper-container flex flex-col justify-center items-center xl:w-[1000px] md:w-[800px] sm:w-[600px] xs:w-[400px] h-[800px] ${className}`}
       >
         {progress && (
           <>
@@ -166,27 +183,34 @@ const FlashCard = ({
           >
             {isEdit && !progress ? (
               <div className="flex flex-col w-full gap-2">
-              <Textarea
-                value={card?.question}
-                onChange={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setCard({...card, question: e.target.value});
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-                style={{ fontSize: '1.2rem', fontWeight: 'bold' }} 
-                className="bg-white shadow-xl p-6 rounded-2xl border-2 border-emerald-500 text-emerald-500 text-center text-2xl font-bold"
-                placeholder="Question"
+                <Textarea
+                  value={card?.question}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setCard({ ...card, question: e.target.value });
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  style={{ fontSize: '1.2rem', fontWeight: 'bold' }}
+                  className="bg-white shadow-xl p-6 rounded-2xl border-2 border-emerald-500 text-emerald-500 text-center text-2xl font-bold"
+                  placeholder="Question"
                 />
 
-                <Button className="bg-white self-end shadow-xl font-bold text-emerald-500 hover:bg-gray-200 active:scale-90 transition-all duration-300" onClick={handleUpdateCard}>
-                  {isLoading ? (<Loader2 className="w-6 h-6 animate-spin" />) : 'Save'}
+                <Button
+                  className="bg-white self-end shadow-xl font-bold text-emerald-500 hover:bg-gray-200 active:scale-90 transition-all duration-300"
+                  onClick={handleUpdateCard}
+                >
+                  {isLoading ? (
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                  ) : (
+                    'Save'
+                  )}
                 </Button>
-                </div>
-              ) : (
+              </div>
+            ) : (
               <h6 className="text-3xl text-white text-center font-bold ">
                 {card?.question}
               </h6>
@@ -201,34 +225,39 @@ const FlashCard = ({
             )}
             onClick={handleFlip}
           >
-            {
-              isEdit && !progress ? (
-                <div className="flex flex-col w-full gap-2">
+            {isEdit && !progress ? (
+              <div className="flex flex-col w-full gap-2">
                 <Textarea
                   value={card?.answer}
                   onChange={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setCard({...card, answer: e.target.value});
+                    setCard({ ...card, answer: e.target.value });
                   }}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                   }}
-                  style={{ fontSize: '1.2rem', fontWeight: 'bold' }} 
+                  style={{ fontSize: '1.2rem', fontWeight: 'bold' }}
                   className="bg-white shadow-xl p-6 rounded-2xl border-2 border-blue-500 text-blue-500 text-center text-2xl font-bold"
-                  placeholder='Answer'
+                  placeholder="Answer"
                 />
-                <Button className="bg-white self-end shadow-xl font-bold text-blue-500" onClick={handleUpdateCard}>
-                  {isLoading ? (<Loader2 className="w-6 h-6 animate-spin" />) : 'Save'}
+                <Button
+                  className="bg-white self-end shadow-xl font-bold text-blue-500"
+                  onClick={handleUpdateCard}
+                >
+                  {isLoading ? (
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                  ) : (
+                    'Save'
+                  )}
                 </Button>
-                </div>
-              ) : (
-                <h6 className="text-3xl text-white text-center font-bold overflow-y-scroll">
-              {card?.answer}
-                </h6>
-              )
-            }
+              </div>
+            ) : (
+              <h6 className="text-3xl text-white text-center font-bold overflow-y-scroll">
+                {card?.answer}
+              </h6>
+            )}
           </div>
         </div>
 

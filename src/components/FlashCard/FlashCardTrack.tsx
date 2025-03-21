@@ -263,7 +263,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
   }
 
   return (
-    <div className="mt-8">
+    <div className="mt-4">
       <div className="flex flex-col gap-2">
         <div className="flex justify-center items-center">
           <FlashCard

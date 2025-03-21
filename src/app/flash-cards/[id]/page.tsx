@@ -14,7 +14,9 @@ export default function FlashCardPage() {
 
   const { id } = useParams();
 
-  const [flashCards, _mutate, isValidating] = SWRFetchData(`/api/flashcard-set/get?id=${id}`);
+  const [flashCards, _mutate, isValidating] = SWRFetchData(
+    `/api/flashcard-set/get?id=${id}`,
+  );
 
   useEffect(() => {
     if (flashCards) {
@@ -30,10 +32,16 @@ export default function FlashCardPage() {
   return (
     <SidebarWrapper>
       <div className="flex flex-col items-center justify-center">
-        {isLoading ? (<LoadingComponent />) : flashCardSet && (
-          <FlashCardTrack
-            flashCards={flashCardSet?.flashCards || []}
-          />
+        {/* <div className="flex items-center justify-start ÷÷"> */}
+          <h4 className="font-semibold text-3xl text-left mt-4">{flashCardSet?.title}</h4>
+        {/* </div> */}
+
+        {isLoading ? (
+          <LoadingComponent />
+        ) : (
+          flashCardSet && (
+            <FlashCardTrack flashCards={flashCardSet?.flashCards || []} />
+          )
         )}
         {/* <FlashCardEdit flashCardSet={flashCardSet}/> */}
       </div>

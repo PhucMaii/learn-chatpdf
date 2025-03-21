@@ -18,8 +18,9 @@ import {
 import { cn } from '@/lib/utils';
 import Logo from './Landing/Logo';
 import StatusText from './StatusText';
+import { AppSidebar } from '@/components/app-sidebar';
 
-const AppSidebar = () => {
+const NavSidebar = () => {
   const [user, setUser] = useState<any>(null);
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
@@ -54,17 +55,10 @@ const AppSidebar = () => {
   };
 
   return (
-    <SidebarProvider
-    
-    >
+    <SidebarProvider>
+      {/* <AppSidebar variant="inset" />
       <Sidebar collapsible='icon'>
-        <SidebarHeader>
-          <div className="flex items-center gap-2">
-            <Logo />
-            <h6 className="text-xl font-semibold">LearnPDF</h6>
-            <StatusText text={user?.status} type="info" />
-          </div>
-        </SidebarHeader>
+        
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent>
@@ -88,7 +82,8 @@ const AppSidebar = () => {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-      </Sidebar>
+      </Sidebar> */}
+      <AppSidebar user={user} selectedTab={selectedTab} />
     </SidebarProvider>
     // <div className="w-full h-screen p-4 text-gray-200 bg-white">
     //   {/* Logo and user status */}
@@ -123,4 +118,4 @@ const AppSidebar = () => {
   );
 };
 
-export default AppSidebar;
+export default NavSidebar;
