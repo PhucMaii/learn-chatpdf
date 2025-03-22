@@ -21,7 +21,7 @@ export default function ChatSidebar({ chats, chatId, subscription }: Props) {
 
   return (
     <div className="w-full h-screen p-4 text-gray-200 bg-white">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex lg:items-center items-start flex-col lg:flex-row gap-2 mb-4">
         <Link href="/chats" className="hover:scale-105 active:scale-90 transition-all duration-300">
           <ArrowLeftIcon className="w-8 h-8 text-black" />
         </Link>

@@ -36,7 +36,7 @@ const Chat = ({ params: { chatId } }: Props) => {
   const [chats] = SWRFetchData(`${API_URL.USER}/chats`);
 
   useEffect(() => {
-    const checkScreenSize = () => setIsSmDown(window.innerWidth < 640);
+    const checkScreenSize = () => setIsSmDown(window.innerWidth <  1024);
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
@@ -154,7 +154,7 @@ const Chat = ({ params: { chatId } }: Props) => {
         <div className="flex flex-col-reverse md:flex-row w-full max-h-screen">
           {/* Chats sidebar */}
           {!isSmDown && (
-            <div className="flex-1 max-w-xs border-r-1">
+            <div className="flex-1  lg:max-w-[350px] max-w-[200px] border-r-1">
               <ChatSidebar
                 chats={userChatlist}
                 chatId={parseInt(chatId)}

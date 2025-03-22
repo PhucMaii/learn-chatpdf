@@ -20,6 +20,7 @@ type Props = {
   learningCards: DrizzleFlashCard[];
   knownCards: DrizzleFlashCard[];
   isEdit: boolean;
+  isInChat?: boolean;
   // setIsEdit: any;
 };
 
@@ -31,6 +32,7 @@ const FlashCard = ({
   learningCards,
   knownCards,
   isEdit,
+  isInChat,
 }: Props) => {
   const [card, setCard] = useState<any>(flashCard);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -106,14 +108,17 @@ const FlashCard = ({
   };
 
   return (
-    <div className="relative xl:w-[1000px] md:w-[800px] sm:w-[600px] w-[400px] h-[800px] flex flex-col items-center justify-center">
+    <div
+      className={cn(
+        `relative 2xl:w-[800px] w-[400px] h-[800px] flex flex-col items-center justify-center`,
+        { '2xl:w-[700px] w-[400px] h-[600px]': isInChat },
+      )}
+    >
       {!progress && (
         <div className="w-full flex items-center justify-between space-x-2 mb-2">
           <Button
             className="bg-gray-100"
-            onClick={() =>
-              router.push(`/flash-cards`)
-            }
+            onClick={() => router.push(`/flash-cards`)}
           >
             <div className="flex items-center space-x-2">
               <ArrowLeft className="w-6 h-6" />
@@ -164,7 +169,10 @@ const FlashCard = ({
         </div>
       )}
       <div
-        className={`relative flipper-container flex flex-col justify-center items-center xl:w-[1000px] md:w-[800px] sm:w-[600px] w-[400px] h-[800px] ${className}`}
+        className={cn(
+          `relative flipper-container flex flex-col justify-center items-center 2xl:w-[800px] w-[400px] h-[800px] ${className}`,
+          { '2xl:w-[700px] w-[400px] h-[600px]': isInChat },
+        )}
       >
         {progress && (
           <>

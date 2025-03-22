@@ -26,9 +26,10 @@ export enum CardStatus {
 
 type Props = {
   flashCards: DrizzleFlashCard[];
+  isInChat?: boolean;
 };
 
-const FlashCardTrack = ({ flashCards }: Props) => {
+const FlashCardTrack = ({ flashCards, isInChat }: Props) => {
   const [bool, setBool] = useState<any>({
     isProgressEnd: false,
     isTrack: false,
@@ -275,6 +276,7 @@ const FlashCardTrack = ({ flashCards }: Props) => {
             learningCards={learningCards}
             knownCards={knownCards}
             isEdit={bool.isEdit}
+            isInChat={isInChat}
             // setIsEdit={(value: boolean) => setBool({ ...bool, isEdit: value })}
           />
         </div>

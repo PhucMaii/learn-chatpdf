@@ -71,7 +71,7 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
       ) : (
         <div className="mt-8">
           {flashCardData.length > 0 && (
-            <FlashCardTrack flashCards={flashCardData} />
+            <FlashCardTrack flashCards={flashCardData} isInChat />
           )}
         </div>
       )}
