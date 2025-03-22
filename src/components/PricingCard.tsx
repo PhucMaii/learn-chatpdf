@@ -13,9 +13,10 @@ type Props = {
   plan: string;
   save?: string[];
   discount?: DrizzleDiscountCode;
+  helperText?: string;
 };
 
-const PricingCard = ({ price, title, isPopular, plan, save, discount }: Props) => {
+const PricingCard = ({ price, title, isPopular, plan, save, discount, helperText }: Props) => {
   const finalPrice = useMemo(() => {
     if (!discount) {
       return price;
@@ -53,11 +54,18 @@ const PricingCard = ({ price, title, isPopular, plan, save, discount }: Props) =
         )}
       </div>
 
+        
       <div className="flex items-end justify-start mt-12">
         {finalPrice !== price && <h1 className="text-2xl text-gray-300 line-through">${price}</h1>}
         <h1 className="text-5xl font-bold">${finalPrice}</h1>
         <h6 className="text-xl font-semibold text-gray-400">/{plan}</h6>
       </div>
+
+      {
+        helperText && (
+          <h6 className="text-lg font-semibold text-gray-400 mt-4">{helperText}</h6>
+        )
+      }
 
       <div className="border-2 border-gray-500 my-4"></div>
 

@@ -38,21 +38,24 @@ export const tabs = [
 export const pricingTabs = [
   {
     title: 'Weekly',
-    price: 5.99,
+    price: 1.99,
     plan: 'week',
+    displayPrice: 1.99,
   },
   {
     title: 'Annually',
-    price: 79.99,
+    price: 35.88,
     plan: 'year',
     isPopular: true,
     save: ['Save 75% vs weekly 💸', 'Save 33% vs monthly 💸'],
+    displayPrice: 2.99,
   },
   {
     title: 'Monthly',
-    price: 9.99,
+    price: 4.99,
     plan: 'month',
-    save: ['Save 60% vs weekly 💸'],
+    save: ['Save up to 55% vs weekly 💸'],
+    displayPrice: 4.99
   },
 ];
 
