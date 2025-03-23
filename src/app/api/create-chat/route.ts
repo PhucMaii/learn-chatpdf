@@ -10,6 +10,7 @@ import { flashCardPrompt, openai } from '../flash-cards/route';
 import { eq } from 'drizzle-orm';
 
 // /api/create-chat
+let returnChatId: any;
 const handler = async (req: Request) => {
   const { userId } = await auth();
 
@@ -34,6 +35,10 @@ const handler = async (req: Request) => {
         insertedId: chats.id,
       });
 
+      returnChatId = chatId[0].insertedId
+
+      console.log('Create Chat Successfully');
+
     // Create flashCards for this chat
     // console.log(chatId, 'chatId');
     const res = await createFlashCards(fileKey, chatId[0].insertedId, userId, vectors);
@@ -46,7 +51,7 @@ const handler = async (req: Request) => {
     return NextResponse.json({ chatId: chatId[0].insertedId }, { status: 200 });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json({ error, chatId: returnChatId }, { status: 500 });
   }
 };
 
@@ -92,11 +97,15 @@ export const createFlashCards = async (
         },
       ],
     });
+
+    console.log('pass prompt');
     const completionData = await response.json();
 
     const formattedMessages = JSON.parse(
       completionData.choices[0].message.content,
     );
+
+    console.log('pass json.parse')
 
     const newFlashCardsSet = await db
       .insert(flashCardSet)
@@ -107,6 +116,8 @@ export const createFlashCards = async (
         userId: userId,
       })
       .returning();
+
+    console.log('pass insert');
 
     const flashCardList = formattedMessages.flashcards.map((question: any) => {
       return {
@@ -120,6 +131,8 @@ export const createFlashCards = async (
       };
     });
 
+    console.log('pass map');
+
     // Save Flash Card into db
     await db.insert(flashCard).values(flashCardList);
     await db
@@ -129,6 +142,7 @@ export const createFlashCards = async (
 
     return formattedMessages;
   } catch (error: any) {
+    console.log(error);
     return { error: error.message };
   }
 };

@@ -55,7 +55,8 @@ const FileUpload = () => {
             router.push(`/chat/${chatId}`);
           },
           onError: (error: any) => {
-            toast.error('Oops! Looks like you have an invalid PDF file');
+            toast.error('Oops! We encountered an error, but your chat has been created.');
+            router.push(`/chat/${error.chatId}`);
             console.log(error);
           },
         });
