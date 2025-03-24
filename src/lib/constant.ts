@@ -3,7 +3,7 @@ import {
   BookCopyIcon,
   ClockArrowDownIcon,
   ContactRound,
-  FacebookIcon,
+  // FacebookIcon,
   GraduationCapIcon,
   InstagramIcon,
   MailIcon,
@@ -203,13 +203,13 @@ export const contactList = [
   {
     icon: InstagramIcon,
     title: 'Instagram',
-    link: 'https://www.instagram.com/maithienphuc/',
+    link: 'https://www.instagram.com/_tpismeee_/',
   },
-  {
-    icon: FacebookIcon,
-    title: 'Facebook',
-    link: 'https://www.facebook.com/maithienphuc/',
-  },
+  // {
+  //   icon: FacebookIcon,
+  //   title: 'Facebook',
+  //   link: 'https://www.facebook.com/PhucMai',
+  // },
   
 ]
 
