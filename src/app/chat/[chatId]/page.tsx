@@ -10,7 +10,6 @@ import LoadingComponent from '@/components/LoadingComponent';
 import { useRouter } from 'next/navigation';
 import InteractiveComponent from '@/components/InteractiveComponent';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
-import { SWRFetchData } from '../../../../hooks/useSWRFetch';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { TableOfContents } from 'lucide-react';
@@ -31,11 +30,31 @@ const Chat = ({ params: { chatId } }: Props) => {
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const [isSmDown, setIsSmDown] = useState(false);
   const [isChatSidebarOpen, setIsChatSidebarOpen] = useState<boolean>(false);
+  const [userChats, setUserChats] = useState<any>(null);
   const router = useRouter();
 
-  const [chats] = SWRFetchData(`${API_URL.USER}/chats`);
+  // const [chats] = SWRFetchData(`${API_URL.USER}/chats`);
 
   useEffect(() => {
+    const fetchUserChats = async () => {
+      try {
+        const response = await axios.get(`${API_URL.USER}/chats`);
+
+        if (response.data.error) {
+          toast.error('Something went wrong in fetching user chats');
+          return;
+        } else {
+          setUserChats(response.data.data);
+          setUserChatList(response.data.groupedChatByDate);
+        }
+      } catch (error: any) {
+        console.log(error);
+        toast.error('Something went wrong in fetching user chats');
+      }
+    }
+
+    fetchUserChats();
+
     const checkScreenSize = () => setIsSmDown(window.innerWidth <  1024);
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
@@ -64,8 +83,8 @@ const Chat = ({ params: { chatId } }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (chats) {
-      const currentChat = chats?.data[chatId];
+    if (userChats) {
+      const currentChat = userChats[chatId];
       if (!currentChat) {
         toast.error('Uh uh, you are not allowed to access this chat');
         window.location.href = '/chats';
@@ -79,9 +98,9 @@ const Chat = ({ params: { chatId } }: Props) => {
       // }
       setIsInitializing(false);
       setChat(currentChat);
-      setUserChatList(chats?.groupedChatByDate);
+      // setUserChatList(userChats?.groupedChatByDate);
     }
-  }, [chats]);
+  }, [userChats]);
 
   useEffect(() => {
     if (chatId) {

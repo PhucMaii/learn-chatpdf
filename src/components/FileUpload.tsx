@@ -8,12 +8,15 @@ import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { Progress } from './ui/progress';
 
 const FileUpload = () => {
   const router = useRouter();
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isLearning, setIsLearning] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
 
-  const { mutate, isPending } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: async ({
       fileKey,
       fileName,
@@ -42,7 +45,11 @@ const FileUpload = () => {
 
       try {
         setIsUploading(true);
-        const data = await uploadToS3(file);
+        const data = await uploadToS3(file, setProgress);
+        setIsUploading(false);
+
+        // setIsLearning(true);
+        setTimeout(() => setIsLearning(true), 1);
         if (!data?.fileKey || !data?.fileName) {
           toast.error(
             'Oops! Looks like the file is not uploaded correctly. Please try again later.',
@@ -55,15 +62,19 @@ const FileUpload = () => {
             router.push(`/chat/${chatId}`);
           },
           onError: (error: any) => {
-            toast.error('Oops! We encountered an error, but your chat has been created.');
+            toast.error(
+              'Oops! We encountered an error, but your chat has been created.',
+            );
             router.push(`/chat/${error.chatId}`);
             console.log(error);
           },
         });
         setIsUploading(false);
+        setIsLearning(false);
       } catch (error) {
         console.log(error);
         setIsUploading(false);
+        setIsLearning(false);
       }
     },
   });
@@ -77,12 +88,18 @@ const FileUpload = () => {
         })}
       >
         <input {...getInputProps()} />
-        {isUploading || isPending ? (
+        {isUploading ? (
+          <>
+            {/* <Loader2 className="w-10 h-10 text-slate-400 animate-spin" /> */}
+            <p className="mt-2 text-sm text-slate-500">
+              Uploading your file {progress}%...
+            </p>
+            <Progress value={progress} className="w-full" />
+          </>
+        ) : isLearning ? (
           <>
             <Loader2 className="w-10 h-10 text-slate-400 animate-spin" />
-            <p className="mt-2 text-sm text-slate-500">
-              Spilling Tea to GPT...
-            </p>
+            <p className="mt-2 text-sm text-slate-500">AI is learning...</p>
           </>
         ) : (
           <>

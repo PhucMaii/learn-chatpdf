@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 
-export async function uploadToS3(file: File) {
+export async function uploadToS3(file: File, setProgress: any) {
   try {
     AWS.config.update({
       accessKeyId: process.env.NEXT_PUBLIC_S3_ACCESS_KEY_ID,
@@ -32,6 +32,7 @@ export async function uploadToS3(file: File) {
     const upload = s3
       .putObject(params)
       .on('httpUploadProgress', (evt) => {
+        setProgress(parseInt(((evt.loaded / evt.total) * 100).toString()));
         console.log(
           'uploading to s3...',
           parseInt(((evt.loaded / evt.total) * 100).toString() + '%'),
