@@ -41,6 +41,7 @@ export const pricingTabs = [
     price: 1.99,
     plan: 'week',
     displayPrice: 1.99,
+    displayPlan: 'week',
   },
   {
     title: 'Annually',
@@ -49,13 +50,15 @@ export const pricingTabs = [
     isPopular: true,
     save: ['Save 75% vs weekly 💸', 'Save 33% vs monthly 💸'],
     displayPrice: 2.99,
+    displayPlan: 'month',
   },
   {
     title: 'Monthly',
     price: 4.99,
     plan: 'month',
     save: ['Save up to 55% vs weekly 💸'],
-    displayPrice: 4.99
+    displayPrice: 4.99,
+    displayPlan: 'month',
   },
 ];
 

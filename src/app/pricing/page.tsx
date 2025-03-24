@@ -87,7 +87,7 @@ const Pricing = () => {
                 price={tab.displayPrice}
                 title={tab.title}
                 isPopular={tab.isPopular}
-                plan={tab.plan}
+                plan={tab.displayPlan}
                 save={tab.save}
                 discount={retrievedCode}
                 helperText={`${tab.plan === 'year' ? `$${tab.price}/year` : ''}`}
