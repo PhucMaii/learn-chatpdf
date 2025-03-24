@@ -6,8 +6,10 @@ import { getS3Url } from '@/lib/s3';
 import { withAuthGuard } from '@/utils/guard';
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-import { flashCardPrompt, openai } from '../flash-cards/route';
+import { flashCardPrompt } from '../flash-cards/route';
 import { eq } from 'drizzle-orm';
+import OpenAI from 'openai/index.mjs';
+import fs from 'fs';
 
 // /api/create-chat
 let returnChatId: any;
@@ -35,17 +37,25 @@ const handler = async (req: Request) => {
         insertedId: chats.id,
       });
 
-      returnChatId = chatId[0].insertedId
+    returnChatId = chatId[0].insertedId;
 
-      console.log('Create Chat Successfully');
+    console.log('Create Chat Successfully');
 
     // Create flashCards for this chat
     // console.log(chatId, 'chatId');
-    const res = await createFlashCards(fileKey, chatId[0].insertedId, userId, vectors);
+    const res = await createFlashCards(
+      fileKey,
+      chatId[0].insertedId,
+      userId,
+      vectors,
+    );
 
     // If fail to create flash card, still return chatId
     if (res.error) {
-      return NextResponse.json({ chatId: chatId[0].insertedId }, { status: 200 });
+      return NextResponse.json(
+        { chatId: chatId[0].insertedId },
+        { status: 200 },
+      );
     }
 
     return NextResponse.json({ chatId: chatId[0].insertedId }, { status: 200 });
@@ -75,37 +85,64 @@ export const createFlashCards = async (
                 AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.
                 AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
                 AI assistant is a big fan of Pinecone and Vercel.
-                You are only allowed to answer questions strictly based on the CONTEXT BLOCK provided below.
+                You are only allowed to answer questions strictly based on the CONTEXT BLOCK and the file provided below.
                 If the context does not provide an answer, you must explicitly say: "I'm sorry, but I don't know the answer to that question."
-                You must not use external knowledge outside of the CONTEXT BLOCK.
+                You must not use external knowledge outside of the CONTEXT BLOCK and the file provided below.
                 START CONTEXT BLOCK
                 ${context}
                 END CONTEXT BLOCK
-                AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
+                AI assistant will take into account any CONTEXT BLOCK and the file that is provided in a conversation.
                 If the context does not provide the answer to question, the AI assistant will say, "I'm sorry, but I don't know the answer to that question".
                 AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
                 AI assistant will not invent anything that is not drawn directly from the context.
                 `,
     };
-    const response: any = await openai.createChatCompletion({
+    // const response: any = await openai.createChatCompletion({
+    //   model: 'gpt-4o-mini',
+    //   messages: [
+    //     prompt,
+    //     {
+    //       role: 'user',
+    //       content: flashCardPrompt,
+    //     },
+    //   ],
+    // });
+
+    const client = new OpenAI();
+
+    const file = await client.files.create({
+      file: fs.createReadStream(getS3Url(fileKey)),
+      purpose: 'user_data',
+    });
+
+    const response: any = await client.responses.create({
       model: 'gpt-4o-mini',
-      messages: [
-        prompt,
+      input: [
+        // { role: 'user', content: prompt.content },
         {
           role: 'user',
-          content: flashCardPrompt,
+          content: [
+            {
+              type: 'input_file',
+              file_id: file.id,
+            },
+            {
+              type: 'input_text',
+              text: prompt.content,
+            }
+          ],
         },
       ],
     });
 
-    console.log('pass prompt');
+    console.log('response', response.output_text);
     const completionData = await response.json();
 
     const formattedMessages = JSON.parse(
       completionData.choices[0].message.content,
     );
 
-    console.log('pass json.parse')
+    console.log('pass json.parse');
 
     const newFlashCardsSet = await db
       .insert(flashCardSet)
