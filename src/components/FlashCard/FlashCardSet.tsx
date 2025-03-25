@@ -29,7 +29,7 @@ const FlashCardSet = ({ flashCardSetWithChat, onClick }: Props) => {
           </h6>
           <div className="mt-2">
             <h6 className="text-sm text-gray-600 font-medium">
-              Created with {flashCardSetWithChat.chat.pdfName}
+              Created with {flashCardSetWithChat?.chat?.pdfName}
             </h6>
           </div>
         </div>

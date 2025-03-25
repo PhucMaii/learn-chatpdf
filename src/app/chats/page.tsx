@@ -38,7 +38,7 @@ const Chats = () => {
   useEffect(() => {
     if (debouncedKeywords) {
       const newChats = userChats.baseData.filter((chat: DrizzleChat) => {
-        return chat.pdfName
+        return (chat?.pdfName || '')
           .toLowerCase()
           .includes(debouncedKeywords.toLowerCase());
       });

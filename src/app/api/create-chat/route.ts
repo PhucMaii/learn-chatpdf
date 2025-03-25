@@ -50,20 +50,21 @@ const handler = async (req: Request) => {
         insertedId: chats.id,
       });
 
-      returnChatId = chatId[0].insertedId
+    returnChatId = chatId[0].insertedId
+    console.log({returnChatId, chatId}, 'returnChatId');
 
       // console.log('Create Chat Successfully');
 
     // Create flashCards for this chat
     // console.log(chatId, 'chatId');
-    const res = await createFlashCards(fileKey || url, chatId[0].insertedId, userId, vectors);
+    const res = await createFlashCards(fileKey || url, returnChatId, userId, vectors);
 
     // If fail to create flash card, still return chatId
     if (res.error) {
-      return NextResponse.json({ chatId: chatId[0].insertedId }, { status: 200 });
+      return NextResponse.json({ chatId: returnChatId }, { status: 200 });
     }
 
-    return NextResponse.json({ chatId: chatId[0].insertedId }, { status: 200 });
+    return NextResponse.json({ chatId: returnChatId }, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error, chatId: returnChatId }, { status: 500 });
@@ -129,6 +130,7 @@ export const createFlashCards = async (
         chatId: chatId,
         createdAt: new Date(),
         userId: userId,
+        // isKnown: false,
       })
       .returning();
 
@@ -157,8 +159,8 @@ export const createFlashCards = async (
 
     return formattedMessages;
   } catch (error: any) {
-    console.log(error);
-    return { error: error.message };
+    console.log('Fail to generate flash cards', error);
+    return { error: error.message, chatId: chatId };
   }
 };
 

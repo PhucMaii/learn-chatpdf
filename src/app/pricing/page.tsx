@@ -84,10 +84,12 @@ const Pricing = () => {
             {pricingTabs.map((tab, index) => (
               <PricingCard
                 key={index}
-                price={tab.displayPrice}
+                price={tab.price}
+                displayPrice={tab.displayPrice}
+                displayPlan={tab.displayPlan}
                 title={tab.title}
                 isPopular={tab.isPopular}
-                plan={tab.displayPlan}
+                plan={tab.plan}
                 save={tab.save}
                 discount={retrievedCode}
                 helperText={`${tab.plan === 'year' ? `$${tab.price}/year` : ''}`}

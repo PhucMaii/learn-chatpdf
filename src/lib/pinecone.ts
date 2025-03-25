@@ -25,12 +25,12 @@ export const getPineconeClient = async () => {
   return pinecone;
 };
 
-type PDFPage = {
-  pageContent: string;
-  metadata: {
-    loc: { pageNumber: number };
-  };
-};
+// type PDFPage = {
+//   pageContent: string;
+//   metadata: {
+//     loc: { pageNumber: number };
+//   };
+// };
 export async function loadS3IntoPinecone(
   input: string,
   type: 'fileKey' | 'url' = 'fileKey',
@@ -161,25 +161,25 @@ export const truncateStringByBytes = (str: string, bytes: number) => {
   return new TextDecoder('utf-8').decode(enc.encode(str).slice(0, bytes));
 };
 
-async function prepareDocument(page: PDFPage) {
-  // eslint-disable-next-line prefer-const
-  let { pageContent, metadata } = page;
-  pageContent = pageContent.replace(/\n/g, ' ');
+// async function prepareDocument(page: PDFPage) {
+//   // eslint-disable-next-line prefer-const
+//   let { pageContent, metadata } = page;
+//   pageContent = pageContent.replace(/\n/g, ' ');
 
-  // split the docs
-  const splitter = new RecursiveCharacterTextSplitter();
-  const docs = await splitter.splitDocuments([
-    new Document({
-      pageContent,
-      metadata: {
-        pageNumber: metadata.loc.pageNumber,
-        text: truncateStringByBytes(pageContent, 36000),
-      },
-    }),
-  ]);
+//   // split the docs
+//   const splitter = new RecursiveCharacterTextSplitter();
+//   const docs = await splitter.splitDocuments([
+//     new Document({
+//       pageContent,
+//       metadata: {
+//         pageNumber: metadata.loc.pageNumber,
+//         text: truncateStringByBytes(pageContent, 36000),
+//       },
+//     }),
+//   ]);
 
-  return docs;
-}
+//   return docs;
+// }
 
 async function chunkedUpsert(
   pineconeIndex: any,

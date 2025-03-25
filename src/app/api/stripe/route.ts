@@ -51,12 +51,12 @@ const handler = async (req: Request) => {
       line_items: [
         {
           price_data: {
-            currency: 'USD',
+            currency: 'CAD',
             product_data: {
               name: 'ChatPDF Pro',
               description: 'Unlimited PDF Sessions',
             },
-            unit_amount: plan === 'year' ? 7999 : price * 100,
+            unit_amount: plan === 'year' ? 3899 : price * 100,
             recurring: {
               interval: plan,
             },

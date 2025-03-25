@@ -14,20 +14,22 @@ type Props = {
   save?: string[];
   discount?: DrizzleDiscountCode;
   helperText?: string;
+  displayPlan: string;
+  displayPrice: number;
 };
 
-const PricingCard = ({ price, title, isPopular, plan, save, discount, helperText }: Props) => {
+const PricingCard = ({ price, title, isPopular, plan, save, discount, helperText, displayPlan, displayPrice }: Props) => {
   const finalPrice = useMemo(() => {
     if (!discount) {
-      return price;
+      return displayPrice;
     }
 
     if (discount.type === 'percent') {
-      return (price - (price * (discount.value / 100)))?.toFixed(2);
+      return (displayPrice - (displayPrice * (discount.value / 100)))?.toFixed(2);
     }
 
-    return (price - discount.value)?.toFixed(2);
-  }, [price, discount]);
+    return (displayPrice - discount.value)?.toFixed(2);
+  }, [displayPrice, discount]);
 
 
   return (
@@ -41,13 +43,13 @@ const PricingCard = ({ price, title, isPopular, plan, save, discount, helperText
           {title}
         </h1>
         {
-          finalPrice !== price && (
+          finalPrice !== displayPrice && (
             <div className="bg-red-600 px-4 py-1 rounded-full">
               <h1 className="text-xl font-bold text-white">🔥 90% OFF 💰</h1>
             </div>
           )
         }
-        {isPopular && finalPrice === price && (
+        {isPopular && finalPrice === displayPrice && (
           <div className="w-auto bg-blue-500 px-4 py-1 rounded-full">
             <h1 className="text-sm font-bold text-white">Popular</h1>
           </div>
@@ -56,9 +58,9 @@ const PricingCard = ({ price, title, isPopular, plan, save, discount, helperText
 
         
       <div className="flex items-end justify-start mt-12">
-        {finalPrice !== price && <h1 className="text-2xl text-gray-300 line-through">${price}</h1>}
+        {finalPrice !== displayPrice && <h1 className="text-2xl text-gray-300 line-through">${finalPrice}</h1>}
         <h1 className="text-5xl font-bold">${finalPrice}</h1>
-        <h6 className="text-xl font-semibold text-gray-400">/{plan}</h6>
+        <h6 className="text-xl font-semibold text-gray-400">/{displayPlan}</h6>
       </div>
 
       {
