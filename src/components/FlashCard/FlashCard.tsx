@@ -32,7 +32,7 @@ const FlashCard = ({
   learningCards,
   knownCards,
   isEdit,
-  isInChat,
+  // isInChat,
 }: Props) => {
   const [card, setCard] = useState<any>(flashCard);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -110,8 +110,8 @@ const FlashCard = ({
   return (
     <div
       className={cn(
-        `relative 2xl:w-[800px] w-[400px] h-[800px] flex flex-col items-center justify-center`,
-        { '2xl:w-[700px] w-[400px] h-[600px]': isInChat },
+        `relative 2xl:w-[1200px] xl:w-[900px] lg:w-[700px] md:w-[600px] w-[400px] h-[800px] flex flex-col items-center justify-center`,
+        // { '2xl:w-[700px] w-[400px] h-[600px]': isInChat },
       )}
     >
       {!progress && (
@@ -170,8 +170,8 @@ const FlashCard = ({
       )}
       <div
         className={cn(
-          `relative flipper-container flex flex-col justify-center items-center 2xl:w-[800px] w-[400px] h-[800px] ${className}`,
-          { '2xl:w-[700px] w-[400px] h-[600px]': isInChat },
+          `relative flipper-container flex flex-col justify-center items-center 2xl:w-[1200px] xl:w-[900px] lg:w-[700px] md:w-[600px] w-[400px] h-[800px] ${className}`,
+          // { '2xl:w-[700px] w-[400px] h-[600px]': isInChat },
         )}
       >
         {progress && (

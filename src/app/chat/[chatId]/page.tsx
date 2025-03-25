@@ -1,6 +1,6 @@
 'use client';
 import ChatSidebar from '@/components/ChatSidebar';
-import PDFViewer from '@/components/PDFViewer';
+// import PDFViewer from '@/components/PDFViewer';
 import { DrizzleChat } from '@/lib/db/schema';
 import { checkSubscription } from '@/lib/subscription';
 import React, { useEffect, useState } from 'react';
@@ -14,6 +14,8 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { TableOfContents } from 'lucide-react';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+// import FilePreview from '@/components/FilePreview';
+// import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 
 type Props = {
   params: {
@@ -22,6 +24,7 @@ type Props = {
 };
 
 const Chat = ({ params: { chatId } }: Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [chat, setChat] = useState<DrizzleChat | null>(null);
   const [flashCards, setFlashCards] = useState<DrizzleFlashCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -51,11 +54,11 @@ const Chat = ({ params: { chatId } }: Props) => {
         console.log(error);
         toast.error('Something went wrong in fetching user chats');
       }
-    }
+    };
 
     fetchUserChats();
 
-    const checkScreenSize = () => setIsSmDown(window.innerWidth <  1024);
+    const checkScreenSize = () => setIsSmDown(window.innerWidth < 1024);
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
@@ -194,9 +197,12 @@ const Chat = ({ params: { chatId } }: Props) => {
                 />
               </div>
               {/* pdf viewer */}
-              <div className="max-h-screen p-4 overflow-scroll flex-1 md:flex-2">
+              {/* <div className="max-h-screen p-4 overflow-scroll flex-1 md:flex-2">
                 <PDFViewer pdfUrl={chat?.pdfUrl || ''} />
-              </div>
+                {/* <DocViewer documents={[{ uri: chat?.pdfUrl || '' }]} pluginRenderers={DocViewerRenderers} />; */}
+                {/* <FilePreview fileUrl={chat?.pdfUrl || ''} /> */}
+                {/* <LinkPreview url='https://www.youtube.com/watch?v=dQw4w9WgXcQ' width="400px" /> */}
+              {/* </div> */}
             </>
           )}
         </div>

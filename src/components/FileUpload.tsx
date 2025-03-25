@@ -44,6 +44,7 @@ const FileUpload = () => {
         ['.pptx'],
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
         ['.docx'],
+      'text/plain': ['.txt'],
     },
     maxFiles: 1,
     onDrop: async (acceptedFiles) => {
@@ -141,7 +142,7 @@ const FileUpload = () => {
           <>
             <Inbox className="w-10 h-10 text-slate-400" />
             <p className="mt-2 text-sm text-center text-slate-500">
-              Drop your file in .pptx, .docx or .pdf here
+              Drop your file in .pptx, .docx, .txt or .pdf here
             </p>
           </>
         )}
@@ -167,7 +168,7 @@ const FileUpload = () => {
           className="text-white"
         >
           {isUploadingLink ? (
-            <Loader2 className="w-10 h-10 text-slate-400 animate-spin" />
+            'AI is learning...'
           ) : (
             'Submit'
           )}
