@@ -4,22 +4,22 @@ import { getEmbeddings } from './embedding';
 
 export async function getMatchesFromEmbeddings(
   embeddings: number[],
-  fileKey: string,
+  input: string,
 ) {
   const pinecone = await getPineconeClient();
 
   const index: any = pinecone.Index('learn-chatpdf');
 
   try {
-    const namespace = convertToAscii(fileKey);
-    console.log(namespace, 'namespace');
+    const namespace = convertToAscii(input);
+    // console.log(namespace, 'namespace');
     const queryResult = await index.namespace(namespace).query({
       topK: 10,
       vector: embeddings,
       includeMetadata: true,
     });
 
-    console.log({ queryResult, fileKey, embeddings });
+    // console.log({ queryResult, fileKey, embeddings });
 
     return queryResult.matches || [];
   } catch (error) {
@@ -29,28 +29,32 @@ export async function getMatchesFromEmbeddings(
 
 export async function getContext(
   query: string,
-  fileKey: string,
+  input: string,
   vectors: any = null,
 ) {
-  console.log(vectors, 'VECTORS');
+  // console.log(vectors, 'VECTORS');
   const queryEmbeddings = await getEmbeddings(query);
-  console.log(queryEmbeddings, 'queryEmbeddings');
+  // console.log(queryEmbeddings, 'queryEmbeddings');
   let matches;
 
   if (vectors) {
+    // matches = [{
+    //   ...vector,
+    //   score: similarity,
+    // }]
     matches = vectors.map((vectorData: any) => {
       const similarity = cosineSimilarity(queryEmbeddings, vectorData.values);
+
       return {
         ...vectorData,
         score: similarity,
       };
     });
   } else {
-    matches = await getMatchesFromEmbeddings(queryEmbeddings, fileKey);
+    matches = await getMatchesFromEmbeddings(queryEmbeddings, input);
   }
 
-
-  console.log({ matches, queryEmbeddings });
+  // console.log({ matches, queryEmbeddings });
 
   const qualifyingDocs = matches.filter(
     (match: any) => match.score && match.score > 0.5,
@@ -65,12 +69,11 @@ export async function getContext(
     return (match.metadata as Metadata).text;
   });
 
-  console.log({ docs, qualifyingDocs });
+  // console.log({ docs, qualifyingDocs });
 
   // 5 vectors
   return docs.join('\n').substring(0, 3000);
 }
-
 
 function cosineSimilarity(vec1: number[], vec2: number[]): number {
   const dotProduct = vec1.reduce((acc, val, idx) => acc + val * vec2[idx], 0);

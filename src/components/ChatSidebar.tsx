@@ -61,7 +61,7 @@ export default function ChatSidebar({ chats, chatId, subscription }: Props) {
                     >
                       <MessageCircleMoreIcon className="w-6 h-6" />
                       <p className="w-full overflow-hidden text-md truncate whitespace-nowrap text-ellipsis">
-                        {chat.pdfName}
+                        {chat?.pdfName || chat?.webUrl}
                       </p>
                     </div>
                   </Link>

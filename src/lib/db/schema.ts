@@ -27,8 +27,9 @@ export type DrizzleUser = typeof users.$inferSelect;
 
 export const chats = pgTable('chats', {
   id: serial('id').primaryKey(),
-  pdfName: text('pdf_name').notNull(),
-  pdfUrl: text('pdf_url').notNull(),
+  pdfName: text('pdf_name'),
+  pdfUrl: text('pdf_url'),
+  webUrl: text('web_url'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   userId: varchar('user_id', { length: 256 }).notNull(),
   fileKey: text('file_key').notNull(),

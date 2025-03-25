@@ -50,6 +50,7 @@
     "moment": "^2.30.1",
     "next": "14.2.14",
     "nodemailer": "^6.9.16",
+    "office-text-extractor": "^3.0.3",
     "openai-edge": "^1.2.2",
     "pdfjs-dist": "^4.7.76",
     "prettier": "^3.3.3",

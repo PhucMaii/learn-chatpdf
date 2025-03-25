@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { FileTextIcon, Loader2, Trash2Icon } from 'lucide-react';
+import { FileTextIcon, Link, Loader2, Trash2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DrizzleChat } from '@/lib/db/schema';
 import { useRouter } from 'next/navigation';
@@ -85,10 +85,10 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
               className="hover:bg-gray-100 cursor-pointer"
             >
               <TableCell>
-                <FileTextIcon />
+                {chat?.webUrl ? <Link /> : <FileTextIcon />}
               </TableCell>
               <TableCell className="font-semibold text-md">
-                {chat?.pdfName}
+                {chat?.pdfName || chat?.webUrl || chat?.fileKey}
               </TableCell>
               <TableCell className="font-medium text-md">
                 {moment(new Date(chat?.createdAt)).calendar()}

@@ -20,28 +20,43 @@ const handler = async (req: Request) => {
 
   try {
     const body = await req.json();
-    const { fileKey, fileName } = body;
+    const { fileKey, fileName, url } = body;
 
-    const vectors = await loadS3IntoPinecone(fileKey);
+    let vectors = [];
+    // const vectors = await loadS3IntoPinecone(fileKey);
+    if (fileKey) {
+      vectors = await loadS3IntoPinecone(fileKey, 'fileKey');
+    } else if (url) {
+      vectors = await loadS3IntoPinecone(url, 'url');
+    }
+
+    const newChat: any = {
+      userId: userId,
+    }
+
+    if (fileKey) {
+      newChat.fileKey = fileKey;
+      newChat.pdfName = fileName;
+      newChat.pdUrl = getS3Url(fileKey);
+    } else if (url) {
+      newChat.webUrl = url;
+      newChat.fileKey = url;
+    }
+
     const chatId = await db
       .insert(chats)
-      .values({
-        fileKey,
-        pdfName: fileName,
-        pdfUrl: getS3Url(fileKey),
-        userId,
-      })
+      .values(newChat)
       .returning({
         insertedId: chats.id,
       });
 
       returnChatId = chatId[0].insertedId
 
-      console.log('Create Chat Successfully');
+      // console.log('Create Chat Successfully');
 
     // Create flashCards for this chat
     // console.log(chatId, 'chatId');
-    const res = await createFlashCards(fileKey, chatId[0].insertedId, userId, vectors);
+    const res = await createFlashCards(fileKey || url, chatId[0].insertedId, userId, vectors);
 
     // If fail to create flash card, still return chatId
     if (res.error) {
@@ -58,14 +73,14 @@ const handler = async (req: Request) => {
 export const POST = withAuthGuard(handler);
 
 export const createFlashCards = async (
-  fileKey: string,
+  input: string,
   chatId: number,
   userId: string,
   vectors: any = null,
 ) => {
   try {
-    const context = await getContext(flashCardPrompt, fileKey, vectors);
-    console.log(context, 'context');
+    const context = await getContext(flashCardPrompt, input, vectors);
+    // console.log(context, 'context');
 
     const prompt: any = {
       role: 'system',
@@ -98,14 +113,14 @@ export const createFlashCards = async (
       ],
     });
 
-    console.log('pass prompt');
+    // console.log('pass prompt');
     const completionData = await response.json();
 
     const formattedMessages = JSON.parse(
       completionData.choices[0].message.content,
     );
 
-    console.log('pass json.parse')
+    // console.log('pass json.parse')
 
     const newFlashCardsSet = await db
       .insert(flashCardSet)
@@ -117,7 +132,7 @@ export const createFlashCards = async (
       })
       .returning();
 
-    console.log('pass insert');
+    // console.log('pass insert');
 
     const flashCardList = formattedMessages.flashcards.map((question: any) => {
       return {
@@ -131,7 +146,7 @@ export const createFlashCards = async (
       };
     });
 
-    console.log('pass map');
+    // console.log('pass map');
 
     // Save Flash Card into db
     await db.insert(flashCard).values(flashCardList);
