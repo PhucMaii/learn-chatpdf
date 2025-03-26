@@ -4,5 +4,11 @@
       "path": "/api/crons/update-plan",
       "schedule": "5 * * * *"
     }
-  ]
+  ],
+  "functions": {
+    "pages/api/**/*": {
+      "maxDuration": 300,
+      "memory": 3008
+    }
+  }
 }

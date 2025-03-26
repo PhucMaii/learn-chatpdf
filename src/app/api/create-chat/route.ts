@@ -22,12 +22,12 @@ const handler = async (req: Request) => {
     const body = await req.json();
     const { fileKey, fileName, url } = body;
 
-    let vectors = [];
+    // let vectors = [];
     // const vectors = await loadS3IntoPinecone(fileKey);
     if (fileKey) {
-      vectors = await loadS3IntoPinecone(fileKey, 'fileKey');
+      await loadS3IntoPinecone(fileKey, 'fileKey');
     } else if (url) {
-      vectors = await loadS3IntoPinecone(url, 'url');
+      await loadS3IntoPinecone(url, 'url');
     }
 
     const newChat: any = {
@@ -59,12 +59,13 @@ const handler = async (req: Request) => {
 
     // Create flashCards for this chat
     // console.log(chatId, 'chatId');
-    const res = await createFlashCards(fileKey || url, returnChatId, userId, vectors);
+    // const res = await createFlashCards(fileKey || url, returnChatId, userId, vectors);
 
+    // console.log(res, 'res');
     // If fail to create flash card, still return chatId
-    if (res.error) {
-      return NextResponse.json({ chatId: returnChatId }, { status: 200 });
-    }
+    // if (res.error) {
+    //   return NextResponse.json({ chatId: returnChatId }, { status: 200 });
+    // }
 
     return NextResponse.json({ chatId: returnChatId }, { status: 200 });
   } catch (error) {

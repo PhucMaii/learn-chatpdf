@@ -46,7 +46,7 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
     <div className="w-full h-full">
       <div className="sticky top-0 inset-x-0 p-2 bg-white h-fit flex justify-between">
         <h3 className="text-xl font-bold">Flash Cards</h3>
-        {flashCardData.length === 0 && (
+        {!flashCardData || flashCardData?.length === 0 && (
           <Button
             onClick={generateFlashCards}
             className="bg-white text-emerald-500 border-dashed border-2 border-emerald-500 hover:bg-emerald-500 hover:text-white flex gap-2"
@@ -66,11 +66,11 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
         <div className="flex justify-center items-center h-full w-full">
           <LoadingComponent />
         </div>
-      ) : flashCardData.length === 0 ? (
+      ) : flashCardData?.length === 0 ? (
         <ErrorComponent errorText="No flash cards found" />
       ) : (
         <div className="mt-8">
-          {flashCardData.length > 0 && (
+          {flashCardData?.length > 0 && (
             <FlashCardTrack flashCards={flashCardData} isInChat />
           )}
         </div>
