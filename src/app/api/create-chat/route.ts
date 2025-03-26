@@ -43,6 +43,8 @@ const handler = async (req: Request) => {
       newChat.fileKey = url;
     }
 
+    console.log(newChat, 'newChat');
+
     const chatId = await db
       .insert(chats)
       .values(newChat)

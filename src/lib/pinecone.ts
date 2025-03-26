@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pinecone } from '@pinecone-database/pinecone';
 import { downloadFromS3 } from './s3-server';
-import { Document, RecursiveCharacterTextSplitter } from '@pinecone-database/doc-splitter';
+import {
+  Document,
+  RecursiveCharacterTextSplitter,
+} from '@pinecone-database/doc-splitter';
 import { getEmbeddings } from './embedding';
 import md5 from 'md5';
 import { convertToAscii } from './utils';
@@ -35,40 +38,41 @@ export async function loadS3IntoPinecone(
   input: string,
   type: 'fileKey' | 'url' = 'fileKey',
 ) {
-  // 1. Obtain the pdf -> download and read from pdf
+  try {
+    // 1. Obtain the pdf -> download and read from pdf
 
-  // console.log('downloading s3 into file system');
-  const extractor = getTextExtractor();
-  let text = '';
-  if (type === 'fileKey') {
-    const fileName = await downloadFromS3(input);
-    console.log(fileName);
-    if (!fileName) {
-      throw new Error('Failed to download file');
+    // console.log('downloading s3 into file system');
+    const extractor = getTextExtractor();
+    let text = '';
+    if (type === 'fileKey') {
+      const fileName = await downloadFromS3(input);
+      console.log(fileName);
+      if (!fileName) {
+        throw new Error('Failed to download file');
+      }
+
+      const buffer = await readFile(fileName);
+      text = await extractor.extractText({ input: buffer, type: 'buffer' });
+    } else if (type === 'url') {
+      text = await extractor.extractText({ input: input, type: 'url' });
     }
-  
-    const buffer = await readFile(fileName);
-    text = await extractor.extractText({ input: buffer, type: 'buffer' });
-  } else if (type === 'url') {
-    text = await extractor.extractText({ input: input, type: 'url' });
-  }
-  console.log('text', text);
+    console.log('text', text);
 
-  // const loader = new PDFLoader(fileName);
-  // const pages = (await loader.load()) as PDFPage[];
+    // const loader = new PDFLoader(fileName);
+    // const pages = (await loader.load()) as PDFPage[];
 
-  // if (pages.length === 0) {
-  //   throw new Error(
-  //     'The file is empty, invalid or corrupted. Please upload a Standard PDF file.',
-  //   );
-  // }
+    // if (pages.length === 0) {
+    //   throw new Error(
+    //     'The file is empty, invalid or corrupted. Please upload a Standard PDF file.',
+    //   );
+    // }
     // 2. Split text into manageable chunks
     const maxChunkSize = 8192; // Adjust based on model's limit
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: maxChunkSize,
       chunkOverlap: 200, // Maintains context across chunks
     });
-  
+
     const documents = await splitter.splitDocuments([
       new Document({
         pageContent: text,
@@ -78,22 +82,26 @@ export async function loadS3IntoPinecone(
         },
       }),
     ]);
-  
+
     console.log(`Split into ${documents.length} chunks`);
-  
+
     // 3. Embed each document chunk
     const vectors: any[] = await Promise.all(documents.map(embedDocuments));
-  
+
     // 4. Upload to Pinecone
     const client = await getPineconeClient();
     const pineconeIndex = client.Index('learn-chatpdf');
-  
+
     const namespace = convertToAscii(input);
-  
+
     await chunkedUpsert(pineconeIndex, vectors, namespace, 10);
-  
+
     console.log('Upsert successful');
     return vectors;
+  } catch (error: any) {
+    console.log('Fail to upload file to pinecone ', error);
+    return error;
+  }
 
   // // 2. Split and segment the pdf
   // const documents = await Promise.all(
