@@ -22,6 +22,7 @@ Your task is to generate **up to 20** high-quality flashcards in JSON format bas
 - Each flashcard must be **strictly derived** from the document.
 - If the content is insufficient, limit the number of flashcards accordingly.
 - Ensure that the JSON output follows **exactly** the structure provided below.
+- Ensure no html or website technology tags are included if present. If the input is a URL, ignore any HTML tags present in the content of the page when generating flashcards, but focus on the content itself or children inside the tags.
 - **Do not include explanations or extra information outside of this JSON format.** 
 
 ### **JSON Format (Example Output)**
