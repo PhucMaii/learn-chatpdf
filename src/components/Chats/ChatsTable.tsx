@@ -60,101 +60,64 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
   };
 
   return (
-    <Table className="mt-4">
-      <TableCaption>A list of your chats with your PDFs.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[50px]">Type</TableHead>
-          <TableHead>File Name</TableHead>
-          <TableHead>Created at</TableHead>
-          <TableHead>Last opened</TableHead>
-          <TableHead></TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {userChats &&
-          userChats.length > 0 &&
-          userChats.map((chat: DrizzleChat) => (
-            <TableRow
-              key={chat?.id}
-              onClick={() =>
-                router.push(
-                  `${subscription?.isPro || subscription?.isTrial ? `/chat/${chat.id}` : '/pricing'}`,
-                )
-              }
-              className="hover:bg-gray-100 cursor-pointer"
-            >
-              <TableCell>
-                {chat?.webUrl ? <Link /> : <FileTextIcon />}
-              </TableCell>
-              <TableCell className="font-semibold text-md">
-                {chat?.pdfName || chat?.webUrl || chat?.fileKey}
-              </TableCell>
-              <TableCell className="font-medium text-md">
-                {moment(new Date(chat?.createdAt)).calendar()}
-              </TableCell>
-              <TableCell className="font-medium text-md">
-                {moment(
-                  new Date(chat?.lastOpenedAt || chat.createdAt),
-                ).fromNow()}
-              </TableCell>
-              <TableCell>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(e) => handleDeleteChat(e, chat)}
-                  className="h-8 w-8 p-0 hover:bg-red-200 hover:text-red-500 active:scale-98 transition-all duration-300"
-                >
-                  {deleting.isDeleting && deleting.id === chat.id ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Trash2Icon className="w-4 h-4 text-gray-500" />
-                  )}
-                </Button>
-                {/* <div className="relative"> */}
-                {/* <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <Button
-                        variant="ghost"
-                        className="h-8 w-8 p-0 hover:bg-gray-200"
-                      >
-                      <>
-                        <span className="sr-only">Open menu</span>
-                        <MoreVerticalIcon className="h-4 w-4" />
-                      </>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="end"
-                      className="bg-white z-50"
-                      // style={{ position: 'absolute', }}
-                    >
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem
-                        onClick={(e) => handleDeleteChat(e, chat)}
-                        className="text-red-600"
-                        disabled={!subscription?.isPro}
-                      >
-                        {isDeleting ? 'Deleting...' : 'Remove chat'}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() =>
-                          router.push(
-                            `${subscription?.isPro || subscription?.isTrial ? `/chat/${chat.id}` : '/pricing'}`,
-                          )
-                        }
-                      >
-                        Go to chat
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu> */}
-                {/* </div> */}
-              </TableCell>
-            </TableRow>
-          ))}
-      </TableBody>
-    </Table>
+    <div className="w-full overflow-x-auto">
+      <Table className="mt-4">
+        <TableCaption>A list of your chats with your PDFs.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Type</TableHead>
+            <TableHead>File Name</TableHead>
+            <TableHead>Created at</TableHead>
+            <TableHead>Last opened</TableHead>
+            <TableHead></TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {userChats &&
+            userChats.length > 0 &&
+            userChats.map((chat: DrizzleChat) => (
+              <TableRow
+                key={chat?.id}
+                onClick={() =>
+                  router.push(
+                    `${subscription?.isPro || subscription?.isTrial ? `/chat/${chat.id}` : '/pricing'}`,
+                  )
+                }
+                className="hover:bg-gray-100 cursor-pointer"
+              >
+                <TableCell>
+                  {chat?.webUrl ? <Link /> : <FileTextIcon />}
+                </TableCell>
+                <TableCell className="max-w-[200px] truncate font-semibold text-md">
+                  {chat?.pdfName || chat?.webUrl || chat?.fileKey}
+                </TableCell>
+                <TableCell className="font-medium text-md">
+                  {moment(new Date(chat?.createdAt)).calendar()}
+                </TableCell>
+                <TableCell className="font-medium text-md">
+                  {moment(
+                    new Date(chat?.lastOpenedAt || chat.createdAt),
+                  ).fromNow()}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => handleDeleteChat(e, chat)}
+                    className="h-8 w-8 p-0 hover:bg-red-200 hover:text-red-500 active:scale-98 transition-all duration-300"
+                  >
+                    {deleting.isDeleting && deleting.id === chat.id ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Trash2Icon className="w-4 h-4 text-gray-500" />
+                    )}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 

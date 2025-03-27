@@ -43,14 +43,14 @@ const SidebarWrapper = ({ children }: Props) => {
 
   return (
     <div className="flex flex-col md:flex-row">
-      <div className="flex-1 max-w-[300px] p-4">
+      <div className="w-full md:w-[300px] p-4 shrink-0">
         <AppSidebar />
       </div>
-      <div className="flex-8 w-full flex flex-col gap-4">
+      <div className="flex-1 flex flex-col gap-4">
         {!subscription?.isPro && (
           <SubscriptionBanner text={subscriptionStatus.text} />
         )}
-        <div className="p-1">{children}</div>
+        <div className="flex flex-col p-1">{children}</div>
       </div>
     </div>
   );

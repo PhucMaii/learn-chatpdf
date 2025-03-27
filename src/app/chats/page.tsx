@@ -8,10 +8,10 @@ import toast from 'react-hot-toast';
 import Link from 'next/link';
 import axios from 'axios';
 import { API_URL } from '@/lib/type';
-import LoadingComponent from '@/components/LoadingComponent';
 import useDebounce from '../../../hooks/useDebounce';
 import ChatsTable from '@/components/Chats/ChatsTable';
 import { checkSubscription } from '@/lib/subscription';
+import LoadingComponent from '@/components/LoadingComponent';
 
 const Chats = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -81,7 +81,7 @@ const Chats = () => {
       </h6>
 
       {/* Search bar */}
-      <div className="flex gap-2 w-full mt-6 rounded-lg">
+      <div className="flex gap-2 mt-6 rounded-lg">
         <Input
           placeholder="Search chats..."
           value={searchKeywords}
@@ -90,10 +90,15 @@ const Chats = () => {
         />
         {subscription?.isPro || subscription?.isAbleToAddMoreChats ? (
           <Link href="/create-chat">
-            <Button className="bg-black text-white font-semibold transition-all duration-300 active:scale-90">+ New Chat</Button>
+            <Button className="bg-black text-white font-semibold transition-all duration-300 active:scale-90">
+              + New Chat
+            </Button>
           </Link>
         ) : (
-          <Button disabled className="bg-[#1E1E1E] text-white cursor-not-allowed">
+          <Button
+            disabled
+            className="bg-[#1E1E1E] text-white cursor-not-allowed"
+          >
             + New Chat
           </Button>
         )}
