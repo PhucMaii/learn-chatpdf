@@ -38,8 +38,10 @@ export async function getContext(
   let matches;
 
   if (vectors) {
+    console.log({queryEmbeddings, vectors}, 'vectors');
+    // const similarity = cosineSimilarity(queryEmbeddings, vectors.values);
     // matches = [{
-    //   ...vector,
+    //   ...vectors,
     //   score: similarity,
     // }]
     matches = vectors.map((vectorData: any) => {
