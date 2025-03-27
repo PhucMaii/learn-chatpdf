@@ -30,6 +30,7 @@ export const chats = pgTable('chats', {
   pdfName: text('pdf_name'),
   pdfUrl: text('pdf_url'),
   webUrl: text('web_url'),
+  fileType: text('file_type'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   userId: varchar('user_id', { length: 256 }).notNull(),
   fileKey: text('file_key').notNull(),

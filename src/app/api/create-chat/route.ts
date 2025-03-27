@@ -38,9 +38,11 @@ const handler = async (req: Request) => {
       newChat.fileKey = fileKey;
       newChat.pdfName = fileName;
       newChat.pdUrl = getS3Url(fileKey);
+      newChat.fileType = fileName.split('.').pop();
     } else if (url) {
       newChat.webUrl = url;
       newChat.fileKey = url;
+      newChat.fileType = 'url';
     }
 
     console.log(newChat, 'newChat');
@@ -59,9 +61,13 @@ const handler = async (req: Request) => {
 
     // Create flashCards for this chat
     // console.log(chatId, 'chatId');
+    new Response('data: generating flashcards\n\n', {
+      headers: { 'Content-Type': 'text/event-stream' }
+    });
+    
     const res = await createFlashCards(fileKey || url, returnChatId, userId, vectors);
 
-    console.log(res, 'res');
+    // console.log(res, 'res');
     // If fail to create flash card, still return chatId
     if (res.error) {
       return NextResponse.json({ chatId: returnChatId }, { status: 200 });
@@ -125,6 +131,12 @@ export const createFlashCards = async (
     );
 
     // console.log('pass json.parse')
+    
+    // Use card title for chat title
+    await db
+      .update(chats)
+      .set({ title: formattedMessages.title })
+      .where(eq(chats.id, chatId));
 
     const newFlashCardsSet = await db
       .insert(flashCardSet)

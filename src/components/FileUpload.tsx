@@ -1,11 +1,10 @@
 'use client';
 
 import { uploadToS3 } from '@/lib/s3';
-import { useMutation } from '@tanstack/react-query';
+// import { useMutation } from '@tanstack/react-query';
 import { Inbox, Loader2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { Progress } from './ui/progress';
@@ -21,21 +20,21 @@ const FileUpload = () => {
   const [progress, setProgress] = useState<number>(0);
   const [url, setUrl] = useState<string>('');
 
-  const { mutate } = useMutation({
-    mutationFn: async ({
-      fileKey,
-      fileName,
-    }: {
-      fileKey: string;
-      fileName: string;
-    }) => {
-      const response = await axios.post('/api/create-chat', {
-        fileKey,
-        fileName,
-      });
-      return response.data;
-    },
-  });
+  // const { mutate } = useMutation({
+  //   mutationFn: async ({
+  //     fileKey,
+  //     fileName,
+  //   }: {
+  //     fileKey: string;
+  //     fileName: string;
+  //   }) => {
+  //     const response = await axios.post('/api/create-chat', {
+  //       fileKey,
+  //       fileName,
+  //     });
+  //     return response.data;
+  //   },
+  // });
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -68,19 +67,54 @@ const FileUpload = () => {
           );
           return;
         }
-        mutate(data, {
-          onSuccess: ({ chatId }) => {
-            toast.success('Chat Created');
+
+        const eventSource = new EventSource(
+          `/api/create-chat-stream?fileKey=${data.fileKey}&fileName=${data.fileName}`,
+        );
+
+        eventSource.onmessage = (event) => {
+          const { stage, chatId } = JSON.parse(event.data);
+          console.log('[SSE]', stage);
+
+          if (stage === 'done' && chatId) {
             router.push(`/chat/${chatId}`);
-          },
-          onError: (error: any) => {
-            toast.error(
-              'Oops! We encountered an error, but your chat has been created.',
-            );
-            router.push(`/chat/${error.chatId}`);
-            console.log(error);
-          },
-        });
+            toast.success('Chat created!', { id: 'upload-progress' });
+          } else {
+            toast.loading(stage, { id: 'upload-progress' });
+          }
+        };
+
+        eventSource.onerror = (err) => {
+          console.error('SSE error:', err);
+          eventSource.close();
+        };
+
+        // mutate(data, {
+        //   onSuccess: ({ chatId }) => {
+        //     toast.success('Chat Created');
+        //     router.push(`/chat/${chatId}`);
+        //   },
+        //   onError: (error: any) => {
+        //     toast.error(
+        //       'Oops! We encountered an error, but your chat has been created.',
+        //     );
+        //     router.push(`/chat/${error.chatId}`);
+        //     console.log(error);
+        //   },
+        //   // onSettled: () => {
+        //   //   // Listen to the events sending from backend
+        //   //   const eventSource = new EventSource('/api/stream');
+        //   //   eventSource.onmessage = (event) => {
+        //   //     console.log(event.data);
+        //   //   };
+        //   //   eventSource.onopen = () => {
+        //   //     console.log('Connected to the stream');
+        //   //   };
+        //   //   eventSource.onerror = () => {
+        //   //     console.log('Error connecting to the stream');
+        //   //   };
+        //   // },
+        // });
         setIsUploading(false);
         setIsLearning(false);
       } catch (error) {
@@ -93,23 +127,37 @@ const FileUpload = () => {
 
   const uploadLink = async () => {
     setIsUploadingLink(true);
+    setIsUploading(true);
     try {
-      const response = await axios.post('/api/create-chat', {
-        // fileKey,
-        // fileName,
-        url,
-      });
+      const eventSource = new EventSource(
+        `/api/create-chat-stream?url=${url}`,
+      );
 
-      toast.success('Chat Created');
-      router.push(`/chat/${response.data.chatId}`);
+      eventSource.onmessage = (event) => {
+        const { stage, chatId } = JSON.parse(event.data);
+        console.log('[SSE]', stage);
+
+        if (stage === 'done' && chatId) {
+          router.push(`/chat/${chatId}`);
+          toast.success('Chat created!', { id: 'upload-progress' });
+        } else {
+          toast.loading(stage, { id: 'upload-progress' });
+        }
+      };
+
+      eventSource.onerror = (err) => {
+        console.error('SSE error:', err);
+        eventSource.close();
+      };
     } catch (error: any) {
       toast.error(
         'Oops! We encountered an error, but your chat has been created.',
       );
-      router.push(`/chat/${error.chatId}`);
+      router.push(`/chats`);
       console.log(error);
     } finally {
       setIsUploadingLink(false);
+      setIsUploading(false);
     }
   };
 
@@ -167,11 +215,7 @@ const FileUpload = () => {
           onClick={uploadLink}
           className="text-white"
         >
-          {isUploadingLink ? (
-            'AI is learning...'
-          ) : (
-            'Submit'
-          )}
+          {isUploadingLink ? 'AI is learning...' : 'Submit'}
         </Button>
       </div>
     </div>

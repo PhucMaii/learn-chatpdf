@@ -60,8 +60,8 @@ const Chats = () => {
       }
 
       setUserChats({
-        baseData: Object.values(response.data.data),
-        displayData: Object.values(response.data.data),
+        baseData: response.data.chatList,
+        displayData: response.data.chatList,
       });
 
       setIsLoading(false);

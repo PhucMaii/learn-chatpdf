@@ -17,7 +17,7 @@ const handler = async () => {
     const userChats: any = await db
       .select({
         chats,
-        flashCard
+        flashCard,
       })
       .from(chats)
       .where(eq(chats.userId, userId))
@@ -26,18 +26,24 @@ const handler = async () => {
       .groupBy(chats.id, flashCard.id)
       .orderBy(desc(chats.lastOpenedAt));
 
+    console.log(userChats, 'userChats');
+
     // For displaying in /chat/[chatId] and group by date
     const groupedChatByDate: any = userChats.reduce((acc: any, chat: any) => {
       const { chats, flashCard } = chat;
-        const dateKey = moment(chat.chats?.lastOpenedAt).format('ll') || moment(chat.chats.createdAt).format('ll');
-        if (!acc[dateKey]) {
-          acc[dateKey] = [];
-        }
+      const dateKey =
+        moment(chat.chats?.lastOpenedAt).format('ll') ||
+        moment(chat.chats.createdAt).format('ll');
+      if (!acc[dateKey]) {
+        acc[dateKey] = [];
+      }
 
-        const isChatExisted = acc[dateKey].find((existedChat: any) => existedChat.id === chats.id);
-        if (isChatExisted) return acc;
-        acc[dateKey].push({...chats, flashCards: flashCard || []});
-        return acc;
+      const isChatExisted = acc[dateKey].find(
+        (existedChat: any) => existedChat.id === chats.id,
+      );
+      if (isChatExisted) return acc;
+      acc[dateKey].push({ ...chats, flashCards: flashCard || [] });
+      return acc;
     }, {});
 
     // For displaying in /chats and also get the flashcard of each chat
@@ -66,7 +72,16 @@ const handler = async () => {
 
     // console.log(groupedChatByDate, 'groupedChatByDate');
 
-    return NextResponse.json({ data: groupedResult, groupedChatByDate }, { status: 200 });
+    const chatList = Object.values(groupedResult).sort((a: any, b: any) => {
+      return (
+        new Date(b.lastOpenedAt).getTime() - new Date(a.lastOpenedAt).getTime()
+      );
+    });
+
+    return NextResponse.json(
+      { data: groupedResult, chatList, groupedChatByDate },
+      { status: 200 },
+    );
   } catch (error: any) {
     console.log('Internal Server Error: ', error);
     return NextResponse.json(
