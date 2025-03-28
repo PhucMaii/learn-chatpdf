@@ -4,6 +4,8 @@ import { WebhookEvent } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { DrizzleUser, users } from '@/lib/db/schema';
 import { daysOfTrial } from '@/lib/constant';
+import { transporter } from '@/lib/email';
+import { newUser } from '../../../../config/emailTemplate';
 
 const handler = async (req: Request) => {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -54,6 +56,7 @@ const handler = async (req: Request) => {
   // Do something with the payload
   // For this guide, you simply log the payload to the console
   const eventType = evt.type;
+  let email, firstName;
 
   if (eventType === 'user.created') {
     const { id, email_addresses, first_name, created_at } = evt.data;
@@ -65,11 +68,16 @@ const handler = async (req: Request) => {
     }
 
     const createdAt = new Date(created_at);
-    const trialEnd = new Date(createdAt.getTime() + daysOfTrial * 24 * 60 * 60 * 1000);
+    const trialEnd = new Date(
+      createdAt.getTime() + daysOfTrial * 24 * 60 * 60 * 1000,
+    );
+
+    email = email_addresses[0]?.email_address;
+    firstName = first_name;
 
     const user = {
       id,
-      email: email_addresses[0].email_address,
+      email: email_addresses[0]?.email_address,
       ...(first_name ? { firstName: first_name } : {}),
       createdAt: new Date(created_at),
       status: 'Trial',
@@ -77,6 +85,14 @@ const handler = async (req: Request) => {
     };
 
     await db.insert(users).values(user as DrizzleUser);
+
+    await transporter.sendMail({
+      from: process.env.NODEMAILER_EMAIL,
+      to: email,
+      subject:
+        ' 🎉 Welcome to LearnPDF — Let’s Make Studying Smarter Together!',
+      text: newUser.replace(/\[First Name\]/g, firstName!),
+    });
   }
 
   return new Response('User Created Successfully', { status: 200 });

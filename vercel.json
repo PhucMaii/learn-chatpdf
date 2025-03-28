@@ -1,10 +1,4 @@
 {
-  "crons": [
-    {
-      "path": "/api/crons/update-plan",
-      "schedule": "5 * * * *"
-    }
-  ],
   "functions": {
     "src/app/api/**/*.ts": {
       "maxDuration": 300,
