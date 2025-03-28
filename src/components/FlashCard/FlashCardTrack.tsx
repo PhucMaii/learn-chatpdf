@@ -265,7 +265,7 @@ const FlashCardTrack = ({ flashCards, isInChat }: Props) => {
 
   return (
     <div className="mt-4">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4">
         <div className="flex justify-center items-center">
           <FlashCard
             flashCard={flashCardData[currentIndex]}
@@ -281,7 +281,7 @@ const FlashCardTrack = ({ flashCards, isInChat }: Props) => {
           />
         </div>
 
-        <div className="flex w-full justify-between items-center">
+        <div className="flex w-full justify-between items-center mt-2">
           <div className="flex-1 flex items-center space-x-2">
             <Switch
               id="isTrack"

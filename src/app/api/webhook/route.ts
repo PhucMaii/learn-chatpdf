@@ -1,11 +1,13 @@
 import { db } from '@/lib/db';
 import { users, userSubscriptions } from '@/lib/db/schema';
+import { transporter } from '@/lib/email';
 import { stripe } from '@/lib/stripe';
 import { SUBSCRIPTION_TYPE } from '@/lib/type';
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { subscriptionMsg } from '../../../../config/emailTemplate';
 
 const handler = async (req: Request) => {
   const body = await req.text();
@@ -29,6 +31,8 @@ const handler = async (req: Request) => {
       if (!session?.metadata?.userId) {
         return new NextResponse('No User Id', { status: 400 });
       }
+
+      const user: any = await db.select().from(users).where(eq(users.id, session.metadata.userId))
   
       // Create user subscription
       await db.insert(userSubscriptions).values({
@@ -47,6 +51,16 @@ const handler = async (req: Request) => {
           status: SUBSCRIPTION_TYPE.PRO,
         })
         .where(eq(users.id, session.metadata.userId));
+      
+      // Send thank you email
+      if (user?.email) {
+        await transporter.sendMail({
+          from: process.env.NODEMAILER_EMAIL,
+          to: user.email,
+          subject: `🙌 You're Officially Pro — And We’re So Grateful!`,
+          text: subscriptionMsg,
+        })
+      }
     }
   
     // update subscription

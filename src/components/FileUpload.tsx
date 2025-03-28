@@ -48,8 +48,8 @@ const FileUpload = () => {
     maxFiles: 1,
     onDrop: async (acceptedFiles) => {
       const file = acceptedFiles[0];
-      if (file.size > 10 * 1024 * 1024) {
-        // Bigger than 10MB
+      if (file.size > 30 * 1024 * 1024) {
+        // Bigger than 30MB
         toast.error('Please upload a smaller file');
         return;
       }
@@ -126,12 +126,15 @@ const FileUpload = () => {
   });
 
   const uploadLink = async () => {
-    setIsUploadingLink(true);
+    if (!url || !url.startsWith('https://')) {
+      toast.error('Please enter a valid URL');
+      return;
+    }
+
+    setTimeout(() => setIsUploadingLink(true), 1);
     setIsUploading(true);
     try {
-      const eventSource = new EventSource(
-        `/api/create-chat-stream?url=${url}`,
-      );
+      const eventSource = new EventSource(`/api/create-chat-stream?url=${url}`);
 
       eventSource.onmessage = (event) => {
         const { stage, chatId } = JSON.parse(event.data);
@@ -160,6 +163,23 @@ const FileUpload = () => {
       setIsUploading(false);
     }
   };
+
+  if (isUploadingLink || isUploading || isLearning) {
+    return (
+      <div className="flex items-center justify-center flex-col gap-2 w-full h-full">
+        <img
+          src="/images/creating-chat.gif"
+          className="w-[500px] h-[400px] min-w-[200px] rounded-lg"
+          alt="creating chat"
+          width={500}
+          height={500}
+        />
+        <h4 className="text-xl font-semibold">
+          Please wait a moment, we are cooking up your file...
+        </h4>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-2 p-2 bg-white rounded-xl h-2xl">
