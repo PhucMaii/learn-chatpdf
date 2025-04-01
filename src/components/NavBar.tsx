@@ -1,18 +1,65 @@
 'use client';
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Button } from './ui/button';
 import { UserContext } from '../../context/UserProvider';
 import NavDialog from './Dialogs/NavDialog';
 import { motion } from 'framer-motion';
+import useLocalStorage from '../../hooks/useLocalStorage';
+import axios from 'axios';
 
 type Props = {
   landingPage?: boolean;
 };
 
 const NavBar = ({ landingPage }: Props) => {
-  const { user }: any = useContext(UserContext);
+  const { user, setUser }: any = useContext(UserContext);
+  const [guestSession, setGuestSession, isInitialized] = useLocalStorage('guest-session', {});
+
+  useEffect(() => {
+    if (isInitialized) {
+      fetchGuestSessionId();
+    }
+  }, [guestSession]);
+
+  const fetchGuestSessionId = async () => {
+    try {
+      // Check if a guest session ID already exists in local storage
+      if (Object.keys(guestSession).length > 0) {
+        // If yes -> Check if this session id already been a guest in db
+        const response = await axios.get(
+          `/api/guest?guestSessionId=${guestSession.sessionId}`,
+        );
+
+        if (response.data.error) {
+          throw new Error('Something went wrong. ', response.data.error);
+        }
+
+        if (response.data.data) {
+          setUser(response.data.data);
+        }
+
+        return; // Exit if a session ID already exists
+      }
+
+      const response = await axios.post(`/api/guest/session`);
+
+      if (response.data.error) {
+        throw new Error('Something went wrong. ', response.data.error);
+      }
+
+      setGuestSession({
+        sessionId: response.data.guestSessionId,
+        signature: response.data.guestSessionSignature,
+      });
+    } catch (error: any) {
+      console.error(
+        'Something went wrong. Fail to fetch guest session id: ',
+        error,
+      );
+    }
+  };
 
   const navbarVariants = {
     hidden: {

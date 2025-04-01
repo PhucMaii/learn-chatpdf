@@ -22,6 +22,10 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   status: userStatusEnums('status').notNull(),
   trialEnd: timestamp('trial_end').notNull(),
+  guestSessionId: varchar('guest_session_id', { length: 256 }),
+  guestSessionSignature: varchar('guest_session_signature', {
+    length: 256,
+  }),
 });
 export type DrizzleUser = typeof users.$inferSelect;
 
@@ -96,7 +100,7 @@ export const contacts = pgTable('contacts', {
   email: varchar('email', { length: 256 }).notNull(),
   message: varchar('message', { length: 256 }).notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-})
+});
 
 export const discountCodes = pgTable('discount_codes', {
   id: varchar('id', { length: 256 }).primaryKey(),
