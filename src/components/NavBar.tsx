@@ -29,10 +29,10 @@ const NavBar = ({ landingPage }: Props) => {
   const fetchGuestSessionId = async () => {
     try {
       // Check if a guest session ID already exists in local storage
-      if (Object.keys(guestSession).length > 0) {
+      if (guestSession.sessionId && guestSession.signature) {
         // If yes -> Check if this session id already been a guest in db
         const response = await axios.get(
-          `/api/guest?guestSessionId=${guestSession.sessionId}`,
+          `/api/guest?guestSessionId=${guestSession.sessionId}&guestSessionSignature=${guestSession.signature}`,
         );
 
         if (response.data.error) {

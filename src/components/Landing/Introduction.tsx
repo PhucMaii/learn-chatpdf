@@ -73,7 +73,7 @@ export default function Introduction() {
               </h1>
             </Button>
           </Link> */}
-          <div className="w-full h-full">
+          <div className="w-full h-full px-4">
             <FileUpload
               className="mt-4"
               noIncludeLink

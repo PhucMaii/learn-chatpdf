@@ -88,7 +88,7 @@ const FileUpload = ({ className, noIncludeLink, msg, loadingTextClassName }: IPr
         );
 
         eventSource.onmessage = (event) => {
-          const { stage, chatId, guestSession } = JSON.parse(event.data);
+          const { stage, chatId } = JSON.parse(event.data);
           // if (guestSession) {
           //   setGuestSession({
           //     sessionId: guestSession.guestSessionId,
@@ -154,7 +154,7 @@ const FileUpload = ({ className, noIncludeLink, msg, loadingTextClassName }: IPr
             `/api/guest?guestSessionId=${guestSession.sessionId}`,
           );
           if (response.data.error) {
-            toast.error('Something went wrong in fetching user chats');
+            // toast.error('Something went wrong in fetching user chats');
             return;
           }
 
@@ -163,7 +163,7 @@ const FileUpload = ({ className, noIncludeLink, msg, loadingTextClassName }: IPr
           }
         } catch (error: any) {
           console.log(error);
-          toast.error('Something went wrong in fetching user chats');
+          // toast.error('Something went wrong in fetching user chats');
         }
       };
 
