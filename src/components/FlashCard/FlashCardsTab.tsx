@@ -76,7 +76,7 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
             height={100}
             className="w-32 h-32"
           />
-          <div className='flex gap-2 items-center'>
+          <div className="flex gap-2 items-center">
             <h4 className="text-center mt-8 font-medium text-lg">
               We&apos;re cooking up your flashcards, they&apos;ll be ready in a
               flash!

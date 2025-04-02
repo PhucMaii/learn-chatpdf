@@ -67,7 +67,7 @@ const handler = async (req: Request) => {
       discounts: [
         {
           promotion_code: discountId || undefined,
-        }
+        },
       ],
       metadata: {
         userId,

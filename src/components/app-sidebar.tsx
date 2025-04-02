@@ -51,19 +51,22 @@ export function AppSidebar() {
   };
   return (
     <SidebarProvider>
-    <Sidebar collapsible="icon" className="transition-all duration-300 ease-in-out">
-      <SidebarHeader>
-        <div className="flex items-center gap-2">
-          <Logo />
-          <h6 className="text-xl font-semibold">LearnPDF</h6>
-          <StatusText text={user?.status} type="info" />
-        </div>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={tabs} />
-      </SidebarContent>
-      <SidebarRail />
-    </Sidebar>
+      <Sidebar
+        collapsible="icon"
+        className="transition-all duration-300 ease-in-out"
+      >
+        <SidebarHeader>
+          <div className="flex items-center gap-2">
+            <Logo />
+            <h6 className="text-xl font-semibold">LearnPDF</h6>
+            <StatusText text={user?.status} type="info" />
+          </div>
+        </SidebarHeader>
+        <SidebarContent>
+          <NavMain items={tabs} />
+        </SidebarContent>
+        <SidebarRail />
+      </Sidebar>
     </SidebarProvider>
   );
 }

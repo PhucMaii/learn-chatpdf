@@ -5,7 +5,9 @@ import { eq } from 'drizzle-orm';
 import { getContext } from '@/lib/context';
 import { db } from '@/lib/db';
 import { chats, messages as _messages } from '@/lib/db/schema';
-import { withAuthGuard } from '@/utils/guard';
+import { auth } from '@clerk/nextjs/server';
+import { getQueryParams } from '@/utils/query';
+import { handleAuthGuard } from '@/utils/auth';
 
 export const runtime = 'nodejs';
 
@@ -17,7 +19,17 @@ const openai = new OpenAIApi(config);
 
 const handler = async (req: Request) => {
   try {
-    const { messages, chatId, language, isAnswerOutOfContext  } = await req.json();
+    const { userId }: any = await auth();
+    const guestSessionId: any = getQueryParams(req, 'guestSessionId');
+
+    const authStatus = await handleAuthGuard(userId, guestSessionId);
+
+    if (!authStatus.ok) {
+      return NextResponse.json({ error: authStatus.error }, { status: 401 });
+    }
+
+    const { messages, chatId, language, isAnswerOutOfContext } =
+      await req.json();
     console.log(language, 'language');
     const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
     if (_chats.length !== 1) {
@@ -40,15 +52,18 @@ const handler = async (req: Request) => {
             ${context}
             END OF CONTEXT BLOCK
             AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
-            ${isAnswerOutOfContext ? 'If the context does not provide the answer to question, the AI assitant will try to answer the question from what AI assistant know outside of the context.' :
-            `If the context does not provide the answer to question, the AI assistant will say, "I'm sorry, but the context does not provide the answer to that question"`}
+            ${
+              isAnswerOutOfContext
+                ? 'If the context does not provide the answer to question, the AI assitant will try to answer the question from what AI assistant know outside of the context.'
+                : `If the context does not provide the answer to question, the AI assistant will try the best to answer the question from what AI assistant know outside of the context.`
+            }
             AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
             AI assistant will not invent anything that is not drawn directly from the context.
             AI will always respond in ${language}.
             `,
     };
     const response: any = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o-mini',
       messages: [
         prompt,
         ...messages.filter((message: Message) => message.role === 'user'),
@@ -83,4 +98,4 @@ const handler = async (req: Request) => {
   }
 };
 
-export const POST = withAuthGuard(handler);
+export const POST = handler;

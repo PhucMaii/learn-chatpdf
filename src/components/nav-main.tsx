@@ -42,7 +42,7 @@ export function NavMain({}: {
               className="p-5 active:scale-90 transition-all duration-300"
             >
               <a href={tab.url}>
-                <tab.icon style={{width: '1.5rem', height: '1.5rem'}}  />
+                <tab.icon style={{ width: '1.5rem', height: '1.5rem' }} />
                 <span className="text-xl">{tab.title}</span>
               </a>
             </SidebarMenuButton>

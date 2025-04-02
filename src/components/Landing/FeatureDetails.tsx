@@ -10,8 +10,8 @@ export default function FeatureDetails() {
   useEffect(() => {
     const checkScreenSize = () => setIsSmDown(window.innerWidth < 640);
     checkScreenSize();
-    window.addEventListener("resize", checkScreenSize);
-    return () => window.removeEventListener("resize", checkScreenSize);
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
   return (

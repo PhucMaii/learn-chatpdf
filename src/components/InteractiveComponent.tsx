@@ -10,6 +10,7 @@ import FlashCardsTab from './FlashCard/FlashCardsTab';
 import { SubscriptionType } from '@/lib/type';
 import { CrownIcon } from 'lucide-react';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 type Props = {
   chatId: number;
@@ -19,18 +20,22 @@ type Props = {
 
 const InteractiveComponent = ({ chatId, subscription, flashCards }: Props) => {
   const [language, setLanguage] = useState<string>('English');
+  const [guestSession] = useLocalStorage('guest-session', {});
 
   const { data, isLoading } = useQuery({
     queryKey: ['chat', chatId],
     queryFn: async () => {
-      const response = await axios.post<Message[]>('/api/get-messages', {
-        chatId,
-      });
+      const response = await axios.post<Message[]>(
+        `/api/get-messages?guestSessionId=${guestSession?.sessionId}`,
+        {
+          chatId,
+        },
+      );
       return response.data;
     },
   });
   const { input, handleInputChange, handleSubmit, messages } = useChat({
-    api: '/api/chat',
+    api: `/api/chat?guestSessionId=${guestSession?.sessionId}`,
     body: {
       chatId,
       language,

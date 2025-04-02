@@ -1,17 +1,26 @@
 import { db } from '@/lib/db';
 import { userSubscriptions } from '@/lib/db/schema';
 import { DAY_IN_MS } from '@/lib/subscription';
-import { withAuthGuard } from '@/utils/guard';
+import { handleAuthGuard } from '@/utils/auth';
+import { getQueryParams } from '@/utils/query';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
-const handler = async () => {
+const handler = async (req: Request) => {
   try {
-    const { userId } = await auth();
+    const { userId }: any = await auth();
 
-    if (!userId) {
-      return new NextResponse('Unauthorized', { status: 401 });
+    const guestSessionId: any = getQueryParams(req, 'guestSessionId');
+
+    const authStatus = await handleAuthGuard(userId, guestSessionId);
+
+    if (!authStatus.ok) {
+      return NextResponse.json({ error: authStatus.error }, { status: 401 });
+    }
+
+    if (authStatus.type === 'guest') {
+      return NextResponse.json({ isPro: false }, { status: 200 });
     }
 
     const _userSubscriptions: any = await db
@@ -37,4 +46,4 @@ const handler = async () => {
   }
 };
 
-export const GET = withAuthGuard(handler);
+export const GET = handler;

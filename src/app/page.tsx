@@ -28,7 +28,7 @@ export default async function Home() {
       <div className="py-8 w-full m-0">
         {/* Nav bar */}
         <NavBar landingPage />
-        <Introduction userId={userId} />
+        <Introduction />
         <Features />
         <FeatureDetails />
         <Gain />

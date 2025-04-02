@@ -45,9 +45,9 @@ export default function FlashCardPage() {
     };
 
     fetchFlashCardSet();
-        // const data = await response.json();x
-        // setFlashCardSet(data.flashCardSetsWithChatsAndFlashCards[0]);
-  }, [])
+    // const data = await response.json();x
+    // setFlashCardSet(data.flashCardSetsWithChatsAndFlashCards[0]);
+  }, []);
 
   // useEffect(() => {
   //   if (flashCards) {
@@ -64,7 +64,9 @@ export default function FlashCardPage() {
     <SidebarWrapper>
       <div className="flex flex-col items-center justify-center">
         {/* <div className="flex items-center justify-start ÷÷"> */}
-          <h4 className="font-semibold text-3xl text-left mt-4">{flashCardSet?.title}</h4>
+        <h4 className="font-semibold text-3xl text-left mt-4">
+          {flashCardSet?.title}
+        </h4>
         {/* </div> */}
 
         {isLoading ? (

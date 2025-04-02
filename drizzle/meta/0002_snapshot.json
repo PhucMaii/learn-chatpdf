@@ -160,9 +160,7 @@
         "discount_codes_code_unique": {
           "name": "discount_codes_code_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "code"
-          ]
+          "columns": ["code"]
         }
       }
     },
@@ -227,12 +225,8 @@
           "name": "flash_card_chat_id_chats_id_fk",
           "tableFrom": "flash_card",
           "tableTo": "chats",
-          "columnsFrom": [
-            "chat_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["chat_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -240,12 +234,8 @@
           "name": "flash_card_flash_card_set_id_flash_card_set_id_fk",
           "tableFrom": "flash_card",
           "tableTo": "flash_card_set",
-          "columnsFrom": [
-            "flash_card_set_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["flash_card_set_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -295,12 +285,8 @@
           "name": "flash_card_set_chat_id_chats_id_fk",
           "tableFrom": "flash_card_set",
           "tableTo": "chats",
-          "columnsFrom": [
-            "chat_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["chat_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -351,12 +337,8 @@
           "name": "messages_chat_id_chats_id_fk",
           "tableFrom": "messages",
           "tableTo": "chats",
-          "columnsFrom": [
-            "chat_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["chat_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -412,23 +394,17 @@
         "user_subscriptions_user_id_unique": {
           "name": "user_subscriptions_user_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user_id"
-          ]
+          "columns": ["user_id"]
         },
         "user_subscriptions_stripe_customer_id_unique": {
           "name": "user_subscriptions_stripe_customer_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "stripe_customer_id"
-          ]
+          "columns": ["stripe_customer_id"]
         },
         "user_subscriptions_stripe_subscription_id_unique": {
           "name": "user_subscriptions_stripe_subscription_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "stripe_subscription_id"
-          ]
+          "columns": ["stripe_subscription_id"]
         }
       }
     },
@@ -482,9 +458,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       }
     }
@@ -493,19 +467,12 @@
     "public.user_status_enum": {
       "name": "user_status_enum",
       "schema": "public",
-      "values": [
-        "Pro",
-        "Trial",
-        "Free"
-      ]
+      "values": ["Pro", "Trial", "Free"]
     },
     "public.user_system_enum": {
       "name": "user_system_enum",
       "schema": "public",
-      "values": [
-        "system",
-        "user"
-      ]
+      "values": ["system", "user"]
     }
   },
   "schemas": {},

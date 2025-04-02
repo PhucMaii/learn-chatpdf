@@ -38,7 +38,7 @@ export async function getContext(
   let matches;
 
   if (vectors) {
-    console.log({queryEmbeddings, vectors}, 'vectors');
+    console.log({ queryEmbeddings, vectors }, 'vectors');
     // const similarity = cosineSimilarity(queryEmbeddings, vectors.values);
     // matches = [{
     //   ...vectors,

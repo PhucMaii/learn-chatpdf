@@ -15,7 +15,10 @@ type Props = {
 
 const NavBar = ({ landingPage }: Props) => {
   const { user, setUser }: any = useContext(UserContext);
-  const [guestSession, setGuestSession, isInitialized] = useLocalStorage('guest-session', {});
+  const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
+    'guest-session',
+    {},
+  );
 
   useEffect(() => {
     if (isInitialized) {

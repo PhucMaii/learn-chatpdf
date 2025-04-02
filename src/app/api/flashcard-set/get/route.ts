@@ -29,7 +29,6 @@ const handler = async (req: Request) => {
         .where(eq(flashCardSet.id, Number(flashCardSetId)))
         .orderBy(flashCard.id);
 
-
       if (flashCardSetsWithChatsAndFlashCards.length === 0) {
         return NextResponse.json(
           { error: 'No flash card set found' },

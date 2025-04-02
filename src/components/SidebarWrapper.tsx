@@ -17,7 +17,7 @@ const SidebarWrapper = ({ children }: Props) => {
   const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
     'guest-session',
     {},
-  )
+  );
 
   useEffect(() => {
     const checkIsPro = async () => {

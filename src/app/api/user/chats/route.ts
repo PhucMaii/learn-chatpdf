@@ -1,32 +1,48 @@
 import { db } from '@/lib/db';
 import { chats, flashCard, flashCardSet } from '@/lib/db/schema';
-import { withAuthGuard } from '@/utils/guard';
+import { getQueryParams } from '@/utils/query';
 import { auth } from '@clerk/nextjs/server';
 import { desc, eq } from 'drizzle-orm';
 import moment from 'moment';
 import { NextResponse } from 'next/server';
 
-const handler = async () => {
+const handler = async (req: Request) => {
   try {
     const { userId } = await auth();
 
-    if (!userId) {
+    const guestSessionId = getQueryParams(req, 'guestSessionId');
+
+    if (!userId && !guestSessionId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userChats: any = await db
-      .select({
-        chats,
-        flashCard,
-      })
-      .from(chats)
-      .where(eq(chats.userId, userId))
-      .leftJoin(flashCardSet, eq(chats.id, flashCardSet.chatId))
-      .leftJoin(flashCard, eq(flashCardSet.id, flashCard.flashCardSetId))
-      .groupBy(chats.id, flashCard.id)
-      .orderBy(desc(chats.lastOpenedAt));
+    let userChats: any = [];
 
-    console.log(userChats, 'userChats');
+    if (userId) {
+      userChats = await db
+        .select({
+          chats,
+          flashCard,
+        })
+        .from(chats)
+        .where(eq(chats.userId, userId))
+        .leftJoin(flashCardSet, eq(chats.id, flashCardSet.chatId))
+        .leftJoin(flashCard, eq(flashCardSet.id, flashCard.flashCardSetId))
+        .groupBy(chats.id, flashCard.id)
+        .orderBy(desc(chats.lastOpenedAt));
+    } else if (guestSessionId) {
+      userChats = await db
+        .select({
+          chats,
+          flashCard,
+        })
+        .from(chats)
+        .where(eq(chats.guestId, guestSessionId))
+        .leftJoin(flashCardSet, eq(chats.id, flashCardSet.chatId))
+        .leftJoin(flashCard, eq(flashCardSet.id, flashCard.flashCardSetId))
+        .groupBy(chats.id, flashCard.id)
+        .orderBy(desc(chats.lastOpenedAt));
+    }
 
     // For displaying in /chat/[chatId] and group by date
     const groupedChatByDate: any = userChats.reduce((acc: any, chat: any) => {
@@ -91,4 +107,4 @@ const handler = async () => {
   }
 };
 
-export const GET = withAuthGuard(handler);
+export const GET = handler;

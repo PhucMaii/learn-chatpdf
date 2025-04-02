@@ -13,11 +13,11 @@ const SingleCardEdit = ({
   flashCard,
   index,
   onChange,
-  onRemove
+  onRemove,
 }: {
   flashCard: DrizzleFlashCard;
   index: number;
-  onRemove: (index: number) => void,
+  onRemove: (index: number) => void;
   onChange: (
     index: number,
     newText: string,
@@ -39,7 +39,10 @@ const SingleCardEdit = ({
       <div className="flex items-center justify-between">
         <h4 className="font-bold text-xl">{index + 1}.</h4>
         <div className="flex items-center gap-2">
-          <Button className="bg-red-100 hover:bg-red-200 text-red-600" onClick={() => onRemove(index)}>
+          <Button
+            className="bg-red-100 hover:bg-red-200 text-red-600"
+            onClick={() => onRemove(index)}
+          >
             <Trash2Icon />
           </Button>
         </div>
@@ -175,7 +178,6 @@ export default function FlashCardEdit({ flashCardSet }: IProps) {
             flashCard={flashCard}
             onChange={onChangeFlashCard}
             onRemove={onRemoveFlashCard}
-
           />
         ),
       )}

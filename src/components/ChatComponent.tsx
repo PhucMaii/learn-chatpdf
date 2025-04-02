@@ -67,7 +67,10 @@ const ChatComponent = ({
               placeholder="Ask any question..."
               className="w-full border-gray-300"
             />
-            <Button className="ml-2 hover:bg-emerald-500 hover:text-white hover:scale-102 transition-all duration-300" type="submit">
+            <Button
+              className="ml-2 hover:bg-emerald-500 hover:text-white hover:scale-102 transition-all duration-300"
+              type="submit"
+            >
               <Send className="w-4 h-4 text-white" />
             </Button>
           </div>

@@ -22,7 +22,7 @@ const handler = async (req: Request) => {
       process.env.STRIPE_WEBHOOK_SIGNING_SECRET as string,
     );
     const session = event.data.object as Stripe.Checkout.Session;
-  
+
     // new subscription
     if (event.type === 'checkout.session.completed') {
       const subscription = await stripe.subscriptions.retrieve(
@@ -32,15 +32,20 @@ const handler = async (req: Request) => {
         return new NextResponse('No User Id', { status: 400 });
       }
 
-      const user: any = await db.select().from(users).where(eq(users.id, session.metadata.userId))
-  
+      const user: any = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, session.metadata.userId));
+
       // Create user subscription
       await db.insert(userSubscriptions).values({
         userId: session.metadata.userId,
         stripeCustomerId: subscription.customer as string,
         stripeSubscriptionId: subscription.id as string,
         stripePriceId: subscription.items.data[0].price.id,
-        stripeCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        stripeCurrentPeriodEnd: new Date(
+          subscription.current_period_end * 1000,
+        ),
         stripePromotionCode: subscription?.discount?.promotion_code as string,
       });
 
@@ -51,7 +56,7 @@ const handler = async (req: Request) => {
           status: SUBSCRIPTION_TYPE.PRO,
         })
         .where(eq(users.id, session.metadata.userId));
-      
+
       // Send thank you email
       if (user?.email) {
         await transporter.sendMail({
@@ -59,16 +64,16 @@ const handler = async (req: Request) => {
           to: user.email,
           subject: `🙌 You're Officially Pro — And We’re So Grateful!`,
           text: subscriptionMsg,
-        })
+        });
       }
     }
-  
+
     // update subscription
     if (event.type === 'invoice.payment_succeeded') {
       const subscription = await stripe.subscriptions.retrieve(
         session.subscription as string,
       );
-  
+
       await db
         .update(userSubscriptions)
         .set({
@@ -79,7 +84,7 @@ const handler = async (req: Request) => {
         })
         .where(eq(userSubscriptions.stripeSubscriptionId, subscription.id));
     }
-  
+
     return new NextResponse(null, { status: 200 });
   } catch (error: any) {
     console.log(error);

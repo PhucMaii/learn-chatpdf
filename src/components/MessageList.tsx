@@ -40,7 +40,9 @@ function MessageList({ messages, isLoading }: Props) {
                 },
               )}
             >
-              <p className="text-md font-regular font-sans">{message.content}</p>
+              <p className="text-md font-regular font-sans">
+                {message.content}
+              </p>
             </div>
           </div>
         );

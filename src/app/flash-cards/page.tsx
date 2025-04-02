@@ -48,7 +48,10 @@ const FlashCardsPage = () => {
       </h6>
 
       <div className="flex flex-col gap-4 mt-8 flex-wrap">
-        {isLoading ? (<LoadingComponent />) : flashCardSetsWithChats.length > 0 &&
+        {isLoading ? (
+          <LoadingComponent />
+        ) : (
+          flashCardSetsWithChats.length > 0 &&
           flashCardSetsWithChats.map(
             (flashCardSetsWithChat: any, index: number) => {
               return (
@@ -61,7 +64,8 @@ const FlashCardsPage = () => {
                 />
               );
             },
-          )}
+          )
+        )}
       </div>
     </SidebarWrapper>
   );

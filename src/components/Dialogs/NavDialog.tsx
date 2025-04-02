@@ -5,7 +5,7 @@ import { MenuIcon } from 'lucide-react';
 import Link from 'next/link';
 import { UserButton } from '@clerk/nextjs';
 
-export default function NavDialog({user}: any) {
+export default function NavDialog({ user }: any) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -15,7 +15,7 @@ export default function NavDialog({user}: any) {
       </DialogTrigger>
       <DialogContent className="w-full h-full bg-black transition-all duration-300">
         <div className="flex flex-col items-center gap-8 mr-2">
-            {/* <Button onClick={() => onClose}>
+          {/* <Button onClick={() => onClose}>
                 <X />
             </Button> */}
           <Link
@@ -24,10 +24,7 @@ export default function NavDialog({user}: any) {
           >
             Dashboard
           </Link>
-          <Link
-            href="/pricing"
-            className={`text-white font-semibold `}
-          >
+          <Link href="/pricing" className={`text-white font-semibold `}>
             Pricing
           </Link>
           {user && Object.keys(user).length > 0 ? (

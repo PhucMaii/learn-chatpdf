@@ -4,9 +4,11 @@ import toast from 'react-hot-toast';
 
 export const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
-export const checkIsPro = async () => {
+export const checkIsPro = async (guestSessionId?: string) => {
   try {
-    const response = await axios.get(`${API_URL.USER}/subscription/is-pro`);
+    const response = await axios.get(
+      `${API_URL.USER}/subscription/is-pro?guestSessionId=${guestSessionId}`,
+    );
 
     if (response.data.error) {
       toast.error('Fail to check subscription');
@@ -20,9 +22,11 @@ export const checkIsPro = async () => {
   }
 };
 
-export const checkIsValidToAddMoreChats = async () => {
+export const checkIsValidToAddMoreChats = async (guestSessionId?: string) => {
   try {
-    const response = await axios.get(`${API_URL.USER}/subscription/is-pro`);
+    const response = await axios.get(
+      `${API_URL.USER}/subscription/is-pro?guestSessionId=${guestSessionId}`,
+    );
 
     if (response.data.error) {
       toast.error('Fail to check subscription');
@@ -45,9 +49,11 @@ export const checkIsValidToAddMoreChats = async () => {
   }
 };
 
-export const getIsTrial = async () => {
+export const getIsTrial = async (guestSessionId?: string) => {
   try {
-    const response = await axios.get(`${API_URL.USER}/subscription/is-trial`);
+    const response = await axios.get(
+      `${API_URL.USER}/subscription/is-trial?guestSessionId=${guestSessionId}`,
+    );
 
     if (response.data.error) {
       toast.error('Fail to check subscription');
@@ -61,11 +67,16 @@ export const getIsTrial = async () => {
   }
 };
 
-export const checkSubscription = async () => {
+export const checkSubscription = async (guestSessionId?: string) => {
   try {
-    const isPro = await checkIsPro(); // Wait for the async operation to complete
-    const isTrial = await getIsTrial();
+    const isPro = await checkIsPro(guestSessionId); // Wait for the async operation to complete
+    const isTrial = await getIsTrial(guestSessionId);
 
+    console.log({
+      isPro,
+      isAbleToAddMoreChats: isPro ? true : isTrial.isAbleToAddMoreChats,
+      isTrial: isTrial.isTrial,
+    });
     return {
       isPro,
       isAbleToAddMoreChats: isPro ? true : isTrial.isAbleToAddMoreChats,

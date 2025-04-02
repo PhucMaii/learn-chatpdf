@@ -1,21 +1,41 @@
-import { NextResponse } from "next/server";
-import GET from "./GET";
+import { db } from '@/lib/db';
+import { chats, users } from '@/lib/db/schema';
+import { getQueryParams } from '@/utils/query';
+import { eq } from 'drizzle-orm';
+import { NextResponse } from 'next/server';
 
-const handler = async (req: Request) => {
-    try {
-        if (req.method === 'GET') {
-            const response = await GET(req);
-            return response;
-        }
+export const GET = async (req: Request) => {
+  try {
+    const guestSessionId = getQueryParams(req, 'guestSessionId');
 
-        return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
-    } catch (error: any) {
-        console.log('Internal Server Error: ', error);
-        return NextResponse.json(
-            { error: 'Internal Server Error: ' + error },
-            { status: 500 },
-        );
+    if (!guestSessionId) {
+      return NextResponse.json(
+        { error: 'Missing guestSessionId' },
+        { status: 400 },
+      );
     }
-}
 
-export default handler;
+    const guest = await db
+      .select()
+      .from(users)
+      .where(eq(users.guestSessionId, guestSessionId));
+
+    console.log('guest: ', guest);
+    if (guest.length === 0) {
+      return NextResponse.json({ error: 'Guest not found' }, { status: 404 });
+    }
+
+    const guestChats = await db
+      .select()
+      .from(chats)
+      .where(eq(chats.guestId, guest[0].id));
+
+    return NextResponse.json({ data: guest[0], guestChats }, { status: 200 });
+  } catch (error: any) {
+    console.log('Fail to get guest: ', error);
+    return NextResponse.json(
+      { error: 'Fail to get guest: ' + error },
+      { status: 500 },
+    );
+  }
+};

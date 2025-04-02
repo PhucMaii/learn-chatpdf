@@ -17,7 +17,7 @@ const useLocalStorage = (key: string, defaultValue: any) => {
       if (storedValue && storedValue !== 'undefined') {
         try {
           setValue(JSON.parse(storedValue));
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (erorr) {
           setValue(storedValue);
         }

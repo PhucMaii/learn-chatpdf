@@ -14,6 +14,7 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { TableOfContents } from 'lucide-react';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import useLocalStorage from '../../../../hooks/useLocalStorage';
 // import FilePreview from '@/components/FilePreview';
 // import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 
@@ -34,14 +35,22 @@ const Chat = ({ params: { chatId } }: Props) => {
   const [isSmDown, setIsSmDown] = useState(false);
   const [isChatSidebarOpen, setIsChatSidebarOpen] = useState<boolean>(false);
   const [userChats, setUserChats] = useState<any>(null);
+
   const router = useRouter();
+  const [guestSession] = useLocalStorage('guest-session', {});
 
   // const [chats] = SWRFetchData(`${API_URL.USER}/chats`);
 
   useEffect(() => {
+    if (!guestSession.sessionId) {
+      // router.push('/');
+      return;
+    }
     const fetchUserChats = async () => {
       try {
-        const response = await axios.get(`${API_URL.USER}/chats`);
+        const response = await axios.get(
+          `${API_URL.USER}/chats?guestSessionId=${guestSession.sessionId}`,
+        );
 
         if (response.data.error) {
           toast.error('Something went wrong in fetching user chats');
@@ -50,24 +59,23 @@ const Chat = ({ params: { chatId } }: Props) => {
           setUserChats(response.data.data);
           setUserChatList(response.data.groupedChatByDate);
         }
+
+        console.log(userChats);
       } catch (error: any) {
         console.log(error);
         toast.error('Something went wrong in fetching user chats');
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchUserChats();
 
-    const checkScreenSize = () => setIsSmDown(window.innerWidth < 1024);
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
-
-  useEffect(() => {
     const checkIsPro = async () => {
       setIsLoading(true);
-      const fetchedSubscription = await checkSubscription();
+      const fetchedSubscription = await checkSubscription(
+        guestSession.sessionId,
+      );
 
       setSubscription(fetchedSubscription);
 
@@ -83,7 +91,12 @@ const Chat = ({ params: { chatId } }: Props) => {
     };
 
     checkIsPro();
-  }, []);
+
+    const checkScreenSize = () => setIsSmDown(window.innerWidth < 1024);
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, [guestSession]);
 
   useEffect(() => {
     if (userChats) {
@@ -133,17 +146,17 @@ const Chat = ({ params: { chatId } }: Props) => {
 
   const udpateOpenChat = async () => {
     try {
-      const responnse = await axios.post(`${API_URL.USER}/chats/open`, {
+      await axios.post(`${API_URL.USER}/chats/open`, {
         chatId,
       });
 
-      if (responnse.data.error) {
-        toast.error('Something went wrong');
-        return;
-      }
+      // if (responnse.data.error) {
+      //   toast.error('Something went wrong');
+      //   return;
+      // }
     } catch (error: any) {
       console.log('There was an error in updating open chat: ', error);
-      toast.error('Something went wrong');
+      // toast.error('Something went wrong');
     }
   };
 
@@ -200,8 +213,8 @@ const Chat = ({ params: { chatId } }: Props) => {
               {/* <div className="max-h-screen p-4 overflow-scroll flex-1 md:flex-2">
                 <PDFViewer pdfUrl={chat?.pdfUrl || ''} />
                 {/* <DocViewer documents={[{ uri: chat?.pdfUrl || '' }]} pluginRenderers={DocViewerRenderers} />; */}
-                {/* <FilePreview fileUrl={chat?.pdfUrl || ''} /> */}
-                {/* <LinkPreview url='https://www.youtube.com/watch?v=dQw4w9WgXcQ' width="400px" /> */}
+              {/* <FilePreview fileUrl={chat?.pdfUrl || ''} /> */}
+              {/* <LinkPreview url='https://www.youtube.com/watch?v=dQw4w9WgXcQ' width="400px" /> */}
               {/* </div> */}
             </>
           )}

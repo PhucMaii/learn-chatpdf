@@ -13,15 +13,24 @@ export const userStatusEnums = pgEnum('user_status_enum', [
   'Pro',
   'Trial',
   'Free',
+  'Guest',
 ]);
+
+export const guests = pgTable('guests', {
+  id: varchar('id', { length: 256 }).primaryKey(),
+  guestSessionId: varchar('guest_session_id', { length: 256 }),
+  guestSessionSignature: varchar('guest_session_signature', {
+    length: 256,
+  }),
+});
 
 export const users = pgTable('users', {
   id: varchar('id', { length: 256 }).primaryKey(),
-  email: varchar('email', { length: 256 }).notNull().unique(),
-  firstName: varchar('first_name', { length: 256 }).notNull(),
+  email: varchar('email', { length: 256 }).unique(),
+  firstName: varchar('first_name', { length: 256 }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   status: userStatusEnums('status').notNull(),
-  trialEnd: timestamp('trial_end').notNull(),
+  trialEnd: timestamp('trial_end'),
   guestSessionId: varchar('guest_session_id', { length: 256 }),
   guestSessionSignature: varchar('guest_session_signature', {
     length: 256,
@@ -36,7 +45,8 @@ export const chats = pgTable('chats', {
   webUrl: text('web_url'),
   fileType: text('file_type'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  userId: varchar('user_id', { length: 256 }).notNull(),
+  userId: varchar('user_id', { length: 256 }),
+  guestId: varchar('guest_id', { length: 256 }),
   fileKey: text('file_key').notNull(),
   title: text('title'),
   lastOpenedAt: timestamp('last_opened_at').defaultNow(),
@@ -51,7 +61,8 @@ export const flashCardSet = pgTable('flash_card_set', {
     .notNull(),
   title: text('title').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  userId: varchar('user_id', { length: 256 }).notNull(),
+  userId: varchar('user_id', { length: 256 }),
+  guestId: varchar('guest_id', { length: 256 }),
 });
 
 export const flashCard = pgTable('flash_card', {
@@ -59,7 +70,8 @@ export const flashCard = pgTable('flash_card', {
   chatId: integer('chat_id')
     .references(() => chats.id, { onDelete: 'cascade' })
     .notNull(),
-  userId: varchar('user_id', { length: 256 }).notNull(),
+  userId: varchar('user_id', { length: 256 }),
+  guestId: varchar('guest_id', { length: 256 }),
   question: text('question').notNull(),
   answer: text('answer').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),

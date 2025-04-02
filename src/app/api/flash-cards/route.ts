@@ -59,7 +59,6 @@ Audience: **20-year-old college students**
 Expected JSON Word Count: **500 words max**.
 `;
 
-
 const handler = async (req: Request) => {
   try {
     const { userId } = await auth();

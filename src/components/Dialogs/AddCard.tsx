@@ -96,7 +96,11 @@ const AddCard = ({ flashCardSetId, chatId }: Props) => {
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={handleAddCard} type="submit" className="text-white font-semibold hover:bg-emerald-600 hover:scale-102 hover:text-white transition-all duration-300 text-white ">
+          <Button
+            onClick={handleAddCard}
+            type="submit"
+            className="text-white font-semibold hover:bg-emerald-600 hover:scale-102 hover:text-white transition-all duration-300 text-white "
+          >
             {isLoading ? 'Adding...' : 'Add Card'}
           </Button>
         </DialogFooter>

@@ -32,7 +32,7 @@ const handler = async (req: Request) => {
 
     const newChat: any = {
       userId: userId,
-    }
+    };
 
     if (fileKey) {
       newChat.fileKey = fileKey;
@@ -47,25 +47,27 @@ const handler = async (req: Request) => {
 
     console.log(newChat, 'newChat');
 
-    const chatId = await db
-      .insert(chats)
-      .values(newChat)
-      .returning({
-        insertedId: chats.id,
-      });
+    const chatId = await db.insert(chats).values(newChat).returning({
+      insertedId: chats.id,
+    });
 
-    returnChatId = chatId[0].insertedId
-    console.log({returnChatId, chatId}, 'returnChatId');
+    returnChatId = chatId[0].insertedId;
+    console.log({ returnChatId, chatId }, 'returnChatId');
 
-      // console.log('Create Chat Successfully');
+    // console.log('Create Chat Successfully');
 
     // Create flashCards for this chat
     // console.log(chatId, 'chatId');
     new Response('data: generating flashcards\n\n', {
-      headers: { 'Content-Type': 'text/event-stream' }
+      headers: { 'Content-Type': 'text/event-stream' },
     });
-    
-    const res = await createFlashCards(fileKey || url, returnChatId, userId, vectors);
+
+    const res = await createFlashCards(
+      fileKey || url,
+      returnChatId,
+      userId,
+      vectors,
+    );
 
     // console.log(res, 'res');
     // If fail to create flash card, still return chatId
@@ -87,6 +89,7 @@ export const createFlashCards = async (
   chatId: number,
   userId: string,
   vectors: any = null,
+  isGuest: boolean = false,
 ) => {
   try {
     const context = await getContext(flashCardPrompt, input, vectors);
@@ -131,7 +134,7 @@ export const createFlashCards = async (
     );
 
     // console.log('pass json.parse')
-    
+
     // Use card title for chat title
     await db
       .update(chats)
@@ -144,7 +147,8 @@ export const createFlashCards = async (
         title: formattedMessages.title,
         chatId: chatId,
         createdAt: new Date(),
-        userId: userId,
+        userId: !isGuest ? userId : null,
+        guestId: isGuest ? userId : null,
         // isKnown: false,
       })
       .returning();
@@ -158,7 +162,8 @@ export const createFlashCards = async (
         createdAt: new Date(),
         chatId: chatId,
         flashCardSetId: newFlashCardsSet[0].id,
-        userId: userId,
+        userId: !isGuest ? userId : null,
+        guestId: isGuest ? userId : null,
         isKnown: 0,
       };
     });

@@ -1,11 +1,10 @@
 'use client';
-import Link from 'next/link';
 import React from 'react';
-import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion } from 'framer-motion';
+import FileUpload from '../FileUpload';
 
-export default function Introduction({ userId }: any) {
+export default function Introduction() {
   const introVariants = {
     hidden: { opacity: 0, y: 100 },
     visible: {
@@ -15,15 +14,11 @@ export default function Introduction({ userId }: any) {
         duration: 1,
         ease: 'easeInOut',
       },
-    }
-  }
+    },
+  };
 
   return (
-    <motion.div
-      variants={introVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <motion.div variants={introVariants} initial="hidden" animate="visible">
       <div className="2xl:max-w-(--breakpoint-2xl) 2xl:mx-auto mx-4 py-4 flex flex-col justify-center h-screen">
         {/* Headline */}
         <div className="w-full max-h-full flex flex-col items-center justify-center gap-8 mt-8">
@@ -43,18 +38,9 @@ export default function Introduction({ userId }: any) {
             <div className="w-full h-full bg-white"></div>
           </div>
         </div>
-        <div className="flex flex-row justify-center">
-          <Link href={`/chats`}>
-            <Button className="mt-4 px-10 py-8 rounded-xl hover:bg-emerald-600 items-center focus:scale-98 transition-all duration-300">
-              <h1 className="text-2xl text-white font-semibold">
-                {userId ? 'Go To Chats' : 'Start Free Trial'}
-              </h1>
-            </Button>
-          </Link>
-        </div>
 
         {/* Users */}
-        <div className="flex flex-row items-center justify-center gap-2 mt-6">
+        <div className="flex flex-row items-center justify-center gap-2 mt-2">
           <div className="flex -space-x-4 items-center">
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" />
@@ -76,6 +62,25 @@ export default function Introduction({ userId }: any) {
           <h4 className="text-white font-semibold">
             99+ users have leveled up their learning experience
           </h4>
+        </div>
+
+        <div className="flex flex-col justify-center mt-8">
+          {/* <h4 className="text-white text-center font-semibold text-2xl">Let&apos;s Drop Your First File And See The Magic Happens</h4> */}
+          {/* <Link href={`/chats`}>
+            <Button className="mt-4 px-10 py-8 rounded-xl hover:bg-emerald-600 items-center focus:scale-98 transition-all duration-300">
+              <h1 className="text-2xl text-white font-semibold">
+                {userId ? 'Go To Chats' : 'Start Free Trial'}
+              </h1>
+            </Button>
+          </Link> */}
+          <div className="w-full h-full">
+            <FileUpload
+              className="mt-4"
+              noIncludeLink
+              msg="Drop Your File Here and See The Magic Happens"
+              loadingTextClassName="text-white"
+            />
+          </div>
         </div>
       </div>
     </motion.div>
