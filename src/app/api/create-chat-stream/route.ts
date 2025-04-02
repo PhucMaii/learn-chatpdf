@@ -8,10 +8,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createFlashCards } from '../create-chat/route';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
-import {
-  generateGuestSessionId,
-  generateSessionSignature,
-} from '@/utils/session';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -20,8 +16,8 @@ export async function GET(req: NextRequest) {
   const url = searchParams.get('url');
   const { userId } = await auth();
 
-  let guestSessionId = searchParams.get('guestSessionId');
-  let guestSessionSignature = searchParams.get('guestSessionSignature');
+  const guestSessionId = searchParams.get('guestSessionId');
+  const guestSessionSignature = searchParams.get('guestSessionSignature');
 
   let toUseId: any = {
     id: userId,
