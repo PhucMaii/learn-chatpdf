@@ -12,6 +12,7 @@ const useLocalStorage = (key: string, defaultValue: any) => {
 
   // Use this to avoid hydrating in next.js
   useEffect(() => {
+    console.log('RUN USE EFFECT')
     if (typeof window !== 'undefined') {
       const storedValue = localStorage.getItem(key);
       if (storedValue && storedValue !== 'undefined') {

@@ -19,6 +19,8 @@ export async function GET(req: NextRequest) {
   const guestSessionId = searchParams.get('guestSessionId');
   const guestSessionSignature = searchParams.get('guestSessionSignature');
 
+  console.log({ guestSessionId, guestSessionSignature });
+
   let toUseId: any = {
     id: userId,
     table: users,
@@ -61,8 +63,9 @@ export async function GET(req: NextRequest) {
         } as any)
         .returning();
 
+        console.log('newGuest', newGuest);
       toUseId = {
-        id: newGuest[0].id,
+        id: guestSessionId,
         table: guests,
         isGuest: true,
       };

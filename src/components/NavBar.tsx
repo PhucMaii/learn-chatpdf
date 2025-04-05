@@ -24,38 +24,39 @@ const NavBar = ({ landingPage }: Props) => {
     if (isInitialized) {
       fetchGuestSessionId();
     }
-  }, [guestSession]);
+  }, [isInitialized]);
 
   const fetchGuestSessionId = async () => {
     try {
+      console.log('RUN FETCH GUEST SESSION ID');
       // Check if a guest session ID already exists in local storage
-      if (guestSession.sessionId && guestSession.signature) {
-        // If yes -> Check if this session id already been a guest in db
-        const response = await axios.get(
-          `/api/guest?guestSessionId=${guestSession.sessionId}&guestSessionSignature=${guestSession.signature}`,
-        );
+      if (!guestSession || Object.keys(guestSession).length === 0) {
+        // Create new session since none exists
+        const response = await axios.post(`/api/guest/session`);
 
         if (response.data.error) {
           throw new Error('Something went wrong. ', response.data.error);
         }
 
-        if (response.data.data) {
-          setUser(response.data.data);
-        }
-
-        return; // Exit if a session ID already exists
+        setGuestSession({
+          sessionId: response.data.guestSessionId,
+          signature: response.data.guestSessionSignature,
+        });
+        return;
       }
 
-      const response = await axios.post(`/api/guest/session`);
+      // If we have a session, verify it
+      const response = await axios.get(
+        `/api/guest?guestSessionId=${guestSession.sessionId}&guestSessionSignature=${guestSession.signature}`,
+      );
 
       if (response.data.error) {
         throw new Error('Something went wrong. ', response.data.error);
       }
 
-      setGuestSession({
-        sessionId: response.data.guestSessionId,
-        signature: response.data.guestSessionSignature,
-      });
+      if (response.data.data) {
+        setUser(response.data.data);
+      }
     } catch (error: any) {
       console.error(
         'Something went wrong. Fail to fetch guest session id: ',
@@ -91,7 +92,7 @@ const NavBar = ({ landingPage }: Props) => {
 
         <div className="md:hidden flex">
           {/* <MenuIcon className="w-8 h-8 text-emerald-500" /> */}
-          <NavDialog user={user} />
+          <NavDialog user={user || null} />
         </div>
 
         <div className="hidden md:flex items-center gap-8 mr-2">

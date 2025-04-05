@@ -83,8 +83,10 @@ const FileUpload = ({ className, noIncludeLink, msg, loadingTextClassName }: IPr
           return;
         }
 
+        const currentSession = JSON.parse(localStorage.getItem('guest-session') || '{}');
+
         const eventSource = new EventSource(
-          `/api/create-chat-stream?fileKey=${data.fileKey}&fileName=${data.fileName}&guestSessionId=${guestSession.sessionId}&guestSessionSignature=${guestSession.signature}`,
+          `/api/create-chat-stream?fileKey=${data.fileKey}&fileName=${data.fileName}&guestSessionId=${currentSession.sessionId}&guestSessionSignature=${currentSession.signature}`,
         );
 
         eventSource.onmessage = (event) => {
