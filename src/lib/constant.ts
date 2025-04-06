@@ -3,6 +3,7 @@ import {
   BookCopyIcon,
   ClockArrowDownIcon,
   ContactRound,
+  FoldersIcon,
   // FacebookIcon,
   GraduationCapIcon,
   InstagramIcon,
@@ -15,6 +16,12 @@ import {
 import { IFeature } from './type';
 
 export const tabs = [
+  {
+    title: 'Projects',
+    icon: FoldersIcon,
+    url: '/projects',
+    params: 'projects',
+  },
   {
     title: 'Chats',
     icon: MessageCircleMoreIcon,

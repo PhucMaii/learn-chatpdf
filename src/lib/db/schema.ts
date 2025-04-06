@@ -16,6 +16,38 @@ export const userStatusEnums = pgEnum('user_status_enum', [
   'Guest',
 ]);
 
+export const mediaTypeEnums = pgEnum('media_type_enum', [
+  'text',
+  'pdf',
+  'doc',
+  'ppt',
+  'url',
+]);
+
+export const project = pgTable('project', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  userId: varchar('user_id', { length: 256 }),
+  guestId: varchar('guest_id', { length: 256 }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  lastOpenedAt: timestamp('last_opened_at').notNull().defaultNow(),
+  isDeleted: integer('is_deleted').default(0),
+});
+
+export const medias = pgTable('medias', {
+  id: serial('id').primaryKey(),
+  url: text('url'), // Users can upload either url or file
+  fileKey: text('file_key'),
+  fileName: text('file_name'),
+  type: mediaTypeEnums('type').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  userId: varchar('user_id', { length: 256 }),
+  guestId: varchar('guest_id', { length: 256 }),
+  projectId: integer('project_id')
+    .references(() => project.id, { onDelete: 'cascade' })
+    .notNull(),
+})
+
 export const guests = pgTable('guests', {
   id: varchar('id', { length: 256 }).primaryKey(),
   guestSessionId: varchar('guest_session_id', { length: 256 }),
@@ -38,6 +70,7 @@ export const users = pgTable('users', {
 });
 export type DrizzleUser = typeof users.$inferSelect;
 
+// All the fields related to file upload should be removed soon
 export const chats = pgTable('chats', {
   id: serial('id').primaryKey(),
   pdfName: text('pdf_name'),
@@ -47,9 +80,11 @@ export const chats = pgTable('chats', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   userId: varchar('user_id', { length: 256 }),
   guestId: varchar('guest_id', { length: 256 }),
-  fileKey: text('file_key').notNull(),
+  fileKey: text('file_key'),
   title: text('title'),
   lastOpenedAt: timestamp('last_opened_at').defaultNow(),
+  projectId: integer('project_id')
+  .references(() => project.id, { onDelete: 'cascade' }),
 });
 
 export type DrizzleChat = typeof chats.$inferSelect;
@@ -58,18 +93,20 @@ export const flashCardSet = pgTable('flash_card_set', {
   id: serial('id').primaryKey(),
   chatId: integer('chat_id')
     .references(() => chats.id, { onDelete: 'cascade' })
-    .notNull(),
+    .notNull(),  // This should be removed soon
   title: text('title').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   userId: varchar('user_id', { length: 256 }),
   guestId: varchar('guest_id', { length: 256 }),
+  projectId: integer('project_id')
+    .references(() => project.id, { onDelete: 'cascade' }),
 });
 
 export const flashCard = pgTable('flash_card', {
   id: serial('id').primaryKey(),
   chatId: integer('chat_id')
     .references(() => chats.id, { onDelete: 'cascade' })
-    .notNull(),
+    .notNull(), // This should be removed soon
   userId: varchar('user_id', { length: 256 }),
   guestId: varchar('guest_id', { length: 256 }),
   question: text('question').notNull(),
