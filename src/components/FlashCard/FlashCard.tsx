@@ -9,7 +9,7 @@ import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import AddCard from '../Dialogs/AddCard';
+import AddCard from '../Dialogs/add/AddCard';
 import { useRouter } from 'next/navigation';
 
 type Props = {

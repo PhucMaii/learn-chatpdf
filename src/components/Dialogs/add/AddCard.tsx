@@ -7,10 +7,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog';
-import { Button } from '../ui/button';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
+} from '../../ui/dialog';
+import { Button } from '../../ui/button';
+import { Label } from '../../ui/label';
+import { Textarea } from '../../ui/textarea';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 

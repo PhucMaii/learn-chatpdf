@@ -1,12 +1,31 @@
 'use client';
+import AddProject from '@/components/Dialogs/add/AddProject';
+import LoadingComponent from '@/components/LoadingComponent';
 import Project from '@/components/Project';
 import SidebarWrapper from '@/components/SidebarWrapper';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 export default function ProjectsPage() {
-    const [searchKeywords, setSearchKeywords] = useState<string>('');
+  const [isInitializing, setIsInitializing] = useState<boolean>(true);
+  const [searchKeywords, setSearchKeywords] = useState<string>('');
+  const [projects, setProjects] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const response = await axios.get('/api/project');
+      setProjects(response.data.projects);
+    } catch (error: any) {
+      console.error('Error fetching projects:', error);
+    } finally {
+      setIsInitializing(false);
+    }
+  };
 
   return (
     <SidebarWrapper>
@@ -34,17 +53,43 @@ export default function ProjectsPage() {
               + New Chat
             </Button>
           )} */}
-          <Button>
-            + New Project
-          </Button>
+          <AddProject setProjects={setProjects} />
         </div>
 
-        <div className="flex gap-2 items-center flex-wrap">
-            <Project />
-            <Project />
-            <Project />
-            <Project />
-            <Project />
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 auto-rows-auto gap-2 items-center flex-wrap w-full">
+          {isInitializing ? (
+            <div className="col-span-5 flex flex-col items-center justify-center w-full h-full">
+              <LoadingComponent />
+            </div>
+          ) : projects.length > 0 ? (
+            projects.map((project) => (
+              <Project
+                className="col-span-1"
+                project={project}
+                setProjects={setProjects}
+                key={project.id}
+              />
+            ))
+          ) : (
+            <div className="col-span-5 flex flex-col items-center justify-center w-full h-full">
+              <img
+                src="/images/no-projects.png"
+                alt="No projects"
+                className="w-[200px] h-[200px] object-contain mx-auto my-4"
+                width={200}
+                height={200}
+                loading="lazy"
+              />
+
+              <h4>
+                You haven&apos;t created any projects yet. Let&apos;s create the
+                first one.
+              </h4>
+              <AddProject 
+                setProjects={setProjects}
+              />
+            </div>
+          )}
         </div>
       </div>
     </SidebarWrapper>

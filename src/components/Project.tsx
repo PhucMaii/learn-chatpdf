@@ -1,28 +1,74 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from './ui/button';
-import { EditIcon, Trash2Icon } from 'lucide-react';
+import { Trash2Icon } from 'lucide-react';
+import { IProject } from '@/lib/type';
+import { convertToFromNow } from '@/utils/date';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+import EditProject from './Dialogs/edit/EditProject';
+import DeleteDialog from './Dialogs/delete/DeleteDialog';
 
-export default function Project() {
+interface IProps {
+  className?: string;
+  project: IProject;
+  setProjects: React.Dispatch<React.SetStateAction<IProject[]>>;
+}
+
+export default function Project({ className, project, setProjects }: IProps) {
+  const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
+
+  const handleDeleteProject = async () => {
+    try {
+      const response = await axios.delete(`/api/project?id=${project.id}`);
+
+      console.log('Delete project response:', response);
+      if (response.status === 200) {
+        toast.success('Project deleted successfully');
+
+        // Assuming you have a way to update the projects state
+        setProjects((prevProjects) => {
+          const newProjects = prevProjects.filter((p) => p.id !== project.id);
+          console.log('Updated projects:', {newProjects});
+          return newProjects;
+        });
+      }
+    } catch (error: any) {
+      console.error('Error deleting project:', error);
+      toast.error('Failed to delete project. Please try again later.');
+    } finally {
+    }
+  }
+
   return (
-    <div className="flex flex-col gap-2 justify-between p-4 border-1 border-gray-100 rounded-lg w-[400px] h-[200px]">
+    <div
+      className={`flex flex-col gap-2 justify-between p-4 border-1 border-gray-100 rounded-lg max-w-[400px] h-[200px] ${className}`}
+    >
+      <DeleteDialog 
+        isOpen={isOpenDelete}
+        onClose={() => setIsOpenDelete(false)}
+        onDelete={handleDeleteProject}
+        message={`Are you sure you want to delete the project "${project.name}"? This action cannot be undone.`}
+      />
       <div className="flex flex-col gap-2">
         <div className="w-full flex items-center justify-between gap-2">
-          <h6 className="text-lg text-gray-400">3 medias</h6>
+          {/* Will replace with project.medias.length */}
+          <h6 className="text-sm text-gray-400">3 medias</h6>
           <div className="flex items-center">
-            <Button variant="ghost">
+            <Button onClick={() => setIsOpenDelete(true)} variant="ghost" className="hover:bg-red-100">
               <Trash2Icon className="w-4 h-4 text-red-500" />
             </Button>
-            <Button variant={'ghost'}>
-              <EditIcon className="w-4 h-4 text-blue-500" />
-            </Button>
+            <EditProject 
+              project={project}
+              setProjects={setProjects}
+            />
           </div>
         </div>
-        <h1 className="text-xl font-bold w-full">
-          CSTP 2023 - Biological Sciences
-        </h1>
+        <h1 className="text-xl font-bold w-full">{project?.name}</h1>
       </div>
 
-      <h6 className="text-lg text-gray-400">Last opened at: 2 days ago</h6>
+      <h6 className="text-sm text-gray-400">
+        Last opened at: {convertToFromNow(project.lastOpenedAt)}
+      </h6>
     </div>
   );
 }

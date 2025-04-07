@@ -38,3 +38,9 @@ export interface IGain {
   description: string;
   icon: any;
 }
+
+export interface IProject {
+  id: number;
+  name: string;
+  lastOpenedAt: Date;
+}
