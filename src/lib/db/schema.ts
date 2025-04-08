@@ -16,13 +16,13 @@ export const userStatusEnums = pgEnum('user_status_enum', [
   'Guest',
 ]);
 
-export const mediaTypeEnums = pgEnum('media_type_enum', [
-  'text',
-  'pdf',
-  'doc',
-  'ppt',
-  'url',
-]);
+// export const mediaTypeEnums = pgEnum('media_type_enum', [
+//   'text',
+//   'pdf',
+//   'doc',
+//   'ppt',
+//   'url',
+// ]);
 
 export const project = pgTable('project', {
   id: serial('id').primaryKey(),
@@ -39,7 +39,7 @@ export const medias = pgTable('medias', {
   url: text('url'), // Users can upload either url or file
   fileKey: text('file_key'),
   fileName: text('file_name'),
-  type: mediaTypeEnums('type').notNull(),
+  type: varchar('type', { length: 256 }).notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   userId: varchar('user_id', { length: 256 }),
   guestId: varchar('guest_id', { length: 256 }),

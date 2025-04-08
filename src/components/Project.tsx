@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import EditProject from './Dialogs/edit/EditProject';
 import DeleteDialog from './Dialogs/delete/DeleteDialog';
+import { useRouter } from 'next/navigation';
 
 interface IProps {
   className?: string;
@@ -16,6 +17,7 @@ interface IProps {
 
 export default function Project({ className, project, setProjects }: IProps) {
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
+  const router = useRouter();
 
   const handleDeleteProject = async () => {
     try {
@@ -28,7 +30,7 @@ export default function Project({ className, project, setProjects }: IProps) {
         // Assuming you have a way to update the projects state
         setProjects((prevProjects) => {
           const newProjects = prevProjects.filter((p) => p.id !== project.id);
-          console.log('Updated projects:', {newProjects});
+          console.log('Updated projects:', { newProjects });
           return newProjects;
         });
       }
@@ -37,13 +39,14 @@ export default function Project({ className, project, setProjects }: IProps) {
       toast.error('Failed to delete project. Please try again later.');
     } finally {
     }
-  }
+  };
 
   return (
     <div
       className={`flex flex-col gap-2 justify-between p-4 border-1 border-gray-100 rounded-lg max-w-[400px] h-[200px] ${className}`}
+      onClick={() => router.push(`/projects/${project.id}`)}
     >
-      <DeleteDialog 
+      <DeleteDialog
         isOpen={isOpenDelete}
         onClose={() => setIsOpenDelete(false)}
         onDelete={handleDeleteProject}
@@ -54,13 +57,17 @@ export default function Project({ className, project, setProjects }: IProps) {
           {/* Will replace with project.medias.length */}
           <h6 className="text-sm text-gray-400">3 medias</h6>
           <div className="flex items-center">
-            <Button onClick={() => setIsOpenDelete(true)} variant="ghost" className="hover:bg-red-100">
+            <Button
+              onClick={(e: any) => {
+                e.stopPropagation();
+                setIsOpenDelete(true);
+              }}
+              variant="ghost"
+              className="hover:bg-red-100"
+            >
               <Trash2Icon className="w-4 h-4 text-red-500" />
             </Button>
-            <EditProject 
-              project={project}
-              setProjects={setProjects}
-            />
+            <EditProject project={project} setProjects={setProjects} />
           </div>
         </div>
         <h1 className="text-xl font-bold w-full">{project?.name}</h1>

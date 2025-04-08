@@ -19,10 +19,21 @@ interface IProps {
   noIncludeLink?: boolean;
   className?: string;
   msg?: string;
-  loadingTextClassName?: string;
+  // loadingTextClassName?: string;
+  projectId?: number | string;
+  // setOptimisticDisplays?: any;
+  setDisplay?: any;
 }
 
-const FileUpload = ({ className, noIncludeLink, msg, loadingTextClassName }: IProps) => {
+const FileUpload = ({
+  className,
+  noIncludeLink,
+  msg,
+  // loadingTextClassName,
+  projectId,
+  setDisplay,
+  // setOptimisticDisplays,
+}: IProps) => {
   const router = useRouter();
   const { user }: any = useContext(UserContext);
 
@@ -60,7 +71,7 @@ const FileUpload = ({ className, noIncludeLink, msg, loadingTextClassName }: IPr
         ['.docx'],
       'text/plain': ['.txt'],
     },
-    maxFiles: 1,
+    maxFiles: 5,
     onDrop: async (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (file.size > 30 * 1024 * 1024) {
@@ -71,26 +82,62 @@ const FileUpload = ({ className, noIncludeLink, msg, loadingTextClassName }: IPr
 
       try {
         setIsUploading(true);
-        const data = await uploadToS3(file, setProgress);
+        const dataList = acceptedFiles.map((file) => {
+          return uploadToS3(file, setProgress);
+        });
+        setDisplay((prevDisplays: any) => {
+          console.log('prevDisplays', prevDisplays);
+          const newFiles = acceptedFiles.map((data: any) => {
+            console.log('data', data);
+            return {
+              // fileKey: data.fileKey,
+              fileName: data.name,
+              loading: true,
+            };
+          });
+
+          console.log('newFiles', newFiles);
+
+          return [...prevDisplays, ...newFiles];
+        });
+
+        const resolvedData = await Promise.all(dataList);
+
+        // const data = await uploadToS3(file, setProgress);
         setIsUploading(false);
 
         // setIsLearning(true);
         setTimeout(() => setIsLearning(true), 1);
-        if (!data?.fileKey || !data?.fileName) {
+
+        console.log(resolvedData, 'resolvedData');
+        if (resolvedData.length === 0) {
           toast.error(
             'Oops! Looks like the file is not uploaded correctly. Please try again later.',
           );
           return;
         }
 
-        const currentSession = JSON.parse(localStorage.getItem('guest-session') || '{}');
-
-        const eventSource = new EventSource(
-          `/api/create-chat-stream?fileKey=${data.fileKey}&fileName=${data.fileName}&guestSessionId=${currentSession.sessionId}&guestSessionSignature=${currentSession.signature}`,
+        const currentSession = JSON.parse(
+          localStorage.getItem('guest-session') || '{}',
         );
 
+        // const eventSource = new EventSource(
+        //   `/api/create-chat-stream?fileKey=${data.fileKey}&fileName=${data.fileName}&guestSessionId=${currentSession.sessionId}&guestSessionSignature=${currentSession.signature}`,
+        // );
+
+        // projectId, fileList, url, guestSessionId, guestSessionSignature
+
+        const fileListParam = encodeURIComponent(JSON.stringify(resolvedData));
+
+        console.log(fileListParam, 'fileListParam');
+        const eventSource = new EventSource(
+          `/api/media/stream?projectId=${projectId}&fileList=${fileListParam}&guestSessionId=${currentSession.sessionId}&guestSessionSignature=${currentSession.signature}`,
+        );
+
+        console.log(eventSource, 'eventSource');
+
         eventSource.onmessage = (event) => {
-          const { stage, chatId } = JSON.parse(event.data);
+          const { stage, projectMedias } = JSON.parse(event.data);
           // if (guestSession) {
           //   setGuestSession({
           //     sessionId: guestSession.guestSessionId,
@@ -99,9 +146,16 @@ const FileUpload = ({ className, noIncludeLink, msg, loadingTextClassName }: IPr
           // }
           console.log('[SSE]', stage);
 
-          if (stage === 'done' && chatId) {
-            router.push(`/chat/${chatId}`);
-            toast.success('Chat created!', { id: 'upload-progress' });
+          if (stage === 'done') {
+            // router.push(`/chat/${chatId}`);
+            toast.success('Upload Successfully', { id: 'upload-progress' });
+            setDisplay(projectMedias);
+            // setOptimisticDisplays((prev: any[]) => {
+            //   // Keep optimistic items (e.g. still loading: true)
+            //   const optimisticOnly = prev.filter((item) => item.loading);
+            //   // Replace the rest with new server data
+            //   return [...projectMedias, ...optimisticOnly];
+            // });
           } else {
             toast.loading(stage, { id: 'upload-progress' });
           }
@@ -109,39 +163,16 @@ const FileUpload = ({ className, noIncludeLink, msg, loadingTextClassName }: IPr
 
         eventSource.onerror = (err) => {
           console.error('SSE error:', err);
+          console.log(err, 'ERROR');
           eventSource.close();
         };
-
-        // mutate(data, {
-        //   onSuccess: ({ chatId }) => {
-        //     toast.success('Chat Created');
-        //     router.push(`/chat/${chatId}`);
-        //   },
-        //   onError: (error: any) => {
-        //     toast.error(
-        //       'Oops! We encountered an error, but your chat has been created.',
-        //     );
-        //     router.push(`/chat/${error.chatId}`);
-        //     console.log(error);
-        //   },
-        //   // onSettled: () => {
-        //   //   // Listen to the events sending from backend
-        //   //   const eventSource = new EventSource('/api/stream');
-        //   //   eventSource.onmessage = (event) => {
-        //   //     console.log(event.data);
-        //   //   };
-        //   //   eventSource.onopen = () => {
-        //   //     console.log('Connected to the stream');
-        //   //   };
-        //   //   eventSource.onerror = () => {
-        //   //     console.log('Error connecting to the stream');
-        //   //   };
-        //   // },
-        // });
         setIsUploading(false);
         setIsLearning(false);
       } catch (error) {
         console.log(error);
+        setIsUploading(false);
+        setIsLearning(false);
+      } finally {
         setIsUploading(false);
         setIsLearning(false);
       }
@@ -212,29 +243,29 @@ const FileUpload = ({ className, noIncludeLink, msg, loadingTextClassName }: IPr
     }
   };
 
-  if (isUploadingLink || isUploading || isLearning) {
-    return (
-      <div className="flex items-center justify-center flex-col gap-2 w-full h-full">
-        <img
-          src="/images/creating-chat.gif"
-          className="w-[500px] h-[400px] min-w-[200px] rounded-lg"
-          alt="creating chat"
-          width={500}
-          height={500}
-        />
-        <h4 className={`text-xl font-semibold ${loadingTextClassName}`}>
-          Please wait a moment, we are cooking up your file...
-        </h4>
-      </div>
-    );
-  }
+  // if (isUploadingLink || isUploading || isLearning) {
+  //   return (
+  //     <div className="flex items-center justify-center flex-col gap-2 w-full h-full">
+  //       <img
+  //         src="/images/creating-chat.gif"
+  //         className="w-[500px] h-[400px] min-w-[200px] rounded-lg"
+  //         alt="creating chat"
+  //         width={500}
+  //         height={500}
+  //       />
+  //       <h4 className={`text-xl font-semibold ${loadingTextClassName}`}>
+  //         Please wait a moment, we are cooking up your file...
+  //       </h4>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className={`flex flex-col gap-2 p-2 rounded-xl h-2xl ${className}`}>
       <div className="relative h-[300px]">
         <div
           {...getRootProps({
-            className: `border-dashed border-2 rounded-xl cursor-pointer bg-gray-50 py-8 flex justify-center items-center flex-col h-[300px] ${isGuestUploaded ? 'blur-sm' : ''}`,
+            className: `px-4 rounded-xl cursor-pointer bg-gray-100 py-8 flex justify-center items-center flex-col h-[300px] ${isGuestUploaded ? 'blur-sm' : ''}`,
           })}
         >
           <input

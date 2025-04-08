@@ -35,6 +35,7 @@ export const getPineconeClient = async () => {
 //   };
 // };
 export async function loadS3IntoPinecone(
+  inputNamespace: string,
   input: string,
   type: 'fileKey' | 'url' = 'fileKey',
 ) {
@@ -92,7 +93,7 @@ export async function loadS3IntoPinecone(
     const client = await getPineconeClient();
     const pineconeIndex = client.Index('learn-chatpdf');
 
-    const namespace = convertToAscii(input);
+    const namespace = convertToAscii(inputNamespace);
 
     await chunkedUpsert(pineconeIndex, vectors, namespace, 10);
 
