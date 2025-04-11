@@ -43,7 +43,7 @@ export default function Project({ className, project, setProjects }: IProps) {
 
   return (
     <div
-      className={`flex flex-col gap-2 justify-between p-4 border-1 border-gray-100 rounded-lg max-w-[400px] h-[200px] ${className}`}
+      className={`flex flex-col gap-2 cursor-pointer justify-between p-4 border-1 border-gray-100 rounded-lg max-w-[400px] h-[200px] ${className}`}
       onClick={() => router.push(`/projects/${project.id}`)}
     >
       <DeleteDialog

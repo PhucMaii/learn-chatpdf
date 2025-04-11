@@ -28,18 +28,30 @@ const handler = async (req: Request) => {
       return NextResponse.json({ error: authStatus.error }, { status: 401 });
     }
 
-    const { messages, chatId, language, isAnswerOutOfContext } =
+    const { messages, projectId, language, isAnswerOutOfContext } =
       await req.json();
-    console.log(language, 'language');
-    const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
-    if (_chats.length !== 1) {
-      return NextResponse.json({ error: 'Chat not found' }, { status: 404 });
+
+    const _chats = await db
+      .select()
+      .from(chats)
+      .where(eq(chats.projectId, Number(projectId)));
+
+      // If there is no chat, create a new one
+      let chatId: any = _chats[0]?.id || null;
+    if (_chats.length < 1) {
+      const newChat = await db
+        .insert(chats)
+        .values({ projectId: Number(projectId), userId, guestId: guestSessionId })
+        .returning();
+
+      chatId = newChat[0].id;
     }
 
-    const fileKey = _chats[0].fileKey;
+    // const fileKey = _chats[0].fileKey;
     const lastMessage = messages[messages.length - 1];
 
-    const context = await getContext(lastMessage.content, fileKey);
+
+    const context = await getContext(lastMessage.content, projectId);
     const prompt = {
       role: 'system',
       content: `AI assistant is a brand new, powerful, human-like artificial intelligence.
@@ -47,7 +59,10 @@ const handler = async (req: Request) => {
             AI is a well-behaved and well-mannered individual.
             AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.
             AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
-            AI assistant is a big fan of Pinecone and Vercel.
+            AI has a deep understanding of the world, and is able to accurately answer nearly any question about any topic in conversation.
+            AI assistant is a big fan of studying, learning, and knowledge.
+            AI assistant loves to break things down to smallest possible parts and then explain it to the user.
+            AI assistant loves to explain the very hard topic to the user in a way that even a kid 5 years old or a grandma 80 years old can understand.
             START CONTEXT BLOCK
             ${context}
             END OF CONTEXT BLOCK
@@ -59,6 +74,8 @@ const handler = async (req: Request) => {
             }
             AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
             AI assistant will not invent anything that is not drawn directly from the context.
+            AI assistant will break the answer into multiple parts, and concisely explain each part.
+            AI assistant will always repspond in markdown format, so that the user can easily read the answer.
             AI will always respond in ${language}.
             `,
     };

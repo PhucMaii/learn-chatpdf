@@ -45,6 +45,7 @@ export default function Media() {
         <FileUpload
           projectId={projectId?.toString()}
           setDisplay={setMedias}
+          noIncludeLink
         />
       </BorderSection>
 

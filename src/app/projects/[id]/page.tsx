@@ -16,7 +16,7 @@ import ChatWithAI from '@/components/Projects/ChatWithAI';
 import ExamMode from '@/components/Projects/ExamMode';
 
 export default function ProjectDisplayPage() {
-  const [selectedTab, setSelectedTab] = useState('medias');
+  const [selectedTab, setSelectedTab] = useState('chat');
 
   const router = useRouter();
 
@@ -62,7 +62,7 @@ export default function ProjectDisplayPage() {
       </aside>
 
       {/* Main Content */}
-      <main className="col-span-10 p-6 overflow-auto">
+      <main className="col-span-10 p-6">
         <Tabs value={selectedTab} className="w-full">
           <TabsList className="hidden">
             <TabsTrigger value="flashcards">Flashcards</TabsTrigger>
@@ -72,11 +72,6 @@ export default function ProjectDisplayPage() {
           </TabsList>
 
           <TabsContent value="medias">
-            {/* <Card>
-              <CardContent className="p-6">
-                Media content goes here.
-              </CardContent>
-            </Card> */}
             <Media />
           </TabsContent>
 
