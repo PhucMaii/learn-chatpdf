@@ -2,7 +2,7 @@ import { db } from '@/lib/db';
 import { chats, guests, messages, project } from '@/lib/db/schema';
 import { getQueryParams } from '@/utils/query';
 import { auth } from '@clerk/nextjs/server';
-import { eq } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';
@@ -49,7 +49,8 @@ const GETMethod = async (req: Request) => {
     const _messages = await db
       .select()
       .from(messages)
-      .where(eq(messages.chatId, existingChat[0].id));
+      .where(eq(messages.chatId, existingChat[0].id))
+      .orderBy(asc(messages.createdAt));
 
     return NextResponse.json({messages: _messages});
   } catch (error: any) {

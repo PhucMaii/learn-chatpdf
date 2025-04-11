@@ -27,9 +27,10 @@ export enum CardStatus {
 type Props = {
   flashCards: DrizzleFlashCard[];
   isInChat?: boolean;
+  onEdit?: () => void;
 };
 
-const FlashCardTrack = ({ flashCards, isInChat }: Props) => {
+const FlashCardTrack = ({ flashCards, isInChat, onEdit }: Props) => {
   const [bool, setBool] = useState<any>({
     isProgressEnd: false,
     isTrack: false,
@@ -251,13 +252,13 @@ const FlashCardTrack = ({ flashCards, isInChat }: Props) => {
             )}
             Learn again
           </Button>
-          <Button
+          {/* <Button
             onClick={() => router.push('/flash-cards')}
             className="bg-transparent text-emerald-500 text-md flex items-center gap-2 font-bold hover:text-blue-600 hover:bg-transparent active:scale-90 transition-all duration-300"
           >
             Flash cards
             <ArrowRight className="w-6 h-6 hover:text-blue-600" />
-          </Button>
+          </Button> */}
         </div>
       </div>
     );
@@ -277,6 +278,7 @@ const FlashCardTrack = ({ flashCards, isInChat }: Props) => {
             knownCards={knownCards}
             isEdit={bool.isEdit}
             isInChat={isInChat}
+            onEdit={onEdit}
             // setIsEdit={(value: boolean) => setBool({ ...bool, isEdit: value })}
           />
         </div>

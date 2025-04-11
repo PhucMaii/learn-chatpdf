@@ -1,27 +1,46 @@
 import { getPineconeClient } from './pinecone';
 import { convertToAscii } from './utils';
 import { getEmbeddings } from './embedding';
+import { DrizzleMedia } from './db/drizzleType';
 
 export async function getMatchesFromEmbeddings(
   embeddings: number[],
-  input: string,
+  projectMedias: DrizzleMedia[],
 ) {
   const pinecone = await getPineconeClient();
 
   const index: any = pinecone.Index('learn-chatpdf');
 
   try {
-    const namespace = convertToAscii(input);
-    // console.log(namespace, 'namespace');
-    const queryResult = await index.namespace(namespace).query({
-      topK: 10,
-      vector: embeddings,
-      includeMetadata: true,
+    const queryResulePromises = projectMedias.map((media) => {
+      const namespace = convertToAscii(media?.fileKey || media?.url || '');
+      return index.namespace(namespace).query({
+        topK: 10,
+        vector: embeddings,
+        includeMetadata: true,
+      });
     });
 
-    // console.log({ queryResult, fileKey, embeddings });
+    const queryResults = await Promise.all(queryResulePromises);
 
-    return queryResult.matches || [];
+    const queryResultMatches = queryResults.flatMap(
+      (queryResult) => queryResult.matches || [],
+    );
+
+    console.log({queryResultMatches, queryResults}, 'queryResultMatches');
+
+    // const namespace = convertToAscii(projectId+'');
+    // console.log(namespace, 'namespace')
+    // // console.log(namespace, 'namespace');
+    // const queryResult = await index.namespace(namespace).query({
+    //   topK: 10,
+    //   vector: embeddings,
+    //   includeMetadata: true,
+    // });
+
+    // console.log({ queryResult, embeddings });
+
+    return queryResultMatches;
   } catch (error) {
     console.error('Error querying embeddings: ', error);
   }
@@ -29,10 +48,10 @@ export async function getMatchesFromEmbeddings(
 
 export async function getContext(
   query: string,
-  input: string,
+  medias: DrizzleMedia[],
   vectors: any = null,
 ) {
-  // console.log(vectors, 'VECTORS');
+  console.log(medias, 'medias');
   const queryEmbeddings = await getEmbeddings(query);
   // console.log(queryEmbeddings, 'queryEmbeddings');
   let matches;
@@ -53,7 +72,8 @@ export async function getContext(
       };
     });
   } else {
-    matches = await getMatchesFromEmbeddings(queryEmbeddings, input);
+    matches = await getMatchesFromEmbeddings(queryEmbeddings, medias);
+
   }
 
   // console.log({ matches, queryEmbeddings });

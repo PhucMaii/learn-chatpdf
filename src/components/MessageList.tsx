@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Message } from 'ai/react';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 type Props = {
@@ -13,9 +13,16 @@ const AssistantChat = (text: string) => {
 };
 
 function MessageList({ messages, isLoading }: Props) {
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
   if (!messages) {
     return <></>;
   }
+
+  useEffect(() => {
+    bottomRef?.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isLoading]);
+
   return (
     <div className="flex flex-col gap-8 px-4 pb-4 w-full">
       {messages.map((message, index) => {
@@ -61,6 +68,8 @@ function MessageList({ messages, isLoading }: Props) {
           <h6 className="text-md font-regular font-sans transition-all duration-300 animate-pulse">Typing...</h6>
         </div>
       )}
+
+      <div ref={bottomRef}></div>
     </div>
   );
 }

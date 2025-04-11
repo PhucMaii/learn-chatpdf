@@ -14,19 +14,17 @@ const handler = async (req: Request) => {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const flashCardSetId = getQueryParams(req, 'id');
+    const projectId = getQueryParams(req, 'projectId');
 
-    if (flashCardSetId) {
+    if (projectId) {
       const flashCardSetsWithChatsAndFlashCards = await db
         .select({
           flashCardSet,
-          chat: chats,
           flashCard,
         })
         .from(flashCardSet)
-        .innerJoin(chats, eq(flashCardSet.chatId, chats.id))
         .leftJoin(flashCard, eq(flashCard.flashCardSetId, flashCardSet.id))
-        .where(eq(flashCardSet.id, Number(flashCardSetId)))
+        .where(eq(flashCardSet.projectId, Number(projectId)))
         .orderBy(flashCard.id);
 
       if (flashCardSetsWithChatsAndFlashCards.length === 0) {

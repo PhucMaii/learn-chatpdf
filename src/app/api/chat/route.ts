@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { getContext } from '@/lib/context';
 import { db } from '@/lib/db';
-import { chats, messages as _messages } from '@/lib/db/schema';
+import { chats, messages as _messages, medias } from '@/lib/db/schema';
 import { auth } from '@clerk/nextjs/server';
 import { getQueryParams } from '@/utils/query';
 import { handleAuthGuard } from '@/utils/auth';
@@ -50,8 +50,12 @@ const handler = async (req: Request) => {
     // const fileKey = _chats[0].fileKey;
     const lastMessage = messages[messages.length - 1];
 
+    const projectMedias = await db
+      .select()
+      .from(medias)
+      .where(eq(medias.projectId, Number(projectId)))
 
-    const context = await getContext(lastMessage.content, projectId);
+    const context = await getContext(lastMessage.content, projectMedias);
     const prompt = {
       role: 'system',
       content: `AI assistant is a brand new, powerful, human-like artificial intelligence.
@@ -76,6 +80,8 @@ const handler = async (req: Request) => {
             AI assistant will not invent anything that is not drawn directly from the context.
             AI assistant will break the answer into multiple parts, and concisely explain each part.
             AI assistant will always repspond in markdown format, so that the user can easily read the answer.
+            AI assistant is allowed to use external knowledge outside of the CONTEXT BLOCK to support the answer.
+            AI assistant is forced to answer precise, divide the answer into multiple parts, and concisely explain each part.
             AI will always respond in ${language}.
             `,
     };

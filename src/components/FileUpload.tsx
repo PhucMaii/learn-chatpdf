@@ -174,7 +174,7 @@ const FileUpload = ({
         setIsLearning(false);
       } finally {
         setIsUploading(false);
-        setIsLearning(false);
+        setTimeout(() => setIsLearning(true), 1);
       }
     },
   });
@@ -204,44 +204,47 @@ const FileUpload = ({
     }
   }, [guestSession]);
 
+  // const uploadLink = async () => {
+  //   if (!url || !url.startsWith('https://')) {
+  //     toast.error('Please enter a valid URL');
+  //     return;
+  //   }
+
+  //   setTimeout(() => setIsUploadingLink(true), 1);
+  //   setIsUploading(true);
+  //   try {
+  //     const eventSource = new EventSource(`/api/create-chat-stream?url=${url}`);
+
+  //     eventSource.onmessage = (event) => {
+  //       const { stage, chatId } = JSON.parse(event.data);
+  //       console.log('[SSE]', stage);
+
+  //       if (stage === 'done' && chatId) {
+  //         router.push(`/chat/${chatId}`);
+  //         toast.success('Chat created!', { id: 'upload-progress' });
+  //       } else {
+  //         toast.loading(stage, { id: 'upload-progress' });
+  //       }
+  //     };
+
+  //     eventSource.onerror = (err) => {
+  //       console.error('SSE error:', err);
+  //       eventSource.close();
+  //     };
+  //   } catch (error: any) {
+  //     toast.error(
+  //       'Oops! We encountered an error, but your chat has been created.',
+  //     );
+  //     router.push(`/chats`);
+  //     console.log(error);
+  //   } finally {
+  //     setIsUploadingLink(false);
+  //     setIsUploading(false);
+  //   }
+  // };
   const uploadLink = async () => {
-    if (!url || !url.startsWith('https://')) {
-      toast.error('Please enter a valid URL');
-      return;
-    }
-
-    setTimeout(() => setIsUploadingLink(true), 1);
-    setIsUploading(true);
-    try {
-      const eventSource = new EventSource(`/api/create-chat-stream?url=${url}`);
-
-      eventSource.onmessage = (event) => {
-        const { stage, chatId } = JSON.parse(event.data);
-        console.log('[SSE]', stage);
-
-        if (stage === 'done' && chatId) {
-          router.push(`/chat/${chatId}`);
-          toast.success('Chat created!', { id: 'upload-progress' });
-        } else {
-          toast.loading(stage, { id: 'upload-progress' });
-        }
-      };
-
-      eventSource.onerror = (err) => {
-        console.error('SSE error:', err);
-        eventSource.close();
-      };
-    } catch (error: any) {
-      toast.error(
-        'Oops! We encountered an error, but your chat has been created.',
-      );
-      router.push(`/chats`);
-      console.log(error);
-    } finally {
-      setIsUploadingLink(false);
-      setIsUploading(false);
-    }
-  };
+    
+  }
 
   // if (isUploadingLink || isUploading || isLearning) {
   //   return (

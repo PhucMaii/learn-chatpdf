@@ -148,7 +148,7 @@ export async function GET(req: NextRequest) {
           // );
           const promiseVectors = parsedFileList.map((file: any) => {
             return loadS3IntoPinecone(
-              existingProject[0]?.id.toString(),
+              file.fileKey,
               file.fileKey,
               'fileKey',
             );
@@ -158,7 +158,8 @@ export async function GET(req: NextRequest) {
           console.log('vectors', vectors);
         } else if (url) {
           vectors = await loadS3IntoPinecone(
-            existingProject[0]?.id.toString(),
+            url,
+            url,
             'url',
           );
         }

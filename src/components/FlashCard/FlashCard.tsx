@@ -21,6 +21,7 @@ type Props = {
   knownCards: DrizzleFlashCard[];
   isEdit: boolean;
   isInChat?: boolean;
+  onEdit?: () => void;
   // setIsEdit: any;
 };
 
@@ -32,6 +33,7 @@ const FlashCard = ({
   learningCards,
   knownCards,
   isEdit,
+  onEdit,
   // isInChat,
 }: Props) => {
   const [card, setCard] = useState<any>(flashCard);
@@ -115,8 +117,8 @@ const FlashCard = ({
       )}
     >
       {!progress && (
-        <div className="w-full flex items-center justify-between space-x-2 mb-2">
-          <Button
+        <div className="w-full flex items-center justify-end space-x-2 mb-2">
+          {/* <Button
             className="bg-gray-100"
             onClick={() => router.push(`/flash-cards`)}
           >
@@ -124,13 +126,8 @@ const FlashCard = ({
               <ArrowLeft className="w-6 h-6" />
               <h6 className="text-lg">Back to set</h6>
             </div>
-          </Button>
-          <Button
-            className="bg-gray-100"
-            onClick={() =>
-              router.push(`/flash-cards/${flashCard.flashCardSetId}/edit`)
-            }
-          >
+          </Button> */}
+          <Button variant="outline" className="jutify-end" onClick={onEdit}>
             <div className="flex items-center space-x-2">
               <Edit className="w-6 h-6" />
               <h6 className="text-lg">Edit</h6>
@@ -239,7 +236,7 @@ const FlashCard = ({
           {/* Back Side */}
           <div
             className={cn(
-              'back flex justify-center items-center w-full h-full bg-blue-500 shadow-xl p-6 rounded-t-2xl border-2 border-blue-500',
+              'back flex justify-center items-center w-full h-full bg-sky-600 shadow-xl p-6 rounded-t-2xl border-2 border-blue-500',
               { 'rounded-b-2xl': !progress },
             )}
             onClick={handleFlip}

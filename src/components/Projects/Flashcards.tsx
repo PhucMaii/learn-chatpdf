@@ -1,7 +1,144 @@
-import React from 'react'
+'use client';
+import React, { useEffect, useState } from 'react';
+import FlashCardTrack from '../FlashCard/FlashCardTrack';
+import { DrizzleFlashCard } from '@/lib/db/drizzleType';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+import { useParams } from 'next/navigation';
+import LoadingComponent from '../LoadingComponent';
+import EmptyDisplay from '../EmptyDisplay';
+import { Button } from '../ui/button';
+import FlashCardEdit from '../FlashCard/FlashCardEdit';
 
 export default function Flashcards() {
+  const { id: projectId } = useParams() ?? { id: null };
+
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [flashcards, setFlashcards] = useState<DrizzleFlashCard[]>([]);
+  const [flashCardSet, setFlashCardSet] = useState<any>(null);
+
+  useEffect(() => {
+    fetchFlashcards();
+  }, []);
+
+  // const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchFlashCardSet = async () => {
+      try {
+        const response = await axios.get(
+          `/api/flashcard-set/get?projectId=${projectId}`,
+        );
+
+        // if (response.data.error) {
+        //   toast.error('Something went wrong in fetching flash card sets');
+        //   // setIsLoading(false);
+        //   return;
+        // }
+
+        // if (!response.data.flashCardSetsWithChatsAndFlashCards.length) {
+        //   window.location.href = '/flash-cards';
+        //   return;
+        // }
+
+        setFlashCardSet(response.data.flashCardSetsWithChatsAndFlashCards[0]);
+        // setIsLoading(false);
+      } catch (error: any) {
+        console.log(error);
+        toast.error('Something went wrong in fetching flash card sets');
+        // setIsLoading(false);
+      }
+    };
+
+    fetchFlashCardSet();
+    // const data = await response.json();x
+    // setFlashCardSet(data.flashCardSetsWithChatsAndFlashCards[0]);
+  }, []);
+
+  const fetchFlashcards = async () => {
+    try {
+      const response = await axios.get(
+        `/api/flash-cards/get?projectId=${projectId}`,
+      );
+
+      // if (response.data.error) {
+      //   toast.error('Something went wrong in fetching flash card sets');
+      //   return;
+      // }
+
+      // if (!response.data.flashCardSetsWithChatsAndFlashCards.length) {
+      //   window.location.href = '/flash-cards';
+      //   return;
+      // }
+
+      setFlashcards(response.data.flashcards);
+    } catch (error: any) {
+      console.log('There was an error in fetching flashcards: ', error);
+      toast.error('Something went wrong in fetching flashcards');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const generateFlashCards = async () => {
+    setIsGenerating(true);
+    try {
+      const response = await axios.post('/api/flash-cards', { projectId });
+
+      if (response.data.error) {
+        toast.error('Fail to generate flash cards');
+        return;
+      }
+
+      setFlashcards(response.data.data);
+      return response.data.data;
+    } catch (error: any) {
+      console.log(error);
+      toast.error('Fail to generate flash cards');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  if (isEditMode) {
+    return (
+      <div className="flex flex-col">
+        <h1 className="text-2xl font-semibold justify-start">Flashcards</h1>
+        <FlashCardEdit flashCardSet={flashCardSet} onEditOff={() => setIsEditMode(false)} />
+      </div>
+    );
+  }
+
   return (
-    <div>Flashcards</div>
-  )
+    <div className="flex flex-col">
+      <h1 className="text-2xl font-semibold justify-start">Flashcards</h1>
+
+      {isLoading ? (
+        <>
+          <LoadingComponent />
+        </>
+      ) : flashcards.length === 0 ? (
+        <>
+          <div className="flex flex-col gap-4 items-center">
+            <EmptyDisplay
+              src="/images/no-flashcard.png"
+              text="You haven't had your own flashcards yet. Let's generate some!"
+            />
+
+            <Button
+              onClick={generateFlashCards}
+              disabled={isGenerating}
+              className="px-6 py-4 text-lg font-semibold"
+            >
+              {isGenerating ? 'Generating...' : 'Generate Flashcards'}
+            </Button>
+          </div>
+        </>
+      ) : (
+        <FlashCardTrack flashCards={flashcards} onEdit={() => setIsEditMode(true)} />
+      )}
+    </div>
+  );
 }

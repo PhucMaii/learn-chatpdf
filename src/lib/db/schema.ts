@@ -92,8 +92,7 @@ export type DrizzleChat = typeof chats.$inferSelect;
 export const flashCardSet = pgTable('flash_card_set', {
   id: serial('id').primaryKey(),
   chatId: integer('chat_id')
-    .references(() => chats.id, { onDelete: 'cascade' })
-    .notNull(),  // This should be removed soon
+    .references(() => chats.id, { onDelete: 'cascade' }),  // This should be removed soon
   title: text('title').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   userId: varchar('user_id', { length: 256 }),
@@ -105,8 +104,7 @@ export const flashCardSet = pgTable('flash_card_set', {
 export const flashCard = pgTable('flash_card', {
   id: serial('id').primaryKey(),
   chatId: integer('chat_id')
-    .references(() => chats.id, { onDelete: 'cascade' })
-    .notNull(), // This should be removed soon
+    .references(() => chats.id, { onDelete: 'cascade' }), // This should be removed soon
   userId: varchar('user_id', { length: 256 }),
   guestId: varchar('guest_id', { length: 256 }),
   question: text('question').notNull(),

@@ -56,10 +56,11 @@ const SingleCardEdit = ({
             style={{ fontSize: '1.2rem' }}
             placeholder="Your front card text..."
             className="w-full border-none bg-emerald-50 text-emerald-800 font-medium"
-            aria-rowspan={5}
+            aria-rowspan={8}
             value={flashCard?.question || ''}
             onChange={(e) => onChange(index, e.target.value, 'question')}
-            aria-rowcount={5}
+            aria-rowcount={8}
+            rows={6}
           />
         </div>
         <div className="flex-[1] flex-col gap-1">
@@ -69,9 +70,12 @@ const SingleCardEdit = ({
             // type="text"
             placeholder="Your back card text..."
             className="w-full border-none bg-emerald-50 text-emerald-800 font-medium text-3xl"
-            aria-rowspan={5}
+            aria-rowspan={8}
             value={flashCard?.answer || ''}
             onChange={(e) => onChange(index, e.target.value, 'answer')}
+            aria-rowcount={8}
+            rows={6}
+            
           />
         </div>
       </div>
@@ -81,9 +85,10 @@ const SingleCardEdit = ({
 
 interface IProps {
   flashCardSet: DrizzleFlashCardSet;
+  onEditOff: () => void;
 }
 
-export default function FlashCardEdit({ flashCardSet }: IProps) {
+export default function FlashCardEdit({ flashCardSet, onEditOff }: IProps) {
   const [cardDeck, setCardDeck] = useState<any>(flashCardSet);
   const [newTitle, setNewTitle] = useState<string>(flashCardSet?.title);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -143,12 +148,13 @@ export default function FlashCardEdit({ flashCardSet }: IProps) {
     <div className="flex flex-col gap-4 w-full mx-auto max-w-[2000px]">
       <div className="flex items-center justify-between mt-2">
         <div className="flex items-center gap-4">
-          <Link
-            href={`/flash-cards/${flashCardSet?.id}`}
+          <Button
             className="hover:scale-105 active:scale-90 transition-all duration-300"
+            variant="ghost"
+            onClick={onEditOff}
           >
-            <ArrowLeftIcon className="w-6 h-6 text-gray-500" />
-          </Link>
+            <ArrowLeftIcon className="w-6 h-6 text-gray-500"  />
+          </Button>
           <h4 className="font-semibold text-3xl">Edit Flashcards</h4>
         </div>
         <Button

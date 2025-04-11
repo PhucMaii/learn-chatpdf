@@ -2,10 +2,10 @@ import { Configuration, OpenAIApi } from 'openai-edge';
 import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { chats, flashCard } from '@/lib/db/schema';
+import { flashCard, medias, project } from '@/lib/db/schema';
 import { withAuthGuard } from '@/utils/guard';
 import { auth } from '@clerk/nextjs/server';
-import { createFlashCards } from '../create-chat/route';
+import { createFlashCards } from '../utils/flashcards';
 
 export const runtime = 'nodejs';
 
@@ -22,7 +22,9 @@ Your task is to generate **up to 20** high-quality flashcards in JSON format bas
 - Each flashcard must be **strictly derived** from the document.
 - If the content is insufficient, limit the number of flashcards accordingly.
 - Ensure that the JSON output follows **exactly** the structure provided below.
-- Ensure no html or website technology tags are included if present. If the input is a URL, ignore any HTML tags present in the content of the page when generating flashcards, but focus on the content itself or children inside the tags.
+- Ensure no html or website technology tags are included if present in no education help or in place reserve for coding. If the input is a URL, ignore any HTML tags present in the content of the page when generating flashcards, but focus on the content itself or children inside the tags.
+- If the document is a webpage or contains HTML, extract only the educational text content, ignoring layout or code unless it's essential to understanding a concept.
+- Prioritize why/how questions, comparisons, definitions, and applications over basic fact recall.
 - **Do not include explanations or extra information outside of this JSON format.** 
 
 ### **JSON Format (Example Output)**
@@ -51,6 +53,7 @@ Your task is to generate **up to 20** high-quality flashcards in JSON format bas
 - **DO NOT** include markdown.
 - **DO NOT** add an introduction or summary.
 - **ONLY** return a valid JSON object.
+- Each flashcard answer should be no more than 3 sentences and under 100 words, unless the concept requires more detail.
   
 Topic: **Questions and Answers**
 Style: **Academic**
@@ -66,15 +69,20 @@ const handler = async (req: Request) => {
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    const { chatId } = await req.json();
-    const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
-    if (_chats.length !== 1) {
+    const { projectId } = await req.json();
+    const targetProject = await db
+      .select()
+      .from(project)
+      .where(eq(project.id, Number(projectId)));
+
+    if (targetProject.length !== 1) {
       return NextResponse.json({ error: 'Chat not found' }, { status: 404 });
     }
 
-    const fileKey = _chats[0].fileKey;
+    // const fileKey = _chats[0].fileKey;
+    const projectMedias = await db.select().from(medias).where(eq(medias.projectId, projectId));
 
-    const formattedMessages = await createFlashCards(fileKey, chatId, userId);
+    const formattedMessages = await createFlashCards(projectMedias, projectId, userId);
     return NextResponse.json({ data: formattedMessages.flashcards });
   } catch (error) {
     console.error(error);
