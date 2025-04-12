@@ -4,16 +4,16 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import {
   MessageSquare,
-  PlayCircle,
   BookOpen,
   Image as ImageIcon,
   FoldersIcon,
+  NotepadTextIcon,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Media from '@/components/Projects/Media';
 import Flashcards from '@/components/Projects/Flashcards';
 import ChatWithAI from '@/components/Projects/ChatWithAI';
-import ExamMode from '@/components/Projects/ExamMode';
+import StudyGuide from '@/components/Projects/StudyGuide';
 
 export default function ProjectDisplayPage() {
   const [selectedTab, setSelectedTab] = useState('chat');
@@ -53,12 +53,19 @@ export default function ProjectDisplayPage() {
           <BookOpen className="w-5 h-5" /> Flashcards
         </Button>
         <Button
+          variant={selectedTab === 'studyGuide' ? 'default' : 'ghost'}
+          onClick={() => setSelectedTab('studyGuide')}
+          className="justify-start gap-2"
+        >
+          <NotepadTextIcon className="w-5 h-5" /> Study Guide
+        </Button>
+        {/* <Button
           variant={selectedTab === 'exam' ? 'default' : 'ghost'}
           onClick={() => setSelectedTab('exam')}
           className="justify-start gap-2"
         >
           <PlayCircle className="w-5 h-5" /> Exam Mode
-        </Button>
+        </Button> */}
       </aside>
 
       {/* Main Content */}
@@ -83,8 +90,8 @@ export default function ProjectDisplayPage() {
             <ChatWithAI />
           </TabsContent>
 
-          <TabsContent value="exam">
-            <ExamMode />
+          <TabsContent value="studyGuide">
+            <StudyGuide />
           </TabsContent>
         </Tabs>
       </main>

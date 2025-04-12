@@ -34,6 +34,19 @@ export const project = pgTable('project', {
   isDeleted: integer('is_deleted').default(0),
 });
 
+export const studyGuide = pgTable('study_guide', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  userId: varchar('user_id', { length: 256 }),
+  guestId: varchar('guest_id', { length: 256 }),
+  projectId: integer('project_id')
+    .references(() => project.id, { onDelete: 'cascade' })
+    .notNull(),
+  
+});
+
 export const medias = pgTable('medias', {
   id: serial('id').primaryKey(),
   url: text('url'), // Users can upload either url or file
@@ -46,7 +59,7 @@ export const medias = pgTable('medias', {
   projectId: integer('project_id')
     .references(() => project.id, { onDelete: 'cascade' })
     .notNull(),
-})
+});
 
 export const guests = pgTable('guests', {
   id: varchar('id', { length: 256 }).primaryKey(),
@@ -83,28 +96,32 @@ export const chats = pgTable('chats', {
   fileKey: text('file_key'),
   title: text('title'),
   lastOpenedAt: timestamp('last_opened_at').defaultNow(),
-  projectId: integer('project_id')
-  .references(() => project.id, { onDelete: 'cascade' }),
+  projectId: integer('project_id').references(() => project.id, {
+    onDelete: 'cascade',
+  }),
 });
 
 export type DrizzleChat = typeof chats.$inferSelect;
 
 export const flashCardSet = pgTable('flash_card_set', {
   id: serial('id').primaryKey(),
-  chatId: integer('chat_id')
-    .references(() => chats.id, { onDelete: 'cascade' }),  // This should be removed soon
+  chatId: integer('chat_id').references(() => chats.id, {
+    onDelete: 'cascade',
+  }), // This should be removed soon
   title: text('title').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   userId: varchar('user_id', { length: 256 }),
   guestId: varchar('guest_id', { length: 256 }),
-  projectId: integer('project_id')
-    .references(() => project.id, { onDelete: 'cascade' }),
+  projectId: integer('project_id').references(() => project.id, {
+    onDelete: 'cascade',
+  }),
 });
 
 export const flashCard = pgTable('flash_card', {
   id: serial('id').primaryKey(),
-  chatId: integer('chat_id')
-    .references(() => chats.id, { onDelete: 'cascade' }), // This should be removed soon
+  chatId: integer('chat_id').references(() => chats.id, {
+    onDelete: 'cascade',
+  }), // This should be removed soon
   userId: varchar('user_id', { length: 256 }),
   guestId: varchar('guest_id', { length: 256 }),
   question: text('question').notNull(),

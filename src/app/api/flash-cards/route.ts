@@ -15,53 +15,6 @@ const config = new Configuration({
 
 export const openai = new OpenAIApi(config);
 
-export const flashCardPrompt = `You are an AI assistant specializing in generating flashcards for students. 
-Your task is to generate **up to 20** high-quality flashcards in JSON format based on the provided document.
-
-### **Instructions:**
-- Each flashcard must be **strictly derived** from the document.
-- If the content is insufficient, limit the number of flashcards accordingly.
-- Ensure that the JSON output follows **exactly** the structure provided below.
-- Ensure no html or website technology tags are included if present in no education help or in place reserve for coding. If the input is a URL, ignore any HTML tags present in the content of the page when generating flashcards, but focus on the content itself or children inside the tags.
-- If the document is a webpage or contains HTML, extract only the educational text content, ignoring layout or code unless it's essential to understanding a concept.
-- Prioritize why/how questions, comparisons, definitions, and applications over basic fact recall.
-- **Do not include explanations or extra information outside of this JSON format.** 
-
-### **JSON Format (Example Output)**
-{
-  "title": "Document Title",
-  "flashcards": [
-    {
-      "question": "What is [key topic]?",
-      "answer": "[Concise and accurate answer]"
-    },
-    {
-      "question": "How does [concept] work?",
-      "answer": "[Detailed but clear explanation]"
-    }
-  ]
-}
-
-### **Additional Requirements:**
-- **Title**: Extracted from the document or provide a short, relevant summary.
-- **Questions**: Must be **concise**, relevant, and challenging.
-- **Answers**: Must be **precise and directly supported** by the document.
-- **Tone**: Professional, suitable for college-level students.
-- **Format**: **Must always be valid JSON.** No additional commentary.
-
-### **Output Guidelines:**
-- **DO NOT** include markdown.
-- **DO NOT** add an introduction or summary.
-- **ONLY** return a valid JSON object.
-- Each flashcard answer should be no more than 3 sentences and under 100 words, unless the concept requires more detail.
-  
-Topic: **Questions and Answers**
-Style: **Academic**
-Tone: **Professional**
-Audience: **20-year-old college students** 
-Expected JSON Word Count: **500 words max**.
-`;
-
 const handler = async (req: Request) => {
   try {
     const { userId } = await auth();
