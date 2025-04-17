@@ -7,11 +7,12 @@ import LoadingComponent from '../LoadingComponent';
 import ReactMarkdown from 'react-markdown';
 import EmptyDisplay from '../EmptyDisplay';
 import { Button } from '../ui/button';
-
+import RichTextEditor from '../RichTextEditor';
 export default function StudyGuide() {
   const { id: projectId } = useParams();
 
   const [isAdding, setIsAdding] = useState<boolean>(false);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [studyGuide, setStudyGuide] = useState<DrizzleStudyGuide | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -36,8 +37,6 @@ export default function StudyGuide() {
     }
   };
 
-  console.log(studyGuide, 'studyGuide');
-
   const handleCreateStudyGuide = async () => {
     setIsAdding(true);
     try {
@@ -58,17 +57,32 @@ export default function StudyGuide() {
     } finally {
       setIsAdding(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col w-full mx-auto md:w-xl lg:w-2xl xl:w-4xl">
-      <h1 className="text-2xl font-semibold justify-start">Study Guide</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl justify-start">Study Guide</h1>
+
+        <div className="flex gap-2">
+          <Button onClick={() => setIsEditMode(!isEditMode)}>
+            {isEditMode ? 'View' : 'Edit'}
+          </Button>
+          {isEditMode && <Button onClick={() => setIsEditMode(!isEditMode)}>
+            Save Changes
+          </Button>}
+        </div>
+      </div>
 
       {isLoading ? (
         <LoadingComponent />
-      ) : studyGuide ? (
-        <div className="flex flex-col">
-          <ReactMarkdown>{studyGuide.content}</ReactMarkdown>
+      ) : studyGuide && isEditMode ? (
+        <RichTextEditor content={studyGuide.content} />
+      ) : studyGuide && !isEditMode ? (
+        <div className="leading-[2]">
+          <ReactMarkdown>
+            {studyGuide.content}
+          </ReactMarkdown>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-4">
@@ -76,7 +90,11 @@ export default function StudyGuide() {
             src="/images/no-flashcard.png"
             text="You haven't created your own study guide yet. Let's create one!"
           />
-          <Button disabled={isAdding} onClick={handleCreateStudyGuide} className="px-6 py-4 text-lg font-semibold">
+          <Button
+            disabled={isAdding}
+            onClick={handleCreateStudyGuide}
+            className="px-6 py-4 text-lg font-semibold"
+          >
             {isAdding ? 'Creating...' : 'Create Study Guide'}
           </Button>
         </div>
