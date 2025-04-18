@@ -6,20 +6,42 @@ import SidebarWrapper from '@/components/SidebarWrapper';
 import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import useDebounce from '../../../hooks/useDebounce';
 
 export default function ProjectsPage() {
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const [searchKeywords, setSearchKeywords] = useState<string>('');
+  const [displayProjects, setDisplayProjects] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
+
+  const debouncedKeyword = useDebounce(searchKeywords, 1000);
 
   useEffect(() => {
     fetchProjects();
   }, []);
 
+  useEffect(() => {
+    if (projects) {
+      setDisplayProjects(projects);
+    }
+  }, [projects])
+
+  useEffect(() => {
+    if (debouncedKeyword) {
+      const newDisplayProjects = projects.filter((project) =>
+        project.name.toLowerCase().includes(debouncedKeyword.toLowerCase()),
+      );
+      setDisplayProjects(newDisplayProjects);
+    } else {
+      setDisplayProjects(projects);
+    }
+  }, [debouncedKeyword]);
+
   const fetchProjects = async () => {
     try {
       const response = await axios.get('/api/project');
       setProjects(response.data.projects);
+      setDisplayProjects(response.data.projects);
     } catch (error: any) {
       console.error('Error fetching projects:', error);
     } finally {
@@ -34,7 +56,7 @@ export default function ProjectsPage() {
       <div className="flex flex-col gap-4 mt-6 p-4 border-1 border-gray-100 rounded-lg">
         <div className="flex gap-2 mt-6 rounded-lg">
           <Input
-            placeholder="Search chats..."
+            placeholder="Search projects..."
             value={searchKeywords}
             onChange={(e) => setSearchKeywords(e.target.value)}
             className="rounded-md border-1 border-gray-300"
@@ -61,8 +83,8 @@ export default function ProjectsPage() {
             <div className="col-span-5 flex flex-col items-center justify-center w-full h-full">
               <LoadingComponent />
             </div>
-          ) : projects.length > 0 ? (
-            projects.map((project) => (
+          ) : displayProjects.length > 0 ? (
+            displayProjects.map((project) => (
               <Project
                 className="col-span-1"
                 project={project}
