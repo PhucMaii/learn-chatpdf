@@ -28,15 +28,18 @@ export interface IFlashCardSet extends DrizzleFlashCardSet {
 }
 
 export interface IFeature {
+  id: number;
   title: string;
   description: string;
   image: string;
+  element?: any;
 }
 
 export interface IGain {
   title: string;
   description: string;
   icon: any;
+  element?: any;
 }
 
 export interface IProject {

@@ -8,11 +8,11 @@ import MotionSection from '../MotionSection';
 export default function Footer() {
   return (
     <MotionSection>
-      <div className="px-4 md:px-32 py-16">
+      <div className="px-4 md:px-32 py-16 border-t border-gray-300">
         <div className="flex flex-row items-center justify-between max-w-4xl mx-auto">
           <div className="flex flex-row gap-2 items-center">
             <Logo />
-            <h6 className="text-xl font-bold text-white">LearnPDF</h6>
+            <h6 className="text-xl font-bold">LearnPDF</h6>
           </div>
           <div className="flex flex-col gap-4">
             {contactList.map((contact: any, index: number) => (
@@ -21,8 +21,8 @@ export default function Footer() {
                 className="flex flex-row gap-4 items-center"
                 key={index}
               >
-                <contact.icon className="text-white" />
-                <h6 className="text-sm font-bold text-white">
+                <contact.icon className="" />
+                <h6 className="text-sm font-bold ">
                   {contact.title}
                 </h6>
               </Link>

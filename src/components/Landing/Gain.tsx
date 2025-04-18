@@ -9,7 +9,7 @@ export default function Gain() {
   return (
     <MotionSection>
       <div className="w-full p-8">
-        <h1 className="text-5xl font-bold text-center text-white">
+        <h1 className="text-5xl font-semibold text-center">
           What You Will Gain?
         </h1>
 

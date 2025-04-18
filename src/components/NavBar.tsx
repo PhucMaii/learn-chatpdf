@@ -98,20 +98,21 @@ const NavBar = ({ landingPage }: Props) => {
         <div className="hidden md:flex items-center gap-8 mr-2">
           <Link
             href="/chats"
-            className={`${landingPage ? 'text-white' : 'text-emerald-500'} font-semibold `}
+            // className={`${landingPage ? 'text-white' : 'text-emerald-500'} font-semibold `}
+            className="text-black font-semibold"
           >
             Dashboard
           </Link>
           <Link
             href="/pricing"
-            className={`${landingPage ? 'text-white' : 'text-emerald-500'} font-semibold hidden sm:block `}
+            className="text-black font-semibold hidden sm:block"
           >
             Pricing
           </Link>
           {user && Object.keys(user).length > 0 ? (
             <UserButton />
           ) : (
-            <Link className="text-white hidden md:block" href="/sign-in">
+            <Link className="text-black hidden md:block" href="/sign-in">
               <Button className="rounded-xl font-semibold text-md">
                 Login
               </Button>

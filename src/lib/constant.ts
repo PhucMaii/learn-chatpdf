@@ -6,12 +6,12 @@ import {
   FoldersIcon,
   // FacebookIcon,
   GraduationCapIcon,
-  InstagramIcon,
   MailIcon,
   // MessageCircleMoreIcon,
   NotebookIcon,
   NotebookPenIcon,
   ShieldCheckIcon,
+  TwitterIcon,
 } from 'lucide-react';
 import { IFeature } from './type';
 
@@ -129,41 +129,49 @@ export const languages = [
 
 export const features: IFeature[] = [
   {
+    id: 1,
     title: 'Flash Cards',
     description:
       'Transform your PDF files into dynamic flashcards designed to empower students and elevate their learning journey!',
-    image: '/images/feature-summary/flashcard.jpeg',
+    image: '/images/feature-summary/flashcard.png',
   },
   {
+    id: 2,
     title: 'Multi-language chat',
     description:
       'Our application breaks down language barriers, empowering everyone to solve their problems seamlessly in their own language.',
-    image: '/images/feature-summary/multi-language.jpeg',
+    image: '/images/feature-summary/multi-language.png',
   },
   {
+    id: 3,
     title: 'Chat with PDFs',
     description:
       'Meet your smartest, fastest study partner—delivering instant answers to all your questions, outpacing your classmates every time!',
-    image: '/images/feature-summary/chatpdf.jpeg',
+    image: '/images/feature-summary/chatpdf.png',
   },
 ];
 
 export const featureDetails = [
   {
+    id: 1,
     title: 'Flash Card Usage 🔖',
-    description:
-      'Boost your learning with flashcards! Research shows that students using flashcards can achieve up to 50% higher scores compared to traditional study methods. Level up your study game today!',
+    description: `Turn your notes into smart, easy-to-review flashcards.
+Studies show flashcards can improve scores by up to 50%.`,
     image: '/images/features-details/flashcard.jpeg',
+    // element: <FlashCardDemo />,
   },
   {
+    id: 2,
     title: 'Chat in your own language 🌎',
     description:
-      'Feeling homesick in a new country? Connect with experts in your native language for instant comfort, support, and understanding.',
+      `Learning shouldn’t be limited by language.
+Talk to your PDFs and get support in the language you're most comfortable with.`,
     image: '/images/features-details/multi-language.jpeg',
   },
   {
-    title: 'Chat with your PDF 💬',
-    description: `Struggling with time consuming PDFs at school? Our 'Chat with your PDF' feature makes tackling homework faster and easier, delivering the same or even better quality results in a fraction of the time.`,
+    id: 3,
+    title: 'Smart Study Guides 📝',
+    description: `Turn lengthy files into clear, structured summaries with key concepts, definitions, and must-know points automatically.`,
     image: '/images/features-details/multi-language.jpeg',
   },
 ];
@@ -220,9 +228,9 @@ export const contactList = [
     link: 'mailto:maithienphuc0102@gmail.com',
   },
   {
-    icon: InstagramIcon,
-    title: 'Instagram',
-    link: 'https://www.instagram.com/_tpismeee_/',
+    icon: TwitterIcon,
+    title: 'Twiter',
+    link: 'https://x.com/learnwithphuc',
   },
   // {
   //   icon: FacebookIcon,

@@ -7,8 +7,7 @@ type Props = {
 
 export default function FeatureCard({ card }: Props) {
   return (
-    <div className="w-full h-full bg-white p-4 rounded-3xl border-2 border-gray-300 flex flex-col items-center justify-center gap-4 hover:scale-103 transition-all duration-500">
-      <h6 className="text-2xl font-bold">{card.title}</h6>
+    <div className="w-full h-full bg-white  flex flex-col items-center justify-center gap-4 hover:scale-103 transition-all duration-500">
       <Image
         src={card.image}
         alt={card.title}
@@ -16,9 +15,12 @@ export default function FeatureCard({ card }: Props) {
         height={500}
         className="rounded-3xl"
       />
-      <h6 className="text-lg font-bold text-center text-gray-500">
-        {card.description}
-      </h6>
+      <div className="flex flex-col justify-center gap-4">
+        <h6 className="text-4xl text-left font-semibold">{card.title}</h6>
+        <h6 className="text-lg text-left font-medium text-gray-700">
+          {card.description}
+        </h6>
+      </div>
     </div>
   );
 }
