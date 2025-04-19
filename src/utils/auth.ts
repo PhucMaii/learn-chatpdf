@@ -7,7 +7,7 @@ export const handleAuthGuard = async (
   guestSessionId?: string,
 ) => {
   if (userId) {
-    return { ok: true, userId, type: 'user' };
+    return { ok: true, userId, type: 'user' , id: userId};
   }
   if (!userId) {
     if (!guestSessionId) {
@@ -24,5 +24,5 @@ export const handleAuthGuard = async (
     }
   }
 
-  return { ok: true, guestSessionId, type: 'guest' };
+  return { ok: true, guestSessionId, type: 'guest' , id: guestSessionId};
 };

@@ -1,9 +1,15 @@
 'use client';
-import React from 'react';
+import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '../ui/button';
+import GuestFileUpload from './GuestFileUpload';
+import { UserContext } from '../../../context/UserProvider';
+import { useRouter } from 'next/navigation';
 
 export default function Introduction() {
+  const { user }: any = useContext(UserContext);
+  const router = useRouter();
+
   const introVariants = {
     hidden: { opacity: 0, y: 100 },
     visible: {
@@ -32,9 +38,21 @@ export default function Introduction() {
               stress less, and feel confident <br />
               with LearnPDF
             </h6>
-            <Button className="mt-4 py-6 px-8 rounded-xl font-semibold text-xl w-fit mt-8">
-              Start Your Free Trial
+            <Button className="mt-4 py-6 px-8 rounded-xl font-semibold text-xl w-[300px] mt-8" onClick={() => {
+              if (user?.name) {
+                router.push('/dashboard');
+              } else {
+                router.push('/signup');
+              }
+            }}>
+              {user?.name ? 'Go to Dashboard' : 'Sign Up For Free'}
             </Button>
+            {!user?.name && (
+              <div className="w-[300px] h-full">
+                <GuestFileUpload className="w-full" projectId={1} />
+              </div>
+            )}
+            <div className="flex flex-col justify-center mt-8"></div>
           </div>
           <div className="flex-1">
             <img
@@ -70,16 +88,6 @@ export default function Introduction() {
           <h4 className="text-white font-semibold">
             99+ users have leveled up their learning experience
           </h4>
-        </div> */}
-
-        {/* <div className="flex flex-col justify-center mt-8">
-          <div className="w-4xl mx-auto h-full px-4">
-            <FileUpload
-              className="mt-4"
-              noIncludeLink
-              msg="Drop Your File Here and See The Magic Happens"
-            />
-          </div>
         </div> */}
       </div>
     </motion.div>

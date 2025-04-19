@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useContext, useEffect, useState } from 'react';
 import '../../../styles/FlashCard.css';
 import { CheckIcon, Edit, Loader2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -10,6 +10,8 @@ import { Textarea } from '../ui/textarea';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import AddCard from '../Dialogs/add/AddCard';
+import { UserContext } from '../../../context/UserProvider';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
 type Props = {
   flashCard: any;
@@ -39,6 +41,10 @@ const FlashCard = ({
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [side, setSide] = useState<'front' | 'back'>('front');
+
+  const [guestSession] = useLocalStorage('guest-session', {});
+
+  const { user } = useContext(UserContext) ?? { user: null };
 
   useEffect(() => {
     if (flashCard) {
@@ -79,7 +85,7 @@ const FlashCard = ({
     e.stopPropagation();
     setIsLoading(true);
     try {
-      const response: any = await axios.put('/api/flash-cards', {
+      const response: any = await axios.put(`/api/flash-cards?guestSessionId=${guestSession?.sessionId}`, {
         id: card.id,
         newFlashCard: {
           question: card.question,
@@ -113,7 +119,7 @@ const FlashCard = ({
         // { '2xl:w-[700px] w-[400px] h-[600px]': isInChat },
       )}
     >
-      {!progress && (
+      {!progress && user && (
         <div className="w-full flex items-center justify-end space-x-2 mb-2">
           <Button variant="outline" className="jutify-end" onClick={onEdit}>
             <div className="flex items-center space-x-2">

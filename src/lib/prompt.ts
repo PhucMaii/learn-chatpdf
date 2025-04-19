@@ -18,6 +18,8 @@ Your task is to produce a study guide that is **concise**, **accurate**, and **r
 ### 📄 Markdown Format (Example Output)
 \`\`\`markdown
 # [Document Title]
+# [Executive Summary]
+# [Introduction]
 
 ## [Topic 1]
 - [Key Point 1]
@@ -28,6 +30,8 @@ Your task is to produce a study guide that is **concise**, **accurate**, and **r
 - [Key Point 1]
 - [Key Point 2]
 - [Key Point 3]
+
+## [Conclusion]
 \`\`\`
 
 ---

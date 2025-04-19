@@ -42,6 +42,7 @@ const FileUpload = ({
 
   const [isLearning, setIsLearning] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isUploadingLink, setIsUploadingLink] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [url, setUrl] = useState<string>('');

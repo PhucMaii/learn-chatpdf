@@ -1,19 +1,12 @@
 import { db } from '@/lib/db';
-import { chats, flashCard, flashCardSet } from '@/lib/db/schema';
+import { flashCard, flashCardSet } from '@/lib/db/schema';
 import { withAuthGuard } from '@/utils/guard';
 import { getQueryParams } from '@/utils/query';
-import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 const handler = async (req: Request) => {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const projectId = getQueryParams(req, 'projectId');
 
     if (projectId) {
@@ -29,8 +22,8 @@ const handler = async (req: Request) => {
 
       if (flashCardSetsWithChatsAndFlashCards.length === 0) {
         return NextResponse.json(
-          { error: 'No flash card set found' },
-          { status: 404 },
+          { flashCardSetsWithChatsAndFlashCards: [] },
+          { status: 200 },
         );
       }
       const groupedResult = groupChatToFlashCards(
@@ -41,24 +34,27 @@ const handler = async (req: Request) => {
       });
     }
 
-    const flashCardSetsWithChatsAndFlashCards = await db
-      .select({
-        flashCardSet,
-        chat: chats,
-        flashCard,
-      })
-      .from(flashCardSet)
-      .innerJoin(chats, eq(flashCardSet.chatId, chats.id))
-      .leftJoin(flashCard, eq(flashCard.flashCardSetId, flashCardSet.id))
-      .where(eq(flashCardSet.userId, userId));
+    // const flashCardSetsWithChatsAndFlashCards = await db
+    //   .select({
+    //     flashCardSet,
+    //     chat: chats,
+    //     flashCard,
+    //   })
+    //   .from(flashCardSet)
+    //   .innerJoin(chats, eq(flashCardSet.chatId, chats.id))
+    //   .leftJoin(flashCard, eq(flashCard.flashCardSetId, flashCardSet.id))
+    //   .where(eq(flashCardSet.projectId, Number(projectId)));
 
-    // Grouping the flashCards by flashCardSet
-    const groupedResult = groupChatToFlashCards(
-      flashCardSetsWithChatsAndFlashCards,
-    );
+    // // Grouping the flashCards by flashCardSet
+    // const groupedResult = groupChatToFlashCards(
+    //   flashCardSetsWithChatsAndFlashCards,
+    // );
 
+    // return NextResponse.json({
+    //   flashCardSetsWithChatsAndFlashCards: Object.values(groupedResult),
+    // });
     return NextResponse.json({
-      flashCardSetsWithChatsAndFlashCards: Object.values(groupedResult),
+      flashCardSetsWithChatsAndFlashCards: [],
     });
   } catch (error: any) {
     console.log('Internal Server Error: ', error);

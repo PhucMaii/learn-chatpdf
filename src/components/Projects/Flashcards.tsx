@@ -9,6 +9,7 @@ import LoadingComponent from '../LoadingComponent';
 import EmptyDisplay from '../EmptyDisplay';
 import { Button } from '../ui/button';
 import FlashCardEdit from '../FlashCard/FlashCardEdit';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
 export default function Flashcards() {
   const { id: projectId } = useParams() ?? { id: null };
@@ -19,17 +20,20 @@ export default function Flashcards() {
   const [flashcards, setFlashcards] = useState<DrizzleFlashCard[]>([]);
   const [flashCardSet, setFlashCardSet] = useState<any>(null);
 
-  useEffect(() => {
-    fetchFlashcards();
-  }, []);
-
-  // const [isLoading, setIsLoading] = useState<boolean>(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [guestSession, setGuestSession, isInitialized] = useLocalStorage('guest-session', {});
 
   useEffect(() => {
-    const fetchFlashCardSet = async () => {
-      try {
-        const response = await axios.get(
-          `/api/flashcard-set/get?projectId=${projectId}`,
+    if (isInitialized) {
+      fetchFlashcards();
+      fetchFlashCardSet();
+    }
+  }, [isInitialized]);
+
+  const fetchFlashCardSet = async () => {
+    try {
+      const response = await axios.get(
+          `/api/flashcard-set/get?projectId=${projectId}&guestSessionId=${guestSession?.sessionId}`,
         );
 
         // if (response.data.error) {
@@ -49,18 +53,15 @@ export default function Flashcards() {
         console.log(error);
         toast.error('Something went wrong in fetching flash card sets');
         // setIsLoading(false);
-      }
-    };
+    }
+  };
 
-    fetchFlashCardSet();
-    // const data = await response.json();x
-    // setFlashCardSet(data.flashCardSetsWithChatsAndFlashCards[0]);
-  }, []);
+  // const data = await response.json();x
 
   const fetchFlashcards = async () => {
     try {
       const response = await axios.get(
-        `/api/flash-cards/get?projectId=${projectId}`,
+        `/api/flash-cards/get?projectId=${projectId}&guestSessionId=${guestSession?.sessionId}`,
       );
 
       // if (response.data.error) {
@@ -85,7 +86,7 @@ export default function Flashcards() {
   const generateFlashCards = async () => {
     setIsGenerating(true);
     try {
-      const response = await axios.post('/api/flash-cards', { projectId });
+      const response = await axios.post(`/api/flash-cards?guestSessionId=${guestSession?.sessionId}`, { projectId });
 
       if (response.data.error) {
         toast.error('Fail to generate flash cards');

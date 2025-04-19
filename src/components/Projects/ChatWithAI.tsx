@@ -14,7 +14,8 @@ export default function ChatWithAI() {
   const { id: projectId } = useParams();
   const [initialMsg, setInitialMsg] = useState<any>(null);
 
-  const [guestSession] = useLocalStorage('guest-session', {});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [guestSession, setGuestSession, isInitialized] = useLocalStorage('guest-session', {});
 
   const [language, setLanguage] = useState<string>('English');
 
@@ -30,8 +31,11 @@ export default function ChatWithAI() {
 
   
   useEffect(() => {
-    fetchMsg();
-  }, []);
+    // Ensure guestSession is ready before fetching messages
+    if (isInitialized) {
+      fetchMsg();
+    }
+  }, [isInitialized]);
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
@@ -51,7 +55,7 @@ export default function ChatWithAI() {
 
   const fetchMsg = async () => {
     try {
-      const response = await axios.get(`/api/messages?projectId=${projectId}`);
+      const response = await axios.get(`/api/messages?projectId=${projectId}&guestSessionId=${guestSession?.sessionId}`);
 
       if (response.data.error) {
         toast.error('Something went wrong in fetching messages');

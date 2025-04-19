@@ -6,6 +6,7 @@ import { flashCard, medias, project } from '@/lib/db/schema';
 import { withAuthGuard } from '@/utils/guard';
 import { auth } from '@clerk/nextjs/server';
 import { createFlashCards } from '../utils/flashcards';
+import { getQueryParams } from '@/utils/query';
 
 export const runtime = 'nodejs';
 
@@ -19,9 +20,15 @@ const handler = async (req: Request) => {
   try {
     const { userId } = await auth();
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const guestSessionId = getQueryParams(req, 'guestSessionId');
+    const isGuest = guestSessionId ? true : false;
+
+    const userData: any = {
+      id: userId ? userId : guestSessionId,
+      isGuest,
+      guestSessionId,
     }
+
     const { projectId } = await req.json();
     const targetProject = await db
       .select()
@@ -35,7 +42,7 @@ const handler = async (req: Request) => {
     // const fileKey = _chats[0].fileKey;
     const projectMedias = await db.select().from(medias).where(eq(medias.projectId, projectId));
 
-    const formattedMessages = await createFlashCards(projectMedias, projectId, userId);
+    const formattedMessages = await createFlashCards(projectMedias, projectId, userData.id, null, userData.isGuest);
     return NextResponse.json({ data: formattedMessages.flashcards });
   } catch (error) {
     console.error(error);

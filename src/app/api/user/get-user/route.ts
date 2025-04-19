@@ -1,6 +1,5 @@
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
-import { withAuthGuard } from '@/utils/guard';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
@@ -10,7 +9,7 @@ const handler = async () => {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ user: null }, { status: 200 });
     }
 
     const dbUser = await db.select().from(users).where(eq(users.id, userId));
@@ -29,4 +28,4 @@ const handler = async () => {
   }
 };
 
-export const GET = withAuthGuard(handler);
+export const GET = handler;

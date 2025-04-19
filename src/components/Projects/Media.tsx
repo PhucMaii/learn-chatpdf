@@ -8,21 +8,29 @@ import EmptyDisplay from '../EmptyDisplay';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useParams } from 'next/navigation';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
 export default function Media() {
   const { id: projectId } = useParams() ?? { id: null };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
+    'guest-session',
+    {},
+  );
 
-  console.log('Project ID:', projectId);
   const [medias, setMedias] = useState<DrizzleMedia[]>([]);
 
   useEffect(() => {
-    fetchMedias();
-  }, []);
+    if (isInitialized) {
+      fetchMedias();
+    }
+  }, [isInitialized]);
 
   const fetchMedias = async () => {
-    console.log('fetching medias');
     try {
-      const response = await axios.get(`/api/media?projectId=${projectId}`);
+      const response = await axios.get(
+        `/api/media?projectId=${projectId}&guestSessionId=${guestSession?.sessionId}`,
+      );
       const data = response.data.medias;
       setMedias(data);
     } catch (error) {
@@ -34,7 +42,6 @@ export default function Media() {
   if (!projectId) {
     return <div>Project ID is not available</div>;
   }
-
 
   return (
     <div className="flex flex-col gap-4">
@@ -52,7 +59,7 @@ export default function Media() {
       <BorderSection>
         <h4 className="px-4 font-medium text-lg">Your Medias</h4>
         {medias.length > 0 ? (
-          <MediasTable medias={medias} setMedias={setMedias}/>
+          <MediasTable medias={medias} setMedias={setMedias} />
         ) : (
           <EmptyDisplay
             src="/images/no-projects.png"

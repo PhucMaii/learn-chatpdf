@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import FlashCard from './FlashCard';
 import {
   ArrowLeft,
-  ArrowRight,
   CircleArrowLeftIcon,
   CircleArrowRightIcon,
   Loader2,
@@ -14,10 +13,10 @@ import { Label } from '../ui/label';
 import { Progress } from '../ui/progress';
 import StatusText from '../StatusText';
 import { Button } from '../ui/button';
-import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { flashCardResults } from '@/lib/constant';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
 export enum CardStatus {
   LEARNING = 'LEARNING',
@@ -44,7 +43,7 @@ const FlashCardTrack = ({ flashCards, isInChat, onEdit }: Props) => {
   const [learningCards, setLearningCards] = useState<DrizzleFlashCard[]>([]);
   const [knownCards, setKnownCards] = useState<DrizzleFlashCard[]>([]);
 
-  const router = useRouter();
+  const [guestSession] = useLocalStorage('guest-session', {});
 
   useEffect(() => {
     setFlashCardData(flashCards);
@@ -134,7 +133,7 @@ const FlashCardTrack = ({ flashCards, isInChat, onEdit }: Props) => {
           };
         },
       );
-      const response = await axios.put('/api/flash-cards/update/many', {
+      const response = await axios.put(`/api/flash-cards/update/many?guestSessionId=${guestSession?.sessionId}`, {
         flashCards: formattedFlashCards,
       });
 

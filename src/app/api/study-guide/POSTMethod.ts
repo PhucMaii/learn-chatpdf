@@ -2,14 +2,19 @@ import { db } from '@/lib/db';
 import { medias, project } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import { createStudyGuide } from '../utils/studyGuide';
+import { handleAuthGuard } from '@/utils/auth';
+import { auth } from '@clerk/nextjs/server';
+import { getQueryParams } from '@/utils/query';
 
 export default async function POSTMethod(req: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { userId }: any = await auth();
+    const guestSessionId = getQueryParams(req, 'guestSessionId');
+    const authRes: any = await handleAuthGuard(userId, guestSessionId || undefined);
+
+    if (!authRes.ok) {
+      return NextResponse.json({ error: authRes.error }, { status: 401 });
     }
 
     const { projectId } = await req.json();
@@ -42,11 +47,14 @@ export default async function POSTMethod(req: Request) {
     const newStudyGuide = await createStudyGuide(
       projectMedias,
       projectId,
-      userId,
-      false,
+      authRes.id,
+      authRes.type === 'guest',
     );
 
-    return NextResponse.json({ data: newStudyGuide, message: 'Generate Cheat Sheet Successfully' });
+    return NextResponse.json({
+      data: newStudyGuide,
+      message: 'Generate Cheat Sheet Successfully',
+    });
   } catch (error: any) {
     console.log('Internal Server Error: ', error);
     return NextResponse.json(

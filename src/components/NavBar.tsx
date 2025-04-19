@@ -9,11 +9,8 @@ import { motion } from 'framer-motion';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import axios from 'axios';
 
-type Props = {
-  landingPage?: boolean;
-};
 
-const NavBar = ({ landingPage }: Props) => {
+const NavBar = () => {
   const { user, setUser }: any = useContext(UserContext);
   const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
     'guest-session',
@@ -109,7 +106,7 @@ const NavBar = ({ landingPage }: Props) => {
           >
             Pricing
           </Link>
-          {user && Object.keys(user).length > 0 ? (
+          {user?.name && Object.keys(user).length > 0 ? (
             <UserButton />
           ) : (
             <Link className="text-black hidden md:block" href="/sign-in">

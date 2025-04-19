@@ -8,22 +8,30 @@ import ReactMarkdown from 'react-markdown';
 import EmptyDisplay from '../EmptyDisplay';
 import { Button } from '../ui/button';
 import RichTextEditor from '../RichTextEditor';
+import useLocalStorage from '../../../hooks/useLocalStorage';
+
 export default function StudyGuide() {
   const { id: projectId } = useParams();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [guestSession, setGuestSession, isInitialized] = useLocalStorage('guest-session', {});
 
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [studyGuide, setStudyGuide] = useState<DrizzleStudyGuide | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   useEffect(() => {
-    fetchStudyGuide();
-  }, []);
+    if (isInitialized) {
+      fetchStudyGuide();
+    }
+  }, [isInitialized]);
+
+  console.log(studyGuide, 'studyGuide');
 
   const fetchStudyGuide = async () => {
     try {
       const response = await axios.get(
-        `/api/study-guide?projectId=${projectId}`,
+        `/api/study-guide?projectId=${projectId}&guestSessionId=${guestSession?.sessionId}`,
       );
 
       if (response.data.data) {
@@ -40,7 +48,7 @@ export default function StudyGuide() {
   const handleCreateStudyGuide = async () => {
     setIsAdding(true);
     try {
-      const response = await axios.post('/api/study-guide', {
+      const response = await axios.post(`/api/study-guide?guestSessionId=${guestSession?.sessionId}`, {
         projectId,
       });
 
@@ -59,25 +67,56 @@ export default function StudyGuide() {
     }
   };
 
+  const handleSaveStudyGuide = async (updatedContent: string) => {
+    setIsSaving(true);
+    try {
+      console.log(studyGuide?.content, 'studyGuide?.content');
+      const response = await axios.put(`/api/study-guide?guestSessionId=${guestSession?.sessionId}`, {
+        projectId,
+        updatedContent,
+      });
+
+      if (response.data.error) {
+        toast.error('Something went wrong in saving study guide');
+        return;
+      }
+
+      toast.success('Study guide saved successfully');
+
+      console.log(response.data.data, 'response.data.data');
+      setStudyGuide(response.data.data);
+    } catch (error: any) {
+      console.log('Something went wrong in saving study guide', error);
+      toast.error('Something went wrong in saving study guide');
+    } finally {
+      setIsEditMode(false);
+      setIsSaving(false);
+    }
+  }
+
   return (
     <div className="flex flex-col w-full mx-auto md:w-xl lg:w-2xl xl:w-4xl">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl justify-start">Study Guide</h1>
-
-        <div className="flex gap-2">
-          <Button onClick={() => setIsEditMode(!isEditMode)}>
-            {isEditMode ? 'View' : 'Edit'}
-          </Button>
-          {isEditMode && <Button onClick={() => setIsEditMode(!isEditMode)}>
-            Save Changes
+        <Button variant="outline" onClick={() => setIsEditMode(!isEditMode)}>
+          {isEditMode ? 'View' : 'Edit'}
+        </Button>
+        {/* {studyGuide && (
+          <div className="flex gap-2">
+            <Button onClick={() => setIsEditMode(!isEditMode)}>
+              {isEditMode ? 'View' : 'Edit'}
+            </Button>
+          {isEditMode && <Button onClick={handleSaveStudyGuide} disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save Changes'}
           </Button>}
-        </div>
+          </div>
+        )} */}
       </div>
 
       {isLoading ? (
         <LoadingComponent />
       ) : studyGuide && isEditMode ? (
-        <RichTextEditor content={studyGuide.content} />
+        <RichTextEditor content={studyGuide.content} handleSaveStudyGuide={handleSaveStudyGuide} />
       ) : studyGuide && !isEditMode ? (
         <div className="leading-[2]">
           <ReactMarkdown>

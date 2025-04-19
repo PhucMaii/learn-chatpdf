@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -13,6 +13,7 @@ import moment from 'moment';
 import { Button } from '../ui/button';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { UserContext } from '../../../context/UserProvider';
 
 interface IProps {
   medias: any[];
@@ -20,6 +21,8 @@ interface IProps {
 }
 
 export default function MediasTable({ medias, setMedias }: IProps) {
+  const { user } = useContext(UserContext) ?? { user: null };
+
   const [deleting, setDeleting] = useState<any>({
     id: null,
     isDeleting: false,
@@ -82,7 +85,7 @@ export default function MediasTable({ medias, setMedias }: IProps) {
                   {moment(new Date(media?.createdAt || new Date())).calendar()}
                 </TableCell>
                 <TableCell>
-                  <Button
+                  {user && <Button
                     variant="ghost"
                     size="icon"
                     // onClick={(e) => handleDeletemedia(e, media)}
@@ -98,7 +101,7 @@ export default function MediasTable({ medias, setMedias }: IProps) {
                     ) : (
                       <Trash2Icon className="w-4 h-4 text-gray-500" />
                     )}
-                  </Button>
+                  </Button>}
                 </TableCell>
               </TableRow>
             ))}
