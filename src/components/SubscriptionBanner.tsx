@@ -4,9 +4,10 @@ import Link from 'next/link';
 
 type Props = {
   text: string;
+  link: string;
 };
 
-const SubscriptionBanner = ({ text }: Props) => {
+const SubscriptionBanner = ({ text, link }: Props) => {
   return (
     <div className="w-full h-10 ">
       <div
@@ -15,7 +16,7 @@ const SubscriptionBanner = ({ text }: Props) => {
         <TriangleAlertIcon className="text-yellow-800" />
         <h6 className={`text-sm text-yellow-800 font-bold items-center w-fit`}>
           {text}! but don&apos;t worry!{' '}
-          <Link className="underline text-blue-500" href="/pricing">
+          <Link className="underline text-blue-500" href={link}>
             Upgrade now
           </Link>{' '}
           to continue adding more chats and exploring more advanced features.

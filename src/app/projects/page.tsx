@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import useDebounce from '../../../hooks/useDebounce';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
 export default function ProjectsPage() {
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
@@ -14,17 +15,24 @@ export default function ProjectsPage() {
   const [displayProjects, setDisplayProjects] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
+    'guest-session',
+    {},
+  );
   const debouncedKeyword = useDebounce(searchKeywords, 1000);
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    if (isInitialized) {
+      fetchProjects();
+    }
+  }, [isInitialized]);
 
   useEffect(() => {
     if (projects) {
       setDisplayProjects(projects);
     }
-  }, [projects])
+  }, [projects]);
 
   useEffect(() => {
     if (debouncedKeyword) {
@@ -39,7 +47,9 @@ export default function ProjectsPage() {
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get('/api/project');
+      const response = await axios.get(
+        `/api/project?guestSessionId=${guestSession.sessionId}`,
+      );
       setProjects(response.data.projects);
       setDisplayProjects(response.data.projects);
     } catch (error: any) {
@@ -107,9 +117,7 @@ export default function ProjectsPage() {
                 You haven&apos;t created any projects yet. Let&apos;s create the
                 first one.
               </h4>
-              <AddProject 
-                setProjects={setProjects}
-              />
+              <AddProject setProjects={setProjects} />
             </div>
           )}
         </div>

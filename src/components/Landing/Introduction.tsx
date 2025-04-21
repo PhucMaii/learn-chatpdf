@@ -42,7 +42,7 @@ export default function Introduction() {
               if (user?.name) {
                 router.push('/dashboard');
               } else {
-                router.push('/signup');
+                router.push('/sign-up');
               }
             }}>
               {user?.name ? 'Go to Dashboard' : 'Sign Up For Free'}

@@ -15,7 +15,6 @@ type Props = {
   items: string[];
   value: string;
   onChange: (value: string) => void;
-  className?: string
 };
 
 export default function SelectComponent({
@@ -24,7 +23,6 @@ export default function SelectComponent({
   items,
   onChange,
   value,
-  className
 }: Props) {
   return (
     <Select onValueChange={onChange} value={value}>

@@ -37,7 +37,7 @@ const FileUpload = ({
   const router = useRouter();
   const { user }: any = useContext(UserContext);
 
-  const [isGuestUploaded, setIsGuestUploaded] = useState<boolean>(false);
+  const [isGuestUploaded, setIsGuestUploaded] = useState<boolean>(true);
   const [guestSession] = useLocalStorage('guest-session', {});
 
   const [isLearning, setIsLearning] = useState<boolean>(false);
@@ -72,7 +72,7 @@ const FileUpload = ({
         ['.docx'],
       'text/plain': ['.txt'],
     },
-    maxFiles: 5,
+    maxFiles: 3,
     onDrop: async (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (file.size > 30 * 1024 * 1024) {
@@ -192,7 +192,7 @@ const FileUpload = ({
             return;
           }
 
-          if (response.data.guestChats.length > 0) {
+          if (response.data.guestMedias.length > 0) {
             setIsGuestUploaded(true);
           }
         } catch (error: any) {
@@ -308,8 +308,9 @@ const FileUpload = ({
             className="absolute top-0 flex justify-center items-center w-full h-full"
           >
             <Button
+              variant="outline"
               onClick={() => router.push('/sign-up')}
-              className="bg-primary text-white px-6 py-6 text-xl font-semibold rounded-md"
+              className="px-6 py-6 text-xl font-semibold rounded-md"
             >
               Create your account to upload unlimited files 🚀
             </Button>

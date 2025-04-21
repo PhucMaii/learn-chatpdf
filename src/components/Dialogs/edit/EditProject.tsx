@@ -61,7 +61,7 @@ export default function EditProject({ project, setProjects }: IProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open}  onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="w-4 h-4 text-blue-500" variant={'ghost'}>
           <EditIcon className="w-4 h-4 text-blue-500" />

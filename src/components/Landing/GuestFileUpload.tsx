@@ -1,12 +1,14 @@
-import React, { useState, useContext } from 'react'
-import { useRouter } from 'next/navigation'
-import { useDropzone } from 'react-dropzone'
-import { toast } from 'react-hot-toast'
-import { Progress } from '@/components/ui/progress'
-import { Inbox, Loader2 } from 'lucide-react'
-import { UserContext } from '../../../context/UserProvider'
-import { uploadToS3 } from '@/lib/s3'
-import useLocalStorage from '../../../hooks/useLocalStorage'
+import React, { useState, useContext, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useDropzone } from 'react-dropzone';
+import { toast } from 'react-hot-toast';
+import { Progress } from '@/components/ui/progress';
+import { Inbox, Loader2 } from 'lucide-react';
+import { UserContext } from '../../../context/UserProvider';
+import { uploadToS3 } from '@/lib/s3';
+import useLocalStorage from '../../../hooks/useLocalStorage';
+import { Button } from '../ui/button';
+import axios from 'axios';
 // Define the IProps interface if not already defined
 interface IProps {
   noIncludeLink?: boolean;
@@ -16,20 +18,16 @@ interface IProps {
   setDisplay?: (displays: any) => void;
 }
 
-const GuestFileUpload = ({
-  className,
-  msg,
-  projectId,
-}: IProps) => {
+const GuestFileUpload = ({ className, msg, projectId }: IProps) => {
   const router = useRouter();
   const { user }: any = useContext(UserContext);
-
 
   const [guestSession] = useLocalStorage('guest-session', {});
 
   const [isLearning, setIsLearning] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
+  const [isGuestUploaded, setIsGuestUploaded] = useState<boolean>(true);
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -40,7 +38,7 @@ const GuestFileUpload = ({
         ['.docx'],
       'text/plain': ['.txt'],
     },
-    maxFiles: 5,
+    maxFiles: 3,
     onDrop: async (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (file.size > 30 * 1024 * 1024) {
@@ -65,17 +63,16 @@ const GuestFileUpload = ({
           return;
         }
 
-
         const fileListParam = encodeURIComponent(JSON.stringify(resolvedData));
         const eventSource = new EventSource(
           `/api/guest/upload?fileList=${fileListParam}&guestSessionId=${guestSession.sessionId}&guestSessionSignature=${guestSession.signature}`,
         );
 
         eventSource.onmessage = (event) => {
-          const { stage } = JSON.parse(event.data);
+          const { stage, projectId: proId } = JSON.parse(event.data);
           if (stage === 'done') {
             toast.success('Upload Successfully', { id: 'upload-progress' });
-            router.push(`/projects/${projectId}`);
+            router.push(`/projects/${proId ? proId : projectId}`);
           } else {
             toast.loading(stage, { id: 'upload-progress' });
           }
@@ -98,6 +95,36 @@ const GuestFileUpload = ({
     },
   });
 
+  useEffect(() => {
+    if (guestSession.sessionId && !user) {
+      const fetchGuest = async () => {
+        try {
+          const response = await axios.get(
+            `/api/guest?guestSessionId=${guestSession.sessionId}`,
+          );
+          console.log('response: ', response.data);
+          if (response.data.error) {
+            setIsGuestUploaded(false);
+            // toast.error('Something went wrong in fetching user chats');
+            return;
+          }
+
+          if (response?.data.guestMedias.length > 0) {
+            setIsGuestUploaded(true);
+          } else {
+            setIsGuestUploaded(false);
+          }
+        } catch (error: any) {
+          console.log(error);
+          setIsGuestUploaded(false);
+          // toast.error('Something went wrong in fetching user chats');
+        }
+      };
+
+      fetchGuest();
+    }
+  }, [guestSession]);
+
   if (user?.name) {
     return null;
   }
@@ -107,15 +134,10 @@ const GuestFileUpload = ({
       <div className="relative h-[300px]">
         <div
           {...getRootProps({
-            className: `px-4 rounded-xl cursor-pointer bg-white border-2 border-dashed border-emerald-500 py-8 flex justify-center items-center flex-col h-[300px]`,
+            className: `px-4 rounded-xl cursor-pointer bg-white border-2 border-dashed border-emerald-500 py-8 flex justify-center items-center flex-col h-[300px] ${isGuestUploaded ? 'blur-sm' : ''}`,
           })}
         >
-          <input
-            disabled={
-              isLearning || isUploading
-            }
-            {...getInputProps()}
-          />
+          <input disabled={isLearning || isUploading} {...getInputProps()} />
           {isUploading ? (
             <>
               <p className="mt-2 text-sm text-slate-500">
@@ -139,19 +161,20 @@ const GuestFileUpload = ({
             </>
           )}
         </div>
-        {/* {isGuestUploaded && (
+        {isGuestUploaded && (
           <div
             style={{ backdropFilter: 'blur(0px)' }}
             className="absolute top-0 flex justify-center items-center w-full h-full"
           >
             <Button
+              variant="outline"
               onClick={() => router.push('/sign-up')}
-              className="bg-primary text-white px-6 py-6 text-xl font-semibold rounded-md"
+              className="px-6 py-6 text-sm font-semibold rounded-md"
             >
               Create your account to upload unlimited files 🚀
             </Button>
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );

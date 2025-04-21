@@ -59,7 +59,7 @@ export function AppSidebar() {
           <div className="flex items-center gap-2">
             <Logo />
             <h6 className="text-xl font-semibold">LearnPDF</h6>
-            <StatusText text={user?.status} type="info" />
+            <StatusText text={user?.status || 'Guest'} type="info" />
           </div>
         </SidebarHeader>
         <SidebarContent>

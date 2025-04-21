@@ -94,7 +94,7 @@ const NavBar = () => {
 
         <div className="hidden md:flex items-center gap-8 mr-2">
           <Link
-            href="/chats"
+            href={user?.status ? "/projects" : "/sign-in"}
             // className={`${landingPage ? 'text-white' : 'text-emerald-500'} font-semibold `}
             className="text-black font-semibold"
           >

@@ -33,7 +33,7 @@ export default async function PUTMethod(req: Request) {
       );
     }
 
-    const updatedStudyGuide = await db
+    await db
       .update(studyGuide)
       .set({ content: updatedContent })
       .where(eq(studyGuide.projectId, projectId));

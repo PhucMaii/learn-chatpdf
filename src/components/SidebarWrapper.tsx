@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { checkSubscription } from '@/lib/subscription';
 import SubscriptionBanner from './SubscriptionBanner';
@@ -6,6 +7,7 @@ import { UserContext } from '../../context/UserProvider';
 import { AppSidebar } from './app-sidebar';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   children: React.ReactNode;
@@ -19,31 +21,52 @@ const SidebarWrapper = ({ children }: Props) => {
     {},
   );
 
+  const router = useRouter();
+
   useEffect(() => {
-    const checkIsPro = async () => {
-      const fetchedSubscription = await checkSubscription();
+    if (isInitialized) {
+      const checkIsPro = async () => {
+        try {
+          const fetchedSubscription = await checkSubscription(
+            guestSession.sessionId,
+          );
+          setSubscription(fetchedSubscription);
+        } catch (error: any) {
+          console.log('Fail to check subscription', error);
+          router.push('/');
+        }
+      };
 
-      setSubscription(fetchedSubscription);
-    };
-
-    checkIsPro();
-  }, []);
+      checkIsPro();
+    }
+  }, [isInitialized]);
 
   const subscriptionStatus = useMemo(() => {
+    // Mean this is guest
+    if (!user?.status) {
+      return {
+        text: 'You have not signed up yet',
+        type: COLOR_TYPE.WARNING,
+        link: '/sign-up',
+      };
+    }
+
     if (subscription?.isPro) {
-      return { text: 'Pro', type: COLOR_TYPE.SUCCESS };
+      return { text: 'Pro', type: COLOR_TYPE.SUCCESS, link: '/pricing' };
     }
 
     if (subscription?.isTrial) {
       return {
         text: `Your trial is ending on ${new Date(user?.trialEnd).toDateString()}`,
         type: COLOR_TYPE.WARNING,
+        link: '/pricing',
       };
     }
 
     return {
       text: `Your trial ended on ${user?.trialEnd}`,
       type: COLOR_TYPE.WARNING,
+      link: '/pricing',
     };
   }, [subscription]);
 
@@ -98,7 +121,10 @@ const SidebarWrapper = ({ children }: Props) => {
       </div>
       <div className="flex-1 flex flex-col gap-4">
         {!subscription?.isPro && (
-          <SubscriptionBanner text={subscriptionStatus.text} />
+          <SubscriptionBanner
+            text={subscriptionStatus.text}
+            link={subscriptionStatus.link}
+          />
         )}
         <div className="flex flex-col p-1">{children}</div>
       </div>

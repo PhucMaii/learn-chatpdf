@@ -53,7 +53,9 @@ export default function RichTextEditor({
   const handleSave = () => {
     const htmlContent = editor?.getHTML() || '';
     const markdownContent = turndownService.turndown(htmlContent);
-    handleSaveStudyGuide && handleSaveStudyGuide(markdownContent);
+    if (handleSaveStudyGuide) {
+      handleSaveStudyGuide(markdownContent);
+    }
   };
 
   return (

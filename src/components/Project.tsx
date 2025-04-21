@@ -46,16 +46,21 @@ export default function Project({ className, project, setProjects }: IProps) {
       className={`flex flex-col gap-2 cursor-pointer justify-between p-4 border-1 border-gray-100 rounded-lg max-w-[400px] h-[200px] ${className}`}
       onClick={() => router.push(`/projects/${project.id}`)}
     >
-      <DeleteDialog
-        isOpen={isOpenDelete}
-        onClose={() => setIsOpenDelete(false)}
-        onDelete={handleDeleteProject}
-        message={`Are you sure you want to delete the project "${project.name}"? This action cannot be undone.`}
-      />
+      {/* If project is not created by guest, show delete dialog */}
+      {project?.userId && (
+        <DeleteDialog
+          isOpen={isOpenDelete}
+          onClose={() => setIsOpenDelete(false)}
+          onDelete={handleDeleteProject}
+          message={`Are you sure you want to delete the project "${project.name}"? This action cannot be undone.`}
+        />
+      )}
       <div className="flex flex-col gap-2">
         <div className="w-full flex items-center justify-between gap-2">
           {/* Will replace with project.medias.length */}
-          <h6 className="text-sm text-gray-400">3 medias</h6>
+          <h6 className="text-sm text-gray-400">
+            {project?.medias?.length} medias
+          </h6>
           <div className="flex items-center">
             <Button
               onClick={(e: any) => {
@@ -64,17 +69,18 @@ export default function Project({ className, project, setProjects }: IProps) {
               }}
               variant="ghost"
               className="hover:bg-red-100"
+              disabled={!project?.userId}
             >
               <Trash2Icon className="w-4 h-4 text-red-500" />
             </Button>
-            <EditProject project={project} setProjects={setProjects} />
+            {project?.userId && <EditProject project={project} setProjects={setProjects} />}
           </div>
         </div>
         <h1 className="text-xl font-bold w-full">{project?.name}</h1>
       </div>
 
       <h6 className="text-sm text-gray-400">
-        Last opened at: {convertToFromNow(project.lastOpenedAt)}
+        Created at: {convertToFromNow(project.lastOpenedAt)}
       </h6>
     </div>
   );

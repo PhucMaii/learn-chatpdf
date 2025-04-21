@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,16 +9,50 @@ import {
   FoldersIcon,
   NotepadTextIcon,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Media from '@/components/Projects/Media';
 import Flashcards from '@/components/Projects/Flashcards';
 import ChatWithAI from '@/components/Projects/ChatWithAI';
 import StudyGuide from '@/components/Projects/StudyGuide';
+import axios from 'axios';
+import useLocalStorage from '../../../../hooks/useLocalStorage';
+import LoadingComponent from '@/components/LoadingComponent';
 
 export default function ProjectDisplayPage() {
+  const { id } = useParams();
+
+  const [isChecking, setIsChecking] = useState<boolean>(true);
   const [selectedTab, setSelectedTab] = useState('chat');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [guestSession, setGuestSession, isInitialized] = useLocalStorage('guest-session', {});
 
   const router = useRouter();
+
+  useEffect(() => {
+    if (isInitialized) {
+      checkProjectOwner();
+    }
+  }, [isInitialized]);
+
+  const checkProjectOwner = async () => {
+    setIsChecking(true);
+    try {
+      await axios.post(`/api/project/check-owner`, {
+        guestSessionId: guestSession.sessionId,
+        projectId: id,
+      });
+
+    } catch (error: any) {
+      console.log(error);
+      router.push('/')
+    } finally {
+      setIsChecking(false);
+    }
+  }
+
+  if (isChecking) {
+    return <LoadingComponent />;
+  }
 
   return (
     <div className="grid grid-cols-12 max-w-[1920px] mx-auto h-screen bg-white text-gray-900">

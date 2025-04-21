@@ -7,7 +7,6 @@ import { DrizzleFlashCard, DrizzleFlashCardSet } from '@/lib/db/drizzleType';
 import { Textarea } from '../ui/textarea';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import Link from 'next/link';
 
 const SingleCardEdit = ({
   flashCard,

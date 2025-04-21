@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { chats, guests } from '@/lib/db/schema';
+import { guests, medias } from '@/lib/db/schema';
 import { getQueryParams } from '@/utils/query';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
@@ -16,7 +16,7 @@ export const GET = async (req: Request) => {
       );
     }
 
-    let guest = await db
+    const guest = await db
       .select()
       .from(guests)
       .where(eq(guests.guestSessionId, guestSessionId));
@@ -24,20 +24,27 @@ export const GET = async (req: Request) => {
     console.log('guest: ', guest);
     if (guest.length === 0) {
       // Create guest
-      guest = await db
+      const newGuest = await db
         .insert(guests)
-        .values({id: guestSessionId, guestSessionId, guestSessionSignature})
+        .values({ id: guestSessionId, guestSessionId, guestSessionSignature })
         .returning();
+
+      return NextResponse.json(
+        { data: newGuest[0], guestMedias: [] },
+        { status: 200 },
+      );
 
       // return NextResponse.json({ data: newGuest[0] }, { status: 200 });
     }
 
-    const guestChats = await db
+    const guestMedias = await db
       .select()
-      .from(chats)
-      .where(eq(chats.guestId, guestSessionId));
+      .from(medias)
+      .where(eq(medias.guestId, guestSessionId));
 
-    return NextResponse.json({ data: guest[0], guestChats }, { status: 200 });
+    console.log('guestMedias: ', guestMedias);
+
+    return NextResponse.json({ data: guest[0], guestMedias }, { status: 200 });
   } catch (error: any) {
     console.log('Fail to get guest: ', error);
     return NextResponse.json(

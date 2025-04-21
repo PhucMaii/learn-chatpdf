@@ -27,7 +27,7 @@ export default async function Home() {
     <div className="max-w-[1400px] mx-auto min-h-screen flex justify-center">
       <div className="py-8 flex flex-col gap-16 w-full m-0">
         {/* Nav bar */}
-        <NavBar landingPage />
+        <NavBar />
         <Introduction />
         <Features />
         <FeatureDetails />

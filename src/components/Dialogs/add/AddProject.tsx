@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -12,12 +12,15 @@ import { Input } from '../../ui/input';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { IProject } from '@/lib/type';
+import { UserContext } from '../../../../context/UserProvider';
 
 interface IProps {
   setProjects: React.Dispatch<React.SetStateAction<IProject[]>>;
 }
 
 export default function AddProject({setProjects}: IProps) {
+  const { user }: any = useContext(UserContext);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [projectName, setProjectName] = useState<string>('');
@@ -53,7 +56,7 @@ export default function AddProject({setProjects}: IProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>+ New Project</Button>
+        <Button disabled={!user?.status}>+ New Project</Button>
       </DialogTrigger>
       <DialogContent className="bg-white">
         <DialogHeader>

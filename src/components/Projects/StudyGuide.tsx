@@ -19,7 +19,7 @@ export default function StudyGuide() {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [studyGuide, setStudyGuide] = useState<DrizzleStudyGuide | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isSaving, setIsSaving] = useState<boolean>(false);
+
   useEffect(() => {
     if (isInitialized) {
       fetchStudyGuide();
@@ -68,7 +68,6 @@ export default function StudyGuide() {
   };
 
   const handleSaveStudyGuide = async (updatedContent: string) => {
-    setIsSaving(true);
     try {
       console.log(studyGuide?.content, 'studyGuide?.content');
       const response = await axios.put(`/api/study-guide?guestSessionId=${guestSession?.sessionId}`, {
@@ -90,7 +89,6 @@ export default function StudyGuide() {
       toast.error('Something went wrong in saving study guide');
     } finally {
       setIsEditMode(false);
-      setIsSaving(false);
     }
   }
 

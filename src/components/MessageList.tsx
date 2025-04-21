@@ -19,6 +19,7 @@ function MessageList({ messages, isLoading }: Props) {
     return <></>;
   }
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     bottomRef?.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);

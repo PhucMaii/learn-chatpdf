@@ -1,4 +1,4 @@
-import { DrizzleFlashCard, DrizzleFlashCardSet } from './db/drizzleType';
+import { DrizzleFlashCard, DrizzleFlashCardSet, DrizzleMedia } from './db/drizzleType';
 import { DrizzleChat } from './db/schema';
 
 export enum API_URL {
@@ -46,4 +46,6 @@ export interface IProject {
   id: number;
   name: string;
   lastOpenedAt: Date;
+  medias?: DrizzleMedia[];
+  userId?: string;
 }
