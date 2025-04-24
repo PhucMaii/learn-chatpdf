@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { guests, users } from '@/lib/db/schema';
+import { guests, project, users } from '@/lib/db/schema';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 
@@ -8,7 +8,8 @@ export const handleAuthGuard = async (guestSessionId?: string) => {
 
   if (userId) {
     const user = await db.select().from(users).where(eq(users.id, userId));
-    return { ok: true, userId, type: 'user', id: userId, user: user[0] };
+    const projects = await db.select().from(project).where(eq(project.userId, userId));
+    return { ok: true, userId, type: 'user', id: userId, user: {...user[0], projects: projects} };
   } else {
     if (!guestSessionId) {
       return { ok: false, error: 'Unauthorized' };

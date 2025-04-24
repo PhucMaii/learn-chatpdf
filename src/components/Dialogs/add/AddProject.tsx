@@ -64,7 +64,15 @@ export default function AddProject({ setProjects }: IProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button disabled={user?.status !== SUBSCRIPTION_TYPE.PRO}>+ New Project</Button>
+        <Button
+          disabled={
+            user?.status !== SUBSCRIPTION_TYPE.PRO &&
+            user?.projects &&
+            user?.projects?.length > 0
+          }
+        >
+          + New Project
+        </Button>
       </DialogTrigger>
       <DialogContent className="bg-white">
         <DialogHeader>
@@ -88,7 +96,12 @@ export default function AddProject({ setProjects }: IProps) {
         </div>
         <DialogFooter>
           <Button
-            disabled={user?.status !== SUBSCRIPTION_TYPE.PRO || isLoading}
+            disabled={
+              (user?.status !== SUBSCRIPTION_TYPE.PRO &&
+                user?.projects &&
+                user?.projects?.length > 0) ||
+              isLoading
+            }
             onClick={handleSubmit}
             type="submit"
           >

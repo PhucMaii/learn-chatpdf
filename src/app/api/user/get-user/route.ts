@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { guests, users } from '@/lib/db/schema';
+import { guests, project, users } from '@/lib/db/schema';
 import { handleAuthGuard } from '@/utils/auth';
 import { getQueryParams } from '@/utils/query';
 import { auth } from '@clerk/nextjs/server';
@@ -32,8 +32,9 @@ const handler = async (req: Request) => {
 
     if (userId) {
       const dbUser = await db.select().from(users).where(eq(users.id, userId));
+      const userProjects = await db.select().from(project).where(eq(project.userId, userId));
 
-      return NextResponse.json({ user: dbUser[0] }, { status: 200 });
+      return NextResponse.json({ user: {...(dbUser[0] || {}), projects: userProjects} }, { status: 200 });
     }
 
     return NextResponse.json({ user: null }, { status: 200 });
