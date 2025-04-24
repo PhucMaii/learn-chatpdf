@@ -88,7 +88,7 @@ export default function ProjectsPage() {
           <AddProject setProjects={setProjects} />
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 auto-rows-auto gap-2 items-center flex-wrap w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 auto-rows-auto gap-2 items-center flex-wrap w-full">
           {isInitializing ? (
             <div className="col-span-5 flex flex-col items-center justify-center w-full h-full">
               <LoadingComponent />

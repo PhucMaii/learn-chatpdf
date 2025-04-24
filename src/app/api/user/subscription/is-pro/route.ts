@@ -13,7 +13,7 @@ const handler = async (req: Request) => {
 
     const guestSessionId: any = getQueryParams(req, 'guestSessionId');
 
-    const authStatus = await handleAuthGuard(userId, guestSessionId);
+    const authStatus = await handleAuthGuard(guestSessionId);
 
     if (!authStatus.ok) {
       return NextResponse.json({ error: authStatus.error }, { status: 401 });

@@ -2,16 +2,14 @@ import { db } from '@/lib/db';
 import { chats } from '@/lib/db/schema';
 import { handleAuthGuard } from '@/utils/auth';
 import { getQueryParams } from '@/utils/query';
-import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 const handler = async (req: Request) => {
   try {
-    const { userId }: any = await auth();
     const guestSessionId: any = getQueryParams(req, 'guestSessionId');
 
-    const authStatus = await handleAuthGuard(userId, guestSessionId);
+    const authStatus = await handleAuthGuard(guestSessionId);
 
     if (!authStatus.ok) {
       return NextResponse.json({ error: authStatus.error }, { status: 401 });

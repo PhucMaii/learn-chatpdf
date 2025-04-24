@@ -88,10 +88,17 @@ export default function ChatWithAI() {
             ref={textareaRef}
             value={input}
             onChange={handleInputChange}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                handleSubmit()
+              }
+            }}
             className="w-full px-6 py-3 text-gray-900 rounded-xl focus:outline-none resize-none "
             placeholder="Ask me anything..."
             spellCheck="false"
             rows={3}
+            
           />
 
           <div className="flex w-[95%] justify-between items-center gap-2 mt-2">

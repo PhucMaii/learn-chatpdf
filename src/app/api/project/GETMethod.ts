@@ -2,16 +2,14 @@ import { db } from '@/lib/db';
 import { medias, project } from '@/lib/db/schema';
 import { handleAuthGuard } from '@/utils/auth';
 import { getQueryParams } from '@/utils/query';
-import { auth } from '@clerk/nextjs/server';
 import { eq, inArray } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 export default async function GETMethod(req: Request) {
   try {
-    const { userId }: any = await auth();
 
     const guestSessionId: any = getQueryParams(req, 'guestSessionId');
-    const authRes: any = await handleAuthGuard(userId, guestSessionId);
+    const authRes: any = await handleAuthGuard(guestSessionId);
 
     if (!authRes.ok) {
       return NextResponse.json(

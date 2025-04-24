@@ -11,17 +11,18 @@ import axios from 'axios';
 
 
 const NavBar = () => {
-  const { user, setUser }: any = useContext(UserContext);
+  const { user, setUser, isInitializing }: any = useContext(UserContext);
+  console.log(user, 'user');
   const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
     'guest-session',
     {},
   );
 
   useEffect(() => {
-    if (isInitialized) {
+    if (isInitializing && isInitialized) {
       fetchGuestSessionId();
     }
-  }, [isInitialized]);
+  }, [isInitializing, isInitialized]);
 
   const fetchGuestSessionId = async () => {
     try {
@@ -51,7 +52,7 @@ const NavBar = () => {
         throw new Error('Something went wrong. ', response.data.error);
       }
 
-      if (response.data.data) {
+      if (!user) {
         setUser(response.data.data);
       }
     } catch (error: any) {
@@ -106,7 +107,7 @@ const NavBar = () => {
           >
             Pricing
           </Link>
-          {user?.name && Object.keys(user).length > 0 ? (
+          {user?.status && Object.keys(user).length > 0 ? (
             <UserButton />
           ) : (
             <Link className="text-black hidden md:block" href="/sign-in">

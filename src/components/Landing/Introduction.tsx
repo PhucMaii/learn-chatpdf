@@ -5,9 +5,10 @@ import { Button } from '../ui/button';
 import GuestFileUpload from './GuestFileUpload';
 import { UserContext } from '../../../context/UserProvider';
 import { useRouter } from 'next/navigation';
+import { Skeleton } from '../ui/skeleton';
 
 export default function Introduction() {
-  const { user }: any = useContext(UserContext);
+  const { user, isInitializing }: any = useContext(UserContext);
   const router = useRouter();
 
   const introVariants = {
@@ -22,33 +23,39 @@ export default function Introduction() {
     },
   };
 
+  if (isInitializing) {
+    return <motion.div>
+      <Skeleton />
+    </motion.div>
+  }
+
   return (
     <motion.div variants={introVariants} initial="hidden" animate="visible">
-      <div className="2xl:max-w-(--breakpoint-2xl) 2xl:mx-auto mx-4 py-4 flex flex-col justify-center h-screen">
+      <div className="w-full 2xl:mx-auto mx-4 py-4 flex flex-col justify-center items-center h-full mt-8 md:mt-0">
         {/* Headline */}
-        <div className="w-full max-h-full flex items-center sm:flex-row flex-col justify-center gap-8 mt-8">
+        <div className="w-full max-h-full flex items-center md:flex-row flex-col justify-center gap-8 mt-8">
           <div className="flex-1 flex flex-col w-full">
-            <h1 className="text-6xl max-w-4xl font-bold text-center sm:text-left leading-[4.5rem]">
+            <h1 className="text-6xl max-w-4xl font-bold text-center md:text-left leading-[4.5rem]">
               Study Smarter,
               <br />
               Not Harder
             </h1>
-            <h6 className="text-xl max-w-5xl font-medium mt-2 text-center sm:text-left">
+            <h6 className="text-xl max-w-5xl font-medium mt-2 text-center md:text-left">
               Study made simple. Learn faster, <br />
               stress less, and feel confident <br />
               with LearnPDF
             </h6>
-            <Button className="mt-4 py-6 px-8 rounded-xl font-semibold text-xl w-[300px] mt-8" onClick={() => {
-              if (user?.name) {
-                router.push('/dashboard');
+            <Button className="mt-4 py-6 px-8 rounded-xl font-semibold text-xl w-[300px] mx-auto md:mx-0 mt-8" onClick={() => {
+              if (user?.status) {
+                router.push('/projects');
               } else {
                 router.push('/sign-up');
               }
             }}>
-              {user?.name ? 'Go to Dashboard' : 'Sign Up For Free'}
+              {user?.status ? 'Go to Dashboard' : 'Sign Up For Free'}
             </Button>
             {!user?.name && (
-              <div className="w-[300px] h-full">
+              <div className="w-[300px] h-full mx-auto md:mx-0">
                 <GuestFileUpload className="w-full" projectId={1} />
               </div>
             )}

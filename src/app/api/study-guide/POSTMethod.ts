@@ -4,14 +4,12 @@ import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { createStudyGuide } from '../utils/studyGuide';
 import { handleAuthGuard } from '@/utils/auth';
-import { auth } from '@clerk/nextjs/server';
 import { getQueryParams } from '@/utils/query';
 
 export default async function POSTMethod(req: Request) {
   try {
-    const { userId }: any = await auth();
     const guestSessionId = getQueryParams(req, 'guestSessionId');
-    const authRes: any = await handleAuthGuard(userId, guestSessionId || undefined);
+    const authRes: any = await handleAuthGuard(guestSessionId || undefined);
 
     if (!authRes.ok) {
       return NextResponse.json({ error: authRes.error }, { status: 401 });

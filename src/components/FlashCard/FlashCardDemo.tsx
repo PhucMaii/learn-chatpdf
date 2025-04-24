@@ -12,7 +12,7 @@ export default function FlashCardDemo({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        `relative xl:w-[900px] lg:w-[700px] w-[500px] h-[600px] flex flex-col items-center justify-center`,
+        `relative xl:w-[900px] lg:w-[700px] sm:w-[500px] w-[300px] h-[650px] flex flex-col items-center justify-center`,
         // { '2xl:w-[700px] w-[400px] h-[600px]': isInChat },
       )}
     >

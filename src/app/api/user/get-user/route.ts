@@ -11,7 +11,7 @@ const handler = async (req: Request) => {
     const { userId }: any = await auth();
     const guestSessionId: any = getQueryParams(req, 'guestSessionId');
 
-    const authRes: any = await handleAuthGuard(userId, guestSessionId);
+    const authRes: any = await handleAuthGuard(guestSessionId);
 
     if (!authRes.ok) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

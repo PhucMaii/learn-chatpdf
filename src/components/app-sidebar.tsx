@@ -16,8 +16,10 @@ import StatusText from './StatusText';
 import axios from 'axios';
 import { API_URL } from '@/lib/type';
 import toast from 'react-hot-toast';
+import { Skeleton } from './ui/skeleton';
 
 export function AppSidebar() {
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [user, setUser] = React.useState<any>(null);
 
   // React.useEffect(() => {
@@ -47,8 +49,15 @@ export function AppSidebar() {
       setUser(response.data.user);
     } catch (error: any) {
       console.log('Internal Server Error: ', error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <Skeleton />
+  }
+
   return (
     <SidebarProvider>
       <Sidebar

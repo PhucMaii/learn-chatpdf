@@ -9,11 +9,11 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { Progress } from './ui/progress';
 import { Separator } from './ui/separator';
-import { Input } from './ui/input';
 import { Button } from './ui/button';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { UserContext } from '../../context/UserProvider';
 import axios from 'axios';
+import { Skeleton } from './ui/skeleton';
 
 interface IProps {
   noIncludeLink?: boolean;
@@ -35,7 +35,7 @@ const FileUpload = ({
   // setOptimisticDisplays,
 }: IProps) => {
   const router = useRouter();
-  const { user }: any = useContext(UserContext);
+  const { user, isInitializing }: any = useContext(UserContext);
 
   const [isGuestUploaded, setIsGuestUploaded] = useState<boolean>(true);
   const [guestSession] = useLocalStorage('guest-session', {});
@@ -45,7 +45,6 @@ const FileUpload = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isUploadingLink, setIsUploadingLink] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
-  const [url, setUrl] = useState<string>('');
 
   // const { mutate } = useMutation({
   //   mutationFn: async ({
@@ -175,13 +174,19 @@ const FileUpload = ({
         setIsLearning(false);
       } finally {
         setIsUploading(false);
-        setTimeout(() => setIsLearning(true), 1);
+        setTimeout(() => setIsLearning(false), 1);
       }
     },
   });
 
   useEffect(() => {
-    if (guestSession.sessionId && !user) {
+    if (!isInitializing && user?.status) {
+      setIsGuestUploaded(false);
+    }
+  }, [isInitializing]);
+
+  useEffect(() => {
+    if (guestSession.sessionId && !user && !isInitializing) {
       const fetchGuest = async () => {
         try {
           const response = await axios.get(
@@ -194,6 +199,8 @@ const FileUpload = ({
 
           if (response.data.guestMedias.length > 0) {
             setIsGuestUploaded(true);
+          } else {
+            setIsGuestUploaded(false);
           }
         } catch (error: any) {
           console.log(error);
@@ -203,66 +210,11 @@ const FileUpload = ({
 
       fetchGuest();
     }
-  }, [guestSession]);
+  }, [guestSession, isInitializing]);
 
-  // const uploadLink = async () => {
-  //   if (!url || !url.startsWith('https://')) {
-  //     toast.error('Please enter a valid URL');
-  //     return;
-  //   }
-
-  //   setTimeout(() => setIsUploadingLink(true), 1);
-  //   setIsUploading(true);
-  //   try {
-  //     const eventSource = new EventSource(`/api/create-chat-stream?url=${url}`);
-
-  //     eventSource.onmessage = (event) => {
-  //       const { stage, chatId } = JSON.parse(event.data);
-  //       console.log('[SSE]', stage);
-
-  //       if (stage === 'done' && chatId) {
-  //         router.push(`/chat/${chatId}`);
-  //         toast.success('Chat created!', { id: 'upload-progress' });
-  //       } else {
-  //         toast.loading(stage, { id: 'upload-progress' });
-  //       }
-  //     };
-
-  //     eventSource.onerror = (err) => {
-  //       console.error('SSE error:', err);
-  //       eventSource.close();
-  //     };
-  //   } catch (error: any) {
-  //     toast.error(
-  //       'Oops! We encountered an error, but your chat has been created.',
-  //     );
-  //     router.push(`/chats`);
-  //     console.log(error);
-  //   } finally {
-  //     setIsUploadingLink(false);
-  //     setIsUploading(false);
-  //   }
-  // };
-  const uploadLink = async () => {
-    
+  if (isInitializing) {
+    return <Skeleton />
   }
-
-  // if (isUploadingLink || isUploading || isLearning) {
-  //   return (
-  //     <div className="flex items-center justify-center flex-col gap-2 w-full h-full">
-  //       <img
-  //         src="/images/creating-chat.gif"
-  //         className="w-[500px] h-[400px] min-w-[200px] rounded-lg"
-  //         alt="creating chat"
-  //         width={500}
-  //         height={500}
-  //       />
-  //       <h4 className={`text-xl font-semibold ${loadingTextClassName}`}>
-  //         Please wait a moment, we are cooking up your file...
-  //       </h4>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className={`flex flex-col gap-2 p-2 rounded-xl h-2xl ${className}`}>
@@ -327,7 +279,7 @@ const FileUpload = ({
           </div>
 
           <h4 className="text-lg">URL Link</h4>
-          <div className="flex gap-1 items-center">
+          {/* <div className="flex gap-1 items-center">
             <Input
               value={url}
               onChange={(e: any) => setUrl(e.target.value)}
@@ -341,7 +293,7 @@ const FileUpload = ({
             >
               {isUploadingLink ? 'AI is learning...' : 'Submit'}
             </Button>
-          </div>
+          </div> */}
         </>
       )}
     </div>

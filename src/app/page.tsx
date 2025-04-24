@@ -25,7 +25,7 @@ export default async function Home() {
   return (
     // <div className="max-w-screen min-h-screen bg-[radial-gradient(ellipse_at_center,_#374151,_#111827,_#000000)] flex justify-center">
     <div className="max-w-[1400px] mx-auto min-h-screen flex justify-center">
-      <div className="py-8 flex flex-col gap-16 w-full m-0">
+      <div className="py-8 px-8 flex flex-col gap-16 w-full m-0 overflow-x-hdiden">
         {/* Nav bar */}
         <NavBar />
         <Introduction />

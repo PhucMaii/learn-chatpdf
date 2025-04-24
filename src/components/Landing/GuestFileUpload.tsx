@@ -20,7 +20,7 @@ interface IProps {
 
 const GuestFileUpload = ({ className, msg, projectId }: IProps) => {
   const router = useRouter();
-  const { user }: any = useContext(UserContext);
+  const { user, isInitializing }: any = useContext(UserContext);
 
   const [guestSession] = useLocalStorage('guest-session', {});
 
@@ -96,7 +96,7 @@ const GuestFileUpload = ({ className, msg, projectId }: IProps) => {
   });
 
   useEffect(() => {
-    if (guestSession.sessionId && !user) {
+    if (guestSession.sessionId && !user && !isInitializing) {
       const fetchGuest = async () => {
         try {
           const response = await axios.get(
@@ -123,7 +123,7 @@ const GuestFileUpload = ({ className, msg, projectId }: IProps) => {
 
       fetchGuest();
     }
-  }, [guestSession]);
+  }, [guestSession, isInitializing]);
 
   if (user?.name) {
     return null;

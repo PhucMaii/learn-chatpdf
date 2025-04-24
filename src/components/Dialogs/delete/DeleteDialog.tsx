@@ -26,7 +26,10 @@ export default function DeleteDialog({
 }: DeleteDialogProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
-  const handleDelete = async () => {
+  const handleDelete = async (e: any) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
     setIsLoading(true);
     await onDelete();
     onClose();

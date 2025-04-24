@@ -1,15 +1,15 @@
 import { db } from '@/lib/db';
-import { guests } from '@/lib/db/schema';
+import { guests, users } from '@/lib/db/schema';
+import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 
-export const handleAuthGuard = async (
-  userId?: string,
-  guestSessionId?: string,
-) => {
+export const handleAuthGuard = async (guestSessionId?: string) => {
+  const { userId } = await auth();
+
   if (userId) {
-    return { ok: true, userId, type: 'user' , id: userId};
-  }
-  if (!userId) {
+    const user = await db.select().from(users).where(eq(users.id, userId));
+    return { ok: true, userId, type: 'user', id: userId, user: user[0] };
+  } else {
     if (!guestSessionId) {
       return { ok: false, error: 'Unauthorized' };
     }
@@ -22,7 +22,12 @@ export const handleAuthGuard = async (
     if (guest.length === 0) {
       return { ok: false, error: 'Guest not found' };
     }
+    return {
+      ok: true,
+      guestSessionId,
+      type: 'guest',
+      id: guestSessionId,
+      user: guest[0],
+    };
   }
-
-  return { ok: true, guestSessionId, type: 'guest' , id: guestSessionId};
 };

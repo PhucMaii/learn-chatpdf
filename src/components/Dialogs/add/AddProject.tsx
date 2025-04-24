@@ -11,15 +11,16 @@ import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { IProject } from '@/lib/type';
+import { IProject, SUBSCRIPTION_TYPE } from '@/lib/type';
 import { UserContext } from '../../../../context/UserProvider';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface IProps {
   setProjects: React.Dispatch<React.SetStateAction<IProject[]>>;
 }
 
-export default function AddProject({setProjects}: IProps) {
-  const { user }: any = useContext(UserContext);
+export default function AddProject({ setProjects }: IProps) {
+  const { user, isInitializing }: any = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -39,7 +40,10 @@ export default function AddProject({setProjects}: IProps) {
 
       if (response.status === 200) {
         toast.success('Project created successfully!');
-        setProjects((prevProjects: IProject[]) => ([...prevProjects, response.data.project]));
+        setProjects((prevProjects: IProject[]) => [
+          ...prevProjects,
+          response.data.project,
+        ]);
         setProjectName(''); // Clear input field after successful creation
         setOpen(false);
       } else {
@@ -47,16 +51,20 @@ export default function AddProject({setProjects}: IProps) {
       }
     } catch (error: any) {
       console.error('Error creating project:', error);
-      toast.error('Failed to create project. Please try again.');
+      toast.error(error?.response?.data?.error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  if (isInitializing) {
+    return <Skeleton />;
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button disabled={!user?.status}>+ New Project</Button>
+        <Button disabled={user?.status !== SUBSCRIPTION_TYPE.PRO}>+ New Project</Button>
       </DialogTrigger>
       <DialogContent className="bg-white">
         <DialogHeader>
@@ -79,7 +87,11 @@ export default function AddProject({setProjects}: IProps) {
           />
         </div>
         <DialogFooter>
-          <Button disabled={isLoading} onClick={handleSubmit} type="submit">
+          <Button
+            disabled={user?.status !== SUBSCRIPTION_TYPE.PRO || isLoading}
+            onClick={handleSubmit}
+            type="submit"
+          >
             {isLoading ? 'Creating...' : 'Create Project'}
           </Button>
         </DialogFooter>

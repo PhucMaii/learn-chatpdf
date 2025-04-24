@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import { project } from '@/lib/db/schema';
-import { auth } from '@clerk/nextjs/server';
+import { handleAuthGuard } from '@/utils/auth';
 import { NextResponse } from 'next/server';
 
 export default async function POSTMethod(req: Request) {
@@ -18,22 +18,27 @@ export default async function POSTMethod(req: Request) {
       );
     }
 
-    const { userId } = await auth();
+    const authGuard: any = await handleAuthGuard();
 
-    if (!userId) {
+    if (!authGuard.ok) {
       return NextResponse.json(
         {
-          error: 'Unauthorized',
+          error: 'Unauthorize',
         },
-        {
-          status: 401,
-        },
+        { status: 401 },
+      );
+    }
+
+    if (authGuard?.user?.status !== 'Pro') {
+      return NextResponse.json(
+        { error: 'Upgrade to Pro plan to create projects' },
+        { status: 400 },
       );
     }
 
     const projectData = {
       name,
-      userId,
+      userId: authGuard.id,
     };
 
     const newProject = await db.insert(project).values(projectData).returning();

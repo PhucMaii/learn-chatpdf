@@ -89,9 +89,9 @@ const SidebarWrapper = ({ children }: Props) => {
           throw new Error('Something went wrong. ', response.data.error);
         }
 
-        if (response.data.data) {
-          setUser(response.data.data);
-        }
+        // if (response.data.data) {
+        //   setUser(response.data.data);
+        // }
 
         return; // Exit if a session ID already exists
       }

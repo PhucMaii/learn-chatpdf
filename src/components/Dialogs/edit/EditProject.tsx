@@ -5,23 +5,22 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '../../ui/dialog';
 import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { IProject } from '@/lib/type';
-import { EditIcon } from 'lucide-react';
 
 interface IProps {
+  open: boolean;
+  onClose: any;
   project: IProject;
   setProjects: React.Dispatch<React.SetStateAction<IProject[]>>;
 }
 
-export default function EditProject({ project, setProjects }: IProps) {
+export default function EditProject({ open, onClose, project, setProjects }: IProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
   const [projectName, setProjectName] = useState<string>(project.name);
 
   useEffect(() => {
@@ -48,7 +47,7 @@ export default function EditProject({ project, setProjects }: IProps) {
             p.id === project.id ? { ...p, name: projectName } : p,
           ),
         );
-        setOpen(false);
+        onClose();
       } else {
         toast.error('Failed to update project. Please try again.');
       }
@@ -61,12 +60,8 @@ export default function EditProject({ project, setProjects }: IProps) {
   };
 
   return (
-    <Dialog open={open}  onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="w-4 h-4 text-blue-500" variant={'ghost'}>
-          <EditIcon className="w-4 h-4 text-blue-500" />
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onClose}>
+      
       <DialogContent className="bg-white">
         <DialogHeader>
           <DialogTitle>Edit Project</DialogTitle>

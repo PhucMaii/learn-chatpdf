@@ -6,18 +6,22 @@ import toast from 'react-hot-toast';
 
 type UserContextType = {
   user: DrizzleUser | null;
-  setUser: React.Dispatch<React.SetStateAction<DrizzleUser | null>>;
+  isInitializing: boolean;
+  setUser: React.Dispatch<React.SetStateAction<DrizzleUser | null>> | null;
 };
 
-export const UserContext = createContext<UserContextType | undefined>(
-  undefined,
-);
+export const UserContext = createContext<UserContextType | undefined>({
+  user: null,
+  isInitializing: true,
+  setUser: null
+});
 
 type Props = {
   children: ReactNode;
 };
 
 export const UserProvider = ({ children }: Props) => {
+  const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const [user, setUser] = useState<DrizzleUser | null>(null);
 
   useEffect(() => {
@@ -37,7 +41,8 @@ export const UserProvider = ({ children }: Props) => {
       } catch (error: any) {
         console.log('Internal Server Error: ', error);
         setUser(null);
-
+      } finally {
+        setIsInitializing(false);
       }
     };
 
@@ -46,7 +51,7 @@ export const UserProvider = ({ children }: Props) => {
 
   console.log('user', user);
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, isInitializing, setUser }}>
       {children}
     </UserContext.Provider>
   );

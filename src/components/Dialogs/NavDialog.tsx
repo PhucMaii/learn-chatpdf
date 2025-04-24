@@ -6,13 +6,15 @@ import Link from 'next/link';
 import { UserButton } from '@clerk/nextjs';
 
 export default function NavDialog({ user }: any) {
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-black text-white font-semibold transition-all duration-300 hover:scale-102 hover:bg-black hover:text-white">
-          <MenuIcon className="w-8 h-8 text-emerald-500" />
+        <Button variant="ghost" className="text-black font-semibold transition-all duration-300 hover:scale-102 hover:bg-black hover:text-white">
+          <MenuIcon className="w-8 h-8 text-black" />
         </Button>
       </DialogTrigger>
+
       <DialogContent className="w-full h-full bg-black transition-all duration-300">
         <div className="flex flex-col items-center gap-8 mr-2">
           {/* <Button onClick={() => onClose}>

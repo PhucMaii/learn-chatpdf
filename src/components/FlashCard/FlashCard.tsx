@@ -12,6 +12,7 @@ import axios from 'axios';
 import AddCard from '../Dialogs/add/AddCard';
 import { UserContext } from '../../../context/UserProvider';
 import useLocalStorage from '../../../hooks/useLocalStorage';
+import { flashCardWidthResponsive } from '@/lib/constant';
 
 type Props = {
   flashCard: any;
@@ -115,7 +116,7 @@ const FlashCard = ({
   return (
     <div
       className={cn(
-        `relative 2xl:w-[1200px] xl:w-[900px] lg:w-[700px] md:w-[600px] w-[400px] h-[600px] flex flex-col items-center justify-center`,
+        `relative ${flashCardWidthResponsive} flex flex-col items-center justify-center`,
         // { '2xl:w-[700px] w-[400px] h-[600px]': isInChat },
       )}
     >
@@ -155,7 +156,7 @@ const FlashCard = ({
       )}
       <div
         className={cn(
-          `relative flipper-container flex flex-col justify-center items-center 2xl:w-[1200px] xl:w-[900px] lg:w-[700px] md:w-[600px] w-[400px] h-[600px] ${className}`,
+          `relative flipper-container flex flex-col justify-center items-center ${flashCardWidthResponsive} ${className}`,
           // { '2xl:w-[700px] w-[400px] h-[600px]': isInChat },
         )}
       >

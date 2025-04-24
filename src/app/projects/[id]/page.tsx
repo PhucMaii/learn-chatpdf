@@ -59,39 +59,44 @@ export default function ProjectDisplayPage() {
       {/* Sidebar */}
       <aside className="sticky top-0 h-screen col-span-2 max-w-[300px] p-4 border-1 border-gray-100 flex flex-col gap-2">
         {/* <div> */}
-          <Button className="justify-start gap-2" variant="ghost" onClick={() => router.push('/projects')}>
+          <Button className="justify-start gap-2" variant="ghost" onClick={() => router.push('/projects')}
+          >
             <FoldersIcon className="w-5 h-5" />
-            <h6>Projects</h6>
+            <h6 className="hidden sm:block">Projects</h6>
           </Button>
         {/* </div> */}
-        <h2 className="text-xl font-semibold mb-2">Explore</h2>
+        <h2 className="text-xl font-semibold mb-2 hidden sm:block">Explore</h2>
         <Button
           variant={selectedTab === 'chat' ? 'default' : 'ghost'}
           onClick={() => setSelectedTab('chat')}
           className="justify-start gap-2"
         >
-          <MessageSquare className="w-5 h-5" /> Chat with AI
+          <MessageSquare className="w-5 h-5" />
+          <span className="hidden sm:block">Chat with AI</span>
         </Button>
         <Button
           variant={selectedTab === 'medias' ? 'default' : 'ghost'}
           onClick={() => setSelectedTab('medias')}
           className="justify-start gap-2"
         >
-          <ImageIcon className="w-5 h-5" /> Media
+          <ImageIcon className="w-5 h-5" />
+          <span className="hidden sm:block">Media</span>
         </Button>
         <Button
           variant={selectedTab === 'flashcards' ? 'default' : 'ghost'}
           onClick={() => setSelectedTab('flashcards')}
           className="justify-start gap-2"
         >
-          <BookOpen className="w-5 h-5" /> Flashcards
+          <BookOpen className="w-5 h-5" />
+          <span className="hidden sm:block">Flashcards</span>
         </Button>
         <Button
           variant={selectedTab === 'studyGuide' ? 'default' : 'ghost'}
           onClick={() => setSelectedTab('studyGuide')}
           className="justify-start gap-2"
         >
-          <NotepadTextIcon className="w-5 h-5" /> Study Guide
+          <NotepadTextIcon className="w-5 h-5" />
+          <span className="hidden sm:block">Study Guide</span>
         </Button>
         {/* <Button
           variant={selectedTab === 'exam' ? 'default' : 'ghost'}

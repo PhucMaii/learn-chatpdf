@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import EditProject from './Dialogs/edit/EditProject';
 import DeleteDialog from './Dialogs/delete/DeleteDialog';
+import { EditIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface IProps {
@@ -17,6 +18,7 @@ interface IProps {
 
 export default function Project({ className, project, setProjects }: IProps) {
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
+  const  [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
   const router = useRouter();
 
   const handleDeleteProject = async () => {
@@ -44,7 +46,6 @@ export default function Project({ className, project, setProjects }: IProps) {
   return (
     <div
       className={`flex flex-col gap-2 cursor-pointer justify-between p-4 border-1 border-gray-100 rounded-lg max-w-[400px] h-[200px] ${className}`}
-      onClick={() => router.push(`/projects/${project.id}`)}
     >
       {/* If project is not created by guest, show delete dialog */}
       {project?.userId && (
@@ -55,7 +56,14 @@ export default function Project({ className, project, setProjects }: IProps) {
           message={`Are you sure you want to delete the project "${project.name}"? This action cannot be undone.`}
         />
       )}
-      <div className="flex flex-col gap-2">
+
+      {project?.userId && (
+        <EditProject open={isOpenEdit} onClose={() => setIsOpenEdit(false)} project={project} setProjects={setProjects} />
+      )}
+      <div
+        className="flex flex-col gap-2"
+        onClick={() => router.push(`/projects/${project.id}`)}
+      >
         <div className="w-full flex items-center justify-between gap-2">
           {/* Will replace with project.medias.length */}
           <h6 className="text-sm text-gray-400">
@@ -73,7 +81,17 @@ export default function Project({ className, project, setProjects }: IProps) {
             >
               <Trash2Icon className="w-4 h-4 text-red-500" />
             </Button>
-            {project?.userId && <EditProject project={project} setProjects={setProjects} />}
+            <Button 
+            variant="ghost"
+            className="hover:bg-blue-100"
+            disabled={!project?.userId}
+            onClick={(e: any) => {
+              e.stopPropagation();
+              setIsOpenEdit(true)
+            }}
+            >
+              <EditIcon className="w-4 h-4 text-blue-500" />
+            </Button>
           </div>
         </div>
         <h1 className="text-xl font-bold w-full">{project?.name}</h1>
