@@ -17,6 +17,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import { flashCardResults } from '@/lib/constant';
 import useLocalStorage from '../../../hooks/useLocalStorage';
+import useMediaQuery from '../../../hooks/useMediaQuery';
 
 export enum CardStatus {
   LEARNING = 'LEARNING',
@@ -44,6 +45,8 @@ const FlashCardTrack = ({ flashCards, isInChat, onEdit }: Props) => {
   const [knownCards, setKnownCards] = useState<DrizzleFlashCard[]>([]);
 
   const [guestSession] = useLocalStorage('guest-session', {});
+
+  const mdDown = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
     setFlashCardData(flashCards);
@@ -133,9 +136,12 @@ const FlashCardTrack = ({ flashCards, isInChat, onEdit }: Props) => {
           };
         },
       );
-      const response = await axios.put(`/api/flash-cards/update/many?guestSessionId=${guestSession?.sessionId}`, {
-        flashCards: formattedFlashCards,
-      });
+      const response = await axios.put(
+        `/api/flash-cards/update/many?guestSessionId=${guestSession?.sessionId}`,
+        {
+          flashCards: formattedFlashCards,
+        },
+      );
 
       if (response.data.error) {
         toast.error('Fail to check flash cards');
@@ -266,6 +272,32 @@ const FlashCardTrack = ({ flashCards, isInChat, onEdit }: Props) => {
   return (
     <div className="mt-4">
       <div className="flex flex-col gap-4">
+        {mdDown ? (
+          <>
+            <div className="flex items-center justify-between">
+              <div className="flex-1 flex items-center space-x-2">
+                <Switch
+                  id="isTrack"
+                  checked={bool.isTrack}
+                  onCheckedChange={() =>
+                    setBool({ ...bool, isTrack: !bool.isTrack })
+                  }
+                  className=""
+                />
+                <Label htmlFor="isTrack">Start Learning</Label>
+              </div>
+
+              <div className="flex-1 w-full h-full flex items-center justify-end">
+                <Button
+                  onClick={shuffleCards}
+                  className="bg-transparent border-2 border-emerald-500 rounded-full text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent hover:scale-105 active:scale-90 transition-all duration-300"
+                >
+                  <ShuffleIcon className="w-6 h-6 " />
+                </Button>
+              </div>
+            </div>
+          </>
+        ) : null}
         <div className="flex justify-center items-center">
           <FlashCard
             flashCard={flashCardData[currentIndex]}
@@ -283,17 +315,19 @@ const FlashCardTrack = ({ flashCards, isInChat, onEdit }: Props) => {
         </div>
 
         <div className="flex w-full justify-between items-center mt-2">
-          <div className="flex-1 flex items-center space-x-2">
-            <Switch
-              id="isTrack"
-              checked={bool.isTrack}
-              onCheckedChange={() =>
-                setBool({ ...bool, isTrack: !bool.isTrack })
-              }
-              className=""
-            />
-            <Label htmlFor="isTrack">Start Learning</Label>
-          </div>
+          {!mdDown && (
+            <div className="flex-1 flex items-center space-x-2">
+              <Switch
+                id="isTrack"
+                checked={bool.isTrack}
+                onCheckedChange={() =>
+                  setBool({ ...bool, isTrack: !bool.isTrack })
+                }
+                className=""
+              />
+              <Label htmlFor="isTrack">Start Learning</Label>
+            </div>
+          )}
           {!bool.isTrack && (
             <div className="flex-1 flex justify-center items-center gap-4">
               <CircleArrowLeftIcon
@@ -309,14 +343,16 @@ const FlashCardTrack = ({ flashCards, isInChat, onEdit }: Props) => {
               />
             </div>
           )}
-          <div className="flex-1 w-full h-full flex items-center justify-end">
-            <Button
-              onClick={shuffleCards}
-              className="bg-transparent border-2 border-emerald-500 rounded-full text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent hover:scale-105 active:scale-90 transition-all duration-300"
-            >
-              <ShuffleIcon className="w-6 h-6 " />
-            </Button>
-          </div>
+          {!mdDown && (
+            <div className="flex-1 w-full h-full flex items-center justify-end">
+              <Button
+                onClick={shuffleCards}
+                className="bg-transparent border-2 border-emerald-500 rounded-full text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent hover:scale-105 active:scale-90 transition-all duration-300"
+              >
+                <ShuffleIcon className="w-6 h-6 " />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 

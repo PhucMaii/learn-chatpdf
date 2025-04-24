@@ -3,8 +3,11 @@ import React from 'react';
 import { Button } from '../ui/button';
 import Image from 'next/image';
 import MotionSection from '../MotionSection';
+import { useRouter } from 'next/navigation';
 
 export default function InvitationCard() {
+  const router = useRouter();
+
   return (
     <MotionSection>
       <div
@@ -20,7 +23,7 @@ export default function InvitationCard() {
             Transform the way you study with instant answers, smart flashcards,
             and effortless productivity.
           </h6>
-          <Button className="bg-white text-emerald-500 rounded-xl font-bold text-xl mt-4 w-fit p-6 hover:bg-gray-200 focus:scale-98 transition-all duration-300">
+          <Button onClick={() => router.push('/sign-in')} className="bg-white text-emerald-500 rounded-xl font-bold text-xl mt-4 w-fit p-6 hover:bg-gray-200 focus:scale-98 transition-all duration-300">
             Join Us
           </Button>
         </div>

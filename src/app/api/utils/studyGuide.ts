@@ -1,9 +1,9 @@
 import { getContext } from '@/lib/context';
 import { DrizzleMedia } from '@/lib/db/drizzleType';
 import { studyGuidePrompt, generatePrompt } from '@/lib/prompt';
-import { openai } from '../flash-cards/route';
 import { db } from '@/lib/db';
 import { studyGuide } from '@/lib/db/schema';
+import { openai } from './openai';
 
 export const createStudyGuide = async (
   medias: DrizzleMedia[],

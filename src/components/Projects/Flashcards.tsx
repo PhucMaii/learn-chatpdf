@@ -21,7 +21,10 @@ export default function Flashcards() {
   const [flashCardSet, setFlashCardSet] = useState<any>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [guestSession, setGuestSession, isInitialized] = useLocalStorage('guest-session', {});
+  const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
+    'guest-session',
+    {},
+  );
 
   useEffect(() => {
     if (isInitialized) {
@@ -33,26 +36,26 @@ export default function Flashcards() {
   const fetchFlashCardSet = async () => {
     try {
       const response = await axios.get(
-          `/api/flashcard-set/get?projectId=${projectId}&guestSessionId=${guestSession?.sessionId}`,
-        );
+        `/api/flashcard-set/get?projectId=${projectId}&guestSessionId=${guestSession?.sessionId}`,
+      );
 
-        // if (response.data.error) {
-        //   toast.error('Something went wrong in fetching flash card sets');
-        //   // setIsLoading(false);
-        //   return;
-        // }
+      // if (response.data.error) {
+      //   toast.error('Something went wrong in fetching flash card sets');
+      //   // setIsLoading(false);
+      //   return;
+      // }
 
-        // if (!response.data.flashCardSetsWithChatsAndFlashCards.length) {
-        //   window.location.href = '/flash-cards';
-        //   return;
-        // }
+      // if (!response.data.flashCardSetsWithChatsAndFlashCards.length) {
+      //   window.location.href = '/flash-cards';
+      //   return;
+      // }
 
-        setFlashCardSet(response.data.flashCardSetsWithChatsAndFlashCards[0]);
-        // setIsLoading(false);
-      } catch (error: any) {
-        console.log(error);
-        toast.error('Something went wrong in fetching flash card sets');
-        // setIsLoading(false);
+      setFlashCardSet(response.data.flashCardSetsWithChatsAndFlashCards[0]);
+      // setIsLoading(false);
+    } catch (error: any) {
+      console.log(error);
+      toast.error('Something went wrong in fetching flash card sets');
+      // setIsLoading(false);
     }
   };
 
@@ -86,7 +89,10 @@ export default function Flashcards() {
   const generateFlashCards = async () => {
     setIsGenerating(true);
     try {
-      const response = await axios.post(`/api/flash-cards?guestSessionId=${guestSession?.sessionId}`, { projectId });
+      const response = await axios.post(
+        `/api/flash-cards?guestSessionId=${guestSession?.sessionId}`,
+        { projectId },
+      );
 
       if (response.data.error) {
         toast.error('Fail to generate flash cards');
@@ -107,14 +113,23 @@ export default function Flashcards() {
     return (
       <div className="flex flex-col">
         <h1 className="text-2xl font-semibold justify-start">Flashcards</h1>
-        <FlashCardEdit flashCardSet={flashCardSet} onEditOff={() => setIsEditMode(false)} />
+        <FlashCardEdit
+          flashCardSet={flashCardSet}
+          refresh={() => {
+            fetchFlashcards();
+            fetchFlashCardSet();
+          }}
+          onEditOff={() => setIsEditMode(false)}
+        />
       </div>
     );
   }
 
   return (
     <div className="flex flex-col">
-      <h1 className="text-2xl font-semibold justify-start">Flashcards</h1>
+      <h1 className="text-2xl font-semibold justify-start">
+        {flashCardSet?.title}
+      </h1>
 
       {isLoading ? (
         <>
@@ -138,7 +153,10 @@ export default function Flashcards() {
           </div>
         </>
       ) : (
-        <FlashCardTrack flashCards={flashcards} onEdit={() => setIsEditMode(true)} />
+        <FlashCardTrack
+          flashCards={flashcards}
+          onEdit={() => setIsEditMode(true)}
+        />
       )}
     </div>
   );

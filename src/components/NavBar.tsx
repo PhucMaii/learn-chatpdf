@@ -12,14 +12,13 @@ import axios from 'axios';
 
 const NavBar = () => {
   const { user, setUser, isInitializing }: any = useContext(UserContext);
-  console.log(user, 'user');
   const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
     'guest-session',
     {},
   );
 
   useEffect(() => {
-    if (isInitializing && isInitialized) {
+    if (!isInitializing && isInitialized) {
       fetchGuestSessionId();
     }
   }, [isInitializing, isInitialized]);

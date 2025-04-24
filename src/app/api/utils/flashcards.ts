@@ -1,9 +1,9 @@
 import { getContext } from '@/lib/context';
-import { openai } from '../flash-cards/route';
 import { DrizzleMedia } from '@/lib/db/drizzleType';
 import { db } from '@/lib/db';
 import { flashCard, flashCardSet } from '@/lib/db/schema';
 import { flashCardPrompt, generatePrompt } from '@/lib/prompt';
+import { openai } from './openai';
 
 export const createFlashCards = async (
   medias: DrizzleMedia[],

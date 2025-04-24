@@ -85,9 +85,10 @@ const SingleCardEdit = ({
 interface IProps {
   flashCardSet: DrizzleFlashCardSet;
   onEditOff: () => void;
+  refresh: () => void;
 }
 
-export default function FlashCardEdit({ flashCardSet, onEditOff }: IProps) {
+export default function FlashCardEdit({ flashCardSet, refresh, onEditOff }: IProps) {
   const [cardDeck, setCardDeck] = useState<any>(flashCardSet);
   const [newTitle, setNewTitle] = useState<string>(flashCardSet?.title);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -100,6 +101,13 @@ export default function FlashCardEdit({ flashCardSet, onEditOff }: IProps) {
     }
   }, [flashCardSet]);
 
+  const onAddNewCard = () => {
+    setCardDeck({
+      ...cardDeck,
+      flashCards: [...cardDeck.flashCards, { question: '', answer: '' }],
+    });
+  };
+
   const handleSaveCard = async () => {
     setIsLoading(true);
     try {
@@ -110,6 +118,7 @@ export default function FlashCardEdit({ flashCardSet, onEditOff }: IProps) {
       });
 
       toast.success(response.data.message);
+      refresh();
     } catch (error: any) {
       console.log('There was an error: ', error);
       toast.error('Something went wrong');
@@ -144,7 +153,7 @@ export default function FlashCardEdit({ flashCardSet, onEditOff }: IProps) {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full mx-auto max-w-[2000px]">
+    <div className="flex flex-col gap-4 w-full mx-auto max-w-[2000px] pb-8">
       <div className="flex items-center justify-between mt-2">
         <div className="flex items-center gap-4">
           <Button
@@ -186,6 +195,8 @@ export default function FlashCardEdit({ flashCardSet, onEditOff }: IProps) {
           />
         ),
       )}
+
+      <Button variant="outline" className="text-xl py-2" onClick={onAddNewCard}>+ Add New Card</Button>
     </div>
   );
 }

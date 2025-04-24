@@ -1,4 +1,3 @@
-import { Configuration, OpenAIApi } from 'openai-edge';
 import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
@@ -10,11 +9,6 @@ import { getQueryParams } from '@/utils/query';
 
 export const runtime = 'nodejs';
 
-const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-export const openai = new OpenAIApi(config);
 
 const handler = async (req: Request) => {
   try {
