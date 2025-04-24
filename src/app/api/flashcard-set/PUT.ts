@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
 import { flashCard, flashCardSet } from '@/lib/db/schema';
+import { handleAuthGuard } from '@/utils/auth';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
@@ -14,6 +15,8 @@ const PUT = async (req: Request) => {
   try {
     const { id, title, flashcards }: IBody = await req.json();
 
+    const authGuard = await handleAuthGuard();
+    const { userId } = authGuard;
     const existingFlashCardSet = await db
       .select()
       .from(flashCardSet)
@@ -50,14 +53,18 @@ const PUT = async (req: Request) => {
     for (const card of flashcards) {
       const dbCard = dbCards.find((dbCard) => dbCard.id === card?.id);
       if (!dbCard) {
+        if (!card.question || !card.answer) {
+          continue;
+        }
         const newCard: any = {
           question: card.question, // This should not cause a type error
           answer: card.answer,
           isKnown: 0,
-          chatId: flashCardSet.chatId,
-          userId: flashCardSet.userId,
           flashCardSetId: id,
+          userId,
         };
+
+        console.log('newCard', newCard);
         await db.insert(flashCard).values(newCard);
       } else {
         console.log({ dbCard, card });
@@ -90,8 +97,15 @@ const PUT = async (req: Request) => {
     //   await db.insert(flashCard).values(flashcards);
     // }
 
+    const updatedFlashCardSet = await db
+    .select()
+    .from(flashCardSet)
+    .where(eq(flashCardSet.id, id));
+
+    const updatedFlashCards = await db.select().from(flashCard).where(eq(flashCard.flashCardSetId, id));
+
     return NextResponse.json(
-      { message: 'Flash card set updated successfully' },
+      { message: 'Flash card set updated successfully', data: { ...updatedFlashCardSet[0], flashCards: updatedFlashCards } },
       { status: 200 },
     );
   } catch (error: any) {

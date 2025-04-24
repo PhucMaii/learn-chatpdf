@@ -244,5 +244,8 @@ export const greyBackground = 'bg-[#f1f1f1]';
 export const daysOfTrial = 3;
 
 export const flashCardWidthResponsive = `
-  2xl:w-[1200px] xl:w-[900px] lg:w-[700px] md:w-[500px] sm:w-[300px] w-[200px] h-[600px]
+  2xl:w-[1200px] xl:w-[900px] lg:w-[700px] md:w-[500px] sm:w-[300px] w-[250px] h-[500px] md:h-[600px]
+`
+export const flashCardTextResponsive = `
+text-lg sm:text-xl md:text-2xl lg:text-3xl
 `

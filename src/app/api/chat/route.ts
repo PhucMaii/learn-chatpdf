@@ -1,4 +1,3 @@
-import { Configuration, OpenAIApi } from 'openai-edge';
 import { StreamingTextResponse, OpenAIStream, Message } from 'ai';
 import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
@@ -9,14 +8,15 @@ import { auth } from '@clerk/nextjs/server';
 import { getQueryParams } from '@/utils/query';
 import { handleAuthGuard } from '@/utils/auth';
 import { generatePrompt } from '@/lib/prompt';
+import { openai } from '../utils/openai';
 
 export const runtime = 'nodejs';
 
-const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// const config = new Configuration({
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
-const openai = new OpenAIApi(config);
+// const openai = new OpenAIApi(config);
 
 const handler = async (req: Request) => {
   try {

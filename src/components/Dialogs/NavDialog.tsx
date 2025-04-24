@@ -21,7 +21,7 @@ export default function NavDialog({ user }: any) {
                 <X />
             </Button> */}
           <Link
-            href="/chats"
+            href={user?.status ? "/projects" : "/sign-in"}
             className={`text-white font-semibold hover:bg-gray-300 `}
           >
             Dashboard

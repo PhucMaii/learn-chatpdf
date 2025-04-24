@@ -54,7 +54,7 @@ export default function Introduction() {
             }}>
               {user?.status ? 'Go to Dashboard' : 'Sign Up For Free'}
             </Button>
-            {!user?.name && (
+            {!user?.status && (
               <div className="w-[300px] h-full mx-auto md:mx-0">
                 <GuestFileUpload className="w-full" projectId={1} />
               </div>
@@ -71,31 +71,6 @@ export default function Introduction() {
             />
           </div>
         </div>
-
-        {/* Users */}
-        {/* <div className="flex flex-row items-center justify-center gap-2 mt-2">
-          <div className="flex -space-x-4 items-center">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            <Avatar>
-              <AvatarImage src="https://media.licdn.com/dms/image/v2/D5603AQH7n4x0Nf3yuA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1706312871768?e=1733961600&v=beta&t=_DLvQr4y60b3eptGXHwN-Bx1ByP96vpKmkMAZJXlVVM" />
-              <AvatarFallback>PM</AvatarFallback>
-            </Avatar>
-            <Avatar>
-              <AvatarImage src="https://lh3.googleusercontent.com/a/ACg8ocIztMgDplLlj7Ysy9msvSyNloM6m9h3pkzL3BtJyqXNpO2j8A=s576-c-no" />
-              <AvatarFallback>DP</AvatarFallback>
-            </Avatar>
-            <div className="w-10 h-10 rounded-full bg-indigo-200 z-10 text-black text-center flex items-center justify-center">
-              99+
-            </div>
-          </div>
-
-          <h4 className="text-white font-semibold">
-            99+ users have leveled up their learning experience
-          </h4>
-        </div> */}
       </div>
     </motion.div>
   );

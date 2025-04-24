@@ -15,7 +15,7 @@ export default function EmptyDisplay({ src, text }: IProps) {
         alt=""
         className="w-[200px] h-[200px]"
       />
-      <h6 className="text-lg text-gray-600">{text}</h6>
+      <h6 className="text-lg text-center text-gray-600">{text}</h6>
     </div>
   );
 }

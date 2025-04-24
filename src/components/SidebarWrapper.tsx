@@ -126,7 +126,7 @@ const SidebarWrapper = ({ children }: Props) => {
             link={subscriptionStatus.link}
           />
         )}
-        <div className="flex flex-col p-1">{children}</div>
+        <div className="flex flex-col p-1 mt-2">{children}</div>
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ import axios from 'axios';
 import AddCard from '../Dialogs/add/AddCard';
 import { UserContext } from '../../../context/UserProvider';
 import useLocalStorage from '../../../hooks/useLocalStorage';
-import { flashCardWidthResponsive } from '@/lib/constant';
+import { flashCardTextResponsive, flashCardWidthResponsive } from '@/lib/constant';
 
 type Props = {
   flashCard: any;
@@ -200,7 +200,7 @@ const FlashCard = ({
                     e.stopPropagation();
                   }}
                   style={{ fontSize: '1.2rem', fontWeight: 'bold' }}
-                  className="bg-white shadow-xl p-6 rounded-2xl border-2 border-emerald-500 text-emerald-500 text-center text-2xl font-bold"
+                  className={`bg-white shadow-xl p-6 rounded-2xl border-2 border-emerald-500 text-emerald-500 text-center ${flashCardTextResponsive} font-bold`}
                   placeholder="Question"
                 />
 
@@ -216,7 +216,7 @@ const FlashCard = ({
                 </Button>
               </div>
             ) : (
-              <h6 className="text-3xl text-white text-center font-bold ">
+              <h6 className={`text-white text-center font-bold ${flashCardTextResponsive} overflow-y-scroll`}>
                 {card?.question}
               </h6>
             )}
@@ -244,7 +244,7 @@ const FlashCard = ({
                     e.stopPropagation();
                   }}
                   style={{ fontSize: '1.2rem', fontWeight: 'bold' }}
-                  className="bg-white shadow-xl p-6 rounded-2xl border-2 border-blue-500 text-blue-500 text-center text-2xl font-bold"
+                  className={`bg-white shadow-xl p-6 rounded-2xl border-2 border-blue-500 text-blue-500 text-center ${flashCardTextResponsive} font-bold`}
                   placeholder="Answer"
                 />
                 <Button
@@ -259,7 +259,7 @@ const FlashCard = ({
                 </Button>
               </div>
             ) : (
-              <h6 className="text-3xl text-white text-center font-bold overflow-y-scroll">
+              <h6 className={`text-white text-center font-bold overflow-y-scroll ${flashCardTextResponsive} overflow-y-scroll`}>
                 {card?.answer}
               </h6>
             )}
