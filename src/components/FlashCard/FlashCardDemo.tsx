@@ -26,11 +26,11 @@ export default function FlashCardDemo({ className }: { className?: string }) {
           {/* Front Side */}
           <div
             className={cn(
-              ' rounded-b-2xl front flex justify-center items-center xl:w-[900px] lg:w-[500px] w-[400px] h-[600px] bg-emerald-500 shadow-xl p-6 rounded-t-2xl border-2 border-emerald-500',
+              ' rounded-b-2xl front flex justify-center items-center xl:w-[900px] lg:w-[500px] w-[400px] h-[600px] bg-emerald-50 shadow-xl p-6 rounded-t-2xl border-2 border-emerald-300',
             )}
             onClick={handleFlip}
           >
-            <h6 className="text-3xl text-white text-center font-semibold leading-[2.5rem]">
+            <h6 className="text-3xl text-black text-center font-semibold leading-[2.5rem]">
               ✨ Real talk: What actually helps you remember stuff better:
               highlighting or testing yourself?
             </h6>
@@ -38,11 +38,11 @@ export default function FlashCardDemo({ className }: { className?: string }) {
 
           <div
             className={cn(
-              'back flex justify-center items-center xl:w-[900px] lg:w-[500px] w-[400px] h-[600px] bg-sky-600 shadow-xl p-6 rounded-t-2xl border-2 border-blue-500 rounded-b-2xl',
+              'back flex justify-center items-center xl:w-[900px] lg:w-[500px] w-[400px] h-[600px] bg-sky-50 shadow-xl p-6 rounded-t-2xl border-2 border-sky-300 rounded-b-2xl',
             )}
             onClick={handleFlip}
           >
-            <h6 className="text-3xl text-white text-center font-semibold leading-[2.5rem]">
+            <h6 className="text-3xl text-black text-center font-semibold leading-[2.5rem]">
               🎯 Testing yourself! That’s called active recall, and it’s like a
               workout for your brain. Highlighting feels productive, but
               flashcards actually train your memory. So yeah, your brain called.

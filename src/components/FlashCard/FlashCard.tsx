@@ -181,7 +181,7 @@ const FlashCard = ({
           {/* Front Side */}
           <div
             className={cn(
-              'front flex justify-center items-center w-full h-full bg-emerald-500 shadow-xl p-6 rounded-t-2xl border-2 border-emerald-500',
+              'front flex justify-center items-center w-full h-full bg-emerald-50 shadow-xl p-6 rounded-t-2xl border-2 border-emerald-300',
               { 'rounded-b-2xl': !progress },
             )}
             onClick={handleFlip}
@@ -216,7 +216,7 @@ const FlashCard = ({
                 </Button>
               </div>
             ) : (
-              <h6 className={`text-white text-center font-bold ${flashCardTextResponsive} overflow-y-scroll`}>
+              <h6 className={`text-black text-center font-semibold ${flashCardTextResponsive} overflow-y-scroll`}>
                 {card?.question}
               </h6>
             )}
@@ -225,7 +225,7 @@ const FlashCard = ({
           {/* Back Side */}
           <div
             className={cn(
-              'back flex justify-center items-center w-full h-full bg-sky-600 shadow-xl p-6 rounded-t-2xl border-2 border-blue-500',
+              'back flex justify-center items-center w-full h-full bg-sky-50 shadow-xl p-6 rounded-t-2xl border-2 border-sky-300',
               { 'rounded-b-2xl': !progress },
             )}
             onClick={handleFlip}
@@ -259,7 +259,7 @@ const FlashCard = ({
                 </Button>
               </div>
             ) : (
-              <h6 className={`text-white text-center font-bold overflow-y-scroll ${flashCardTextResponsive} overflow-y-scroll`}>
+              <h6 className={`text-black text-center font-semibold overflow-y-scroll ${flashCardTextResponsive} overflow-y-scroll`}>
                 {card?.answer}
               </h6>
             )}
