@@ -9,6 +9,12 @@ import FeatureDetails from '@/components/Landing/FeatureDetails';
 import Gain from '@/components/Landing/Gain';
 import InvitationCard from '@/components/Landing/InvitationCard';
 import Footer from '@/components/Landing/Footer';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "Home"
+
+}
 
 export default async function Home() {
   const { userId } = await auth();

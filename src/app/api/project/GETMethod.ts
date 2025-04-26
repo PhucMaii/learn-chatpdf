@@ -22,6 +22,19 @@ export default async function GETMethod(req: Request) {
       );
     }
 
+    const id = getQueryParams(req, 'id');
+    if (id) {
+      const returnProject = await db.select().from(project).where(eq(project.id, Number(id)));
+      return NextResponse.json(
+        {
+          data: returnProject[0],
+        },
+        {
+          status: 200,
+        },
+      );
+    }
+
     // Merge project medias using join
     const projects = await db
       .select()
