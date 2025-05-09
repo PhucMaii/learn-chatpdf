@@ -1,5 +1,5 @@
 'use client';
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import React, { useContext, useEffect } from 'react';
 import { Button } from './ui/button';
@@ -12,6 +12,7 @@ import axios from 'axios';
 
 const NavBar = () => {
   const { user, setUser, isInitializing }: any = useContext(UserContext);
+  const { user: clerkUser } = useUser();
   const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
     'guest-session',
     {},
@@ -21,11 +22,10 @@ const NavBar = () => {
     if (!isInitializing && isInitialized) {
       fetchGuestSessionId();
     }
-  }, [isInitializing, isInitialized]);
+  }, [isInitializing, isInitialized, user]);
 
   const fetchGuestSessionId = async () => {
     try {
-      console.log('RUN FETCH GUEST SESSION ID');
       // Check if a guest session ID already exists in local storage
       if (!guestSession || Object.keys(guestSession).length === 0) {
         // Create new session since none exists
@@ -94,7 +94,7 @@ const NavBar = () => {
 
         <div className="hidden md:flex items-center gap-8 mr-2">
           <Link
-            href={user?.status ? "/projects" : "/sign-in"}
+            href={clerkUser ? "/projects" : "/sign-in"}
             // className={`${landingPage ? 'text-white' : 'text-emerald-500'} font-semibold `}
             className="text-black font-semibold"
           >
@@ -106,7 +106,7 @@ const NavBar = () => {
           >
             Pricing
           </Link>
-          {user?.status && Object.keys(user).length > 0 ? (
+          {clerkUser ? (
             <UserButton />
           ) : (
             <Link className="text-black hidden md:block" href="/sign-in">

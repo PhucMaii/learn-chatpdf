@@ -1,14 +1,13 @@
 'use client';
-import React, { useContext } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '../ui/button';
 import GuestFileUpload from './GuestFileUpload';
-import { UserContext } from '../../../context/UserProvider';
 import { useRouter } from 'next/navigation';
-import { Skeleton } from '../ui/skeleton';
-
+import { useUser } from '@clerk/nextjs';
 export default function Introduction() {
-  const { user, isInitializing }: any = useContext(UserContext);
+  // const { isInitializing }: any = useContext(UserContext);
+  const { user: clerkUser } = useUser();
   const router = useRouter();
 
   const introVariants = {
@@ -23,11 +22,11 @@ export default function Introduction() {
     },
   };
 
-  if (isInitializing) {
-    return <motion.div>
-      <Skeleton />
-    </motion.div>
-  }
+  // if (isInitializing) {
+  //   return <motion.div>
+  //     <Skeleton />
+  //   </motion.div>
+  // }
 
   return (
     <motion.div variants={introVariants} initial="hidden" animate="visible">
@@ -46,15 +45,15 @@ export default function Introduction() {
               with LearnPDF
             </h6>
             <Button className="mt-4 py-6 px-8 rounded-xl font-semibold text-xl w-[300px] mx-auto md:mx-0 mt-8" onClick={() => {
-              if (user?.status) {
+              if (clerkUser) {
                 router.push('/projects');
               } else {
                 router.push('/sign-up');
               }
             }}>
-              {user?.status ? 'Go to Dashboard' : 'Sign Up For Free'}
+              {clerkUser ? 'Go to Dashboard' : 'Sign Up For Free'}
             </Button>
-            {!user?.status && (
+            {!clerkUser && (
               <div className="w-[300px] h-full mx-auto md:mx-0">
                 <GuestFileUpload className="w-full" projectId={1} />
               </div>

@@ -112,7 +112,7 @@ Topic: **Questions and Answers**
 Style: **Academic**
 Tone: **Professional**
 Audience: **20-year-old college students** 
-Expected JSON Word Count: **500 words max**.
+Expected JSON Word Count: at least 1000 words and at most 2000 words.
 `;
 
 export const generatePrompt = (

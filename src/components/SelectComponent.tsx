@@ -29,7 +29,7 @@ export default function SelectComponent({
       <SelectTrigger className="border-gray-300">
         <SelectValue placeholder={label} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-white z-50">
         <SelectGroup>
           <SelectLabel>{title}</SelectLabel>
 

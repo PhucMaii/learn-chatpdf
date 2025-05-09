@@ -58,13 +58,11 @@ export default function ProjectDetails() {
     <div className="grid grid-cols-12 max-w-[1920px] mx-auto h-screen bg-white text-gray-900">
       {/* Sidebar */}
       <aside className="sticky top-0 h-screen col-span-2 max-w-[300px] p-4 border-1 border-gray-100 flex flex-col gap-2">
-        {/* <div> */}
           <Button className="justify-start gap-2" variant="ghost" onClick={() => router.push('/projects')}
           >
             <FoldersIcon className="w-5 h-5" />
             <h6 className="hidden sm:block">Projects</h6>
           </Button>
-        {/* </div> */}
         <h2 className="text-xl font-semibold mb-2 hidden sm:block">Explore</h2>
         <Button
           variant={selectedTab === 'chat' ? 'default' : 'ghost'}

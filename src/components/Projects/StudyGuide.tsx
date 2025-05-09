@@ -13,7 +13,10 @@ import useLocalStorage from '../../../hooks/useLocalStorage';
 export default function StudyGuide() {
   const { id: projectId } = useParams();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [guestSession, setGuestSession, isInitialized] = useLocalStorage('guest-session', {});
+  const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
+    'guest-session',
+    {},
+  );
 
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -48,16 +51,19 @@ export default function StudyGuide() {
   const handleCreateStudyGuide = async () => {
     setIsAdding(true);
     try {
-      const response = await axios.post(`/api/study-guide?guestSessionId=${guestSession?.sessionId}`, {
-        projectId,
-      });
+      const response = await axios.post(
+        `/api/study-guide?guestSessionId=${guestSession?.sessionId}`,
+        {
+          projectId,
+        },
+      );
 
       if (response.data.error) {
         toast.error('Something went wrong in creating study guide');
         return;
       }
 
-      setStudyGuide(response.data.data);
+      await fetchStudyGuide();
       toast.success('Study guide created successfully');
     } catch (error: any) {
       console.log('Something went wrong in creating study guide', error);
@@ -69,11 +75,13 @@ export default function StudyGuide() {
 
   const handleSaveStudyGuide = async (updatedContent: string) => {
     try {
-      console.log(studyGuide?.content, 'studyGuide?.content');
-      const response = await axios.put(`/api/study-guide?guestSessionId=${guestSession?.sessionId}`, {
-        projectId,
-        updatedContent,
-      });
+      const response = await axios.put(
+        `/api/study-guide?guestSessionId=${guestSession?.sessionId}`,
+        {
+          projectId,
+          updatedContent,
+        },
+      );
 
       if (response.data.error) {
         toast.error('Something went wrong in saving study guide');
@@ -82,15 +90,14 @@ export default function StudyGuide() {
 
       toast.success('Study guide saved successfully');
 
-      console.log(response.data.data, 'response.data.data');
-      setStudyGuide(response.data.data);
+      await fetchStudyGuide();
     } catch (error: any) {
       console.log('Something went wrong in saving study guide', error);
       toast.error('Something went wrong in saving study guide');
     } finally {
       setIsEditMode(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col w-full mx-auto md:w-xl lg:w-2xl xl:w-4xl">
@@ -114,12 +121,13 @@ export default function StudyGuide() {
       {isLoading ? (
         <LoadingComponent />
       ) : studyGuide && isEditMode ? (
-        <RichTextEditor content={studyGuide.content} handleSaveStudyGuide={handleSaveStudyGuide} />
+        <RichTextEditor
+          content={studyGuide.content}
+          handleSaveStudyGuide={handleSaveStudyGuide}
+        />
       ) : studyGuide && !isEditMode ? (
         <div className="leading-[2]">
-          <ReactMarkdown>
-            {studyGuide.content}
-          </ReactMarkdown>
+          <ReactMarkdown>{studyGuide.content}</ReactMarkdown>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-4">
