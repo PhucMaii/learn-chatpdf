@@ -14,19 +14,32 @@ import axios from 'axios';
 import { IProject, SUBSCRIPTION_TYPE } from '@/lib/type';
 import { UserContext } from '../../../../context/UserProvider';
 import { Skeleton } from '@/components/ui/skeleton';
+import { trialProjects } from '@/lib/constant';
+import { useRouter } from 'next/navigation';
 
 interface IProps {
   setProjects: React.Dispatch<React.SetStateAction<IProject[]>>;
 }
 
 export default function AddProject({ setProjects }: IProps) {
-  const { user, isInitializing }: any = useContext(UserContext);
+  const { user, isInitializing, setUser }: any = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [projectName, setProjectName] = useState<string>('');
 
+  const router = useRouter();
+
   const handleSubmit = async () => {
+    if (
+      user?.status !== SUBSCRIPTION_TYPE.PRO &&
+      user?.projects &&
+      user?.projects?.length >= trialProjects
+    ) {
+      router.push('/pricing');
+      return;
+    }
+
     if (!projectName) {
       toast.error('Please enter a project name.');
       return;
@@ -44,6 +57,12 @@ export default function AddProject({ setProjects }: IProps) {
           ...prevProjects,
           response.data.project,
         ]);
+
+        setUser((prevUser: any) => {
+          if (!prevUser) return prevUser;
+          const newProjects = [...prevUser.projects, response.data.project];
+          return { ...prevUser, projects: newProjects };
+        });
         setProjectName(''); // Clear input field after successful creation
         setOpen(false);
       } else {
@@ -65,11 +84,17 @@ export default function AddProject({ setProjects }: IProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          disabled={
-            user?.status !== SUBSCRIPTION_TYPE.PRO &&
-            user?.projects &&
-            user?.projects?.length > 0
-          }
+          onClick={() => {
+            if (
+              user?.status !== SUBSCRIPTION_TYPE.PRO &&
+              user?.projects &&
+              user?.projects?.length >= trialProjects
+            ) {
+              router.push('/pricing');
+            } else {
+              setOpen(true);
+            }
+          }}
         >
           + New Project
         </Button>
@@ -95,16 +120,7 @@ export default function AddProject({ setProjects }: IProps) {
           />
         </div>
         <DialogFooter>
-          <Button
-            disabled={
-              (user?.status !== SUBSCRIPTION_TYPE.PRO &&
-                user?.projects &&
-                user?.projects?.length > 0) ||
-              isLoading
-            }
-            onClick={handleSubmit}
-            type="submit"
-          >
+          <Button disabled={isLoading} onClick={handleSubmit} type="submit">
             {isLoading ? 'Creating...' : 'Create Project'}
           </Button>
         </DialogFooter>

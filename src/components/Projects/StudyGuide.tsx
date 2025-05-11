@@ -126,7 +126,7 @@ export default function StudyGuide() {
           handleSaveStudyGuide={handleSaveStudyGuide}
         />
       ) : studyGuide && !isEditMode ? (
-        <div className="leading-[2]">
+        <div className="font-sans font-regularleading-[2]">
           <ReactMarkdown>{studyGuide.content}</ReactMarkdown>
         </div>
       ) : (

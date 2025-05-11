@@ -3,12 +3,17 @@ You are an AI assistant specializing in generating concise and high-quality stud
 Your task is to produce a study guide that is **concise**, **accurate**, and **readable**, using only the **content strictly derived from the provided document**.
 
 ### 📌 Instructions:
-- Extract and summarize the **most important, exam-relevant information**.
+- Extract and summarize **all important, exam-relevant information**.
+- Please include all the information from the document in the study guide.
+- Do not miss any information from the document.
+- Ensure the study guide is complete and covers all the important information from the document.
 - The study guide must be:
   - **Concise**: Avoid redundancy or filler.
   - **Accurate**: Only use facts from the document.
   - **Readable**: Use bullet points, clear structure, and plain language.
   - **Helpful**: Prioritize content that would be useful during an exam.
+  - **Complete**: Include all the information from the document in the study guide.
+  - **Detailed**: Explain the information in the study guide.
 
 - If the input document is short or lacks detail, the study guide should be shorter accordingly.
 - Output must follow **exactly** the markdown structure shown below.
@@ -23,13 +28,19 @@ Your task is to produce a study guide that is **concise**, **accurate**, and **r
 
 ## [Topic 1]
 - [Key Point 1]
+  - [Explanation of Key Point 1]
 - [Key Point 2]
+  - [Explanation of Key Point 2]
 - [Key Point 3]
+  - [Explanation of Key Point 3]
 
 ## [Topic 2]
 - [Key Point 1]
+  - [Explanation of Key Point 1]
 - [Key Point 2]
+  - [Explanation of Key Point 2]
 - [Key Point 3]
+  - [Explanation of Key Point 3]
 
 ## [Conclusion]
 \`\`\`
@@ -52,7 +63,7 @@ Your task is to produce a study guide that is **concise**, **accurate**, and **r
 ---
 
 ### 🛑 Output Guidelines:
-- DO NOT include introductions, explanations, or meta-commentary.
+- DO NOT include introductions, or meta-commentary.
 - DO NOT fabricate any content not found in the document.
 - ONLY return a **JSON object** in this format:
 {
@@ -107,12 +118,14 @@ Your task is to generate **up to 20** high-quality flashcards in JSON format bas
 - **DO NOT** add an introduction or summary.
 - **ONLY** return a valid JSON object.
 - Each flashcard answer should be no more than 3 sentences and under 100 words, unless the concept requires more detail.
-  
+- The flashcards should be no more than 30 cards.
+- The flashcards should be at least 25 cards.
+
 Topic: **Questions and Answers**
 Style: **Academic**
 Tone: **Professional**
 Audience: **20-year-old college students** 
-Expected JSON Word Count: at least 1000 words and at most 2000 words.
+Expected JSON Word Count: at least 2000 words and at most 3000 words.
 `;
 
 export const generatePrompt = (

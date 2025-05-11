@@ -1,3 +1,4 @@
+import { trialProjects } from '@/lib/constant';
 import { db } from '@/lib/db';
 import { project } from '@/lib/db/schema';
 import { handleAuthGuard } from '@/utils/auth';
@@ -29,7 +30,7 @@ export default async function POSTMethod(req: Request) {
       );
     }
 
-    if (authGuard?.user?.status !== 'Pro' && authGuard?.user?.projects?.length >= 1) {
+    if (authGuard?.user?.status !== 'Pro' && authGuard?.user?.projects?.length >= trialProjects) {
       return NextResponse.json(
         { error: 'Upgrade to Pro plan to create projects' },
         { status: 400 },

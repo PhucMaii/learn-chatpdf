@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button } from './ui/button';
 import { Trash2Icon } from 'lucide-react';
 import { IProject } from '@/lib/type';
@@ -9,6 +9,7 @@ import EditProject from './Dialogs/edit/EditProject';
 import DeleteDialog from './Dialogs/delete/DeleteDialog';
 import { EditIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { UserContext } from '../../context/UserProvider';
 
 interface IProps {
   className?: string;
@@ -17,6 +18,7 @@ interface IProps {
 }
 
 export default function Project({ className, project, setProjects }: IProps) {
+  const { setUser } = useContext(UserContext) as any;
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
   const  [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
   const router = useRouter();
@@ -34,6 +36,15 @@ export default function Project({ className, project, setProjects }: IProps) {
           const newProjects = prevProjects.filter((p) => p.id !== project.id);
           console.log('Updated projects:', { newProjects });
           return newProjects;
+        });
+
+        setUser((prevUser: any) => {
+          if (!prevUser) return prevUser;
+          const newProjects = prevUser.projects?.filter((p: IProject) => p.id !== project.id);
+          return {
+            ...prevUser,
+            projects: newProjects,
+          };
         });
       }
     } catch (error: any) {
