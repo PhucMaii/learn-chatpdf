@@ -17,6 +17,7 @@ import StudyGuide from '@/components/Projects/StudyGuide';
 import axios from 'axios';
 import useLocalStorage from '../../../../hooks/useLocalStorage';
 import LoadingComponent from '@/components/LoadingComponent';
+import toast from 'react-hot-toast';
 
 export default function ProjectDetails() {
   const { id } = useParams();
@@ -34,6 +35,10 @@ export default function ProjectDetails() {
     }
   }, [isInitialized]);
 
+  useEffect(() => {
+    fetchProject();
+  }, []);
+
   const checkProjectOwner = async () => {
     setIsChecking(true);
     try {
@@ -47,6 +52,20 @@ export default function ProjectDetails() {
       router.push('/')
     } finally {
       setIsChecking(false);
+    }
+  }
+
+  const fetchProject = async () => {
+    try {
+      const response = await axios.get(`/api/project?id=${id}`);
+      const project = response.data.data;
+
+      if (!project?.medias || project.medias.length === 0) {
+        setSelectedTab('medias');
+      }
+    } catch (error: any) {
+      console.log(error);
+      toast.error('Failed to fetch project');
     }
   }
 

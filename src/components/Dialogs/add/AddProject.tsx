@@ -11,17 +11,17 @@ import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { IProject, SUBSCRIPTION_TYPE } from '@/lib/type';
+import { SUBSCRIPTION_TYPE } from '@/lib/type';
 import { UserContext } from '../../../../context/UserProvider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { trialProjects } from '@/lib/constant';
 import { useRouter } from 'next/navigation';
 
 interface IProps {
-  setProjects: React.Dispatch<React.SetStateAction<IProject[]>>;
+  refresh: () => Promise<any>;
 }
 
-export default function AddProject({ setProjects }: IProps) {
+export default function AddProject({ refresh }: IProps) {
   const { user, isInitializing, setUser }: any = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -53,14 +53,11 @@ export default function AddProject({ setProjects }: IProps) {
 
       if (response.status === 200) {
         toast.success('Project created successfully!');
-        setProjects((prevProjects: IProject[]) => [
-          ...prevProjects,
-          response.data.project,
-        ]);
+        const projects = await refresh();
 
         setUser((prevUser: any) => {
           if (!prevUser) return prevUser;
-          const newProjects = [...prevUser.projects, response.data.project];
+          const newProjects = projects;
           return { ...prevUser, projects: newProjects };
         });
         setProjectName(''); // Clear input field after successful creation

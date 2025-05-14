@@ -16,10 +16,10 @@ interface IProps {
   open: boolean;
   onClose: any;
   project: IProject;
-  setProjects: React.Dispatch<React.SetStateAction<IProject[]>>;
+  refresh: () => Promise<any>;
 }
 
-export default function EditProject({ open, onClose, project, setProjects }: IProps) {
+export default function EditProject({ open, onClose, project, refresh }: IProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [projectName, setProjectName] = useState<string>(project.name);
 
@@ -42,11 +42,7 @@ export default function EditProject({ open, onClose, project, setProjects }: IPr
 
       if (response.status === 200) {
         toast.success('Project updated successfully!');
-        setProjects((prevProjects: IProject[]) =>
-          prevProjects.map((p) =>
-            p.id === project.id ? { ...p, name: projectName } : p,
-          ),
-        );
+        await refresh();
         onClose();
       } else {
         toast.error('Failed to update project. Please try again.');

@@ -14,10 +14,10 @@ import { UserContext } from '../../context/UserProvider';
 interface IProps {
   className?: string;
   project: IProject;
-  setProjects: React.Dispatch<React.SetStateAction<IProject[]>>;
+  refresh: () => Promise<any>;
 }
 
-export default function Project({ className, project, setProjects }: IProps) {
+export default function Project({ className, project, refresh }: IProps) {
   const { setUser } = useContext(UserContext) as any;
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
   const  [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
@@ -32,15 +32,11 @@ export default function Project({ className, project, setProjects }: IProps) {
         toast.success('Project deleted successfully');
 
         // Assuming you have a way to update the projects state
-        setProjects((prevProjects) => {
-          const newProjects = prevProjects.filter((p) => p.id !== project.id);
-          console.log('Updated projects:', { newProjects });
-          return newProjects;
-        });
+        const projects = await refresh();
 
         setUser((prevUser: any) => {
           if (!prevUser) return prevUser;
-          const newProjects = prevUser.projects?.filter((p: IProject) => p.id !== project.id);
+          const newProjects = projects;
           return {
             ...prevUser,
             projects: newProjects,
@@ -69,7 +65,7 @@ export default function Project({ className, project, setProjects }: IProps) {
       )}
 
       {project?.userId && (
-        <EditProject open={isOpenEdit} onClose={() => setIsOpenEdit(false)} project={project} setProjects={setProjects} />
+        <EditProject open={isOpenEdit} onClose={() => setIsOpenEdit(false)} project={project} refresh={refresh} />
       )}
       <div
         className="flex flex-col gap-2"

@@ -9,14 +9,18 @@ Your task is to produce a study guide that is **concise**, **accurate**, and **r
 - Ensure the study guide is complete and covers all the important information from the document.
 - The study guide must be:
   - **Concise**: Avoid redundancy or filler.
-  - **Accurate**: Only use facts from the document.
+  - **Accurate**: Only use facts from the uploaded documents.
   - **Readable**: Use bullet points, clear structure, and plain language.
   - **Helpful**: Prioritize content that would be useful during an exam.
-  - **Complete**: Include all the information from the document in the study guide.
+  - **Complete**: Include all the information from the uploaded documents in the study guide.
   - **Detailed**: Explain the information in the study guide.
 
 - If the input document is short or lacks detail, the study guide should be shorter accordingly.
 - Output must follow **exactly** the markdown structure shown below.
+- Write out at least 1000 words, and at most 3000 words.
+- If the document is short, write out at least 1000 words, try to cover the whole document.
+- Please mention words count not character count.
+- Also only stop when you finish all of the information in the document.
 
 ---
 
@@ -76,7 +80,9 @@ Topic: **Study Guide**
 Style: **Academic**
 Tone: **Professional**
 Audience: **College Students**
-Max Length: **1000 words**
+At least 1000 words, and at most 3000 words.
+Please mention words count not character count.
+Also only stop when you finish all of the information in the document.
 `;
 
 export const flashCardPrompt = `You are an AI assistant specializing in generating flashcards for students. 

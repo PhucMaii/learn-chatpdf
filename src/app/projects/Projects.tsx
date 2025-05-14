@@ -52,6 +52,8 @@ export default function Projects() {
       );
       setProjects(response.data.projects);
       setDisplayProjects(response.data.projects);
+
+      return response.data.projects;
     } catch (error: any) {
       console.error('Error fetching projects:', error);
     } finally {
@@ -85,7 +87,7 @@ export default function Projects() {
               + New Chat
             </Button>
           )} */}
-          <AddProject setProjects={setProjects} />
+          <AddProject refresh={fetchProjects} />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 auto-rows-auto gap-2 items-center flex-wrap w-full">
@@ -98,7 +100,7 @@ export default function Projects() {
               <Project
                 className="col-span-1"
                 project={project}
-                setProjects={setProjects}
+                refresh={fetchProjects}
                 key={project.id}
               />
             ))
@@ -117,7 +119,7 @@ export default function Projects() {
                 You haven&apos;t created any projects yet. Let&apos;s create the
                 first one.
               </h4>
-              <AddProject setProjects={setProjects} />
+              <AddProject refresh={fetchProjects} />
             </div>
           )}
         </div>

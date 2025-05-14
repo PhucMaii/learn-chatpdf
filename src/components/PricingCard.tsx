@@ -5,6 +5,8 @@ import React, { useMemo } from 'react';
 import { Button } from './ui/button';
 import { handleSubscription } from '@/utils/subscription';
 import { DrizzleDiscountCode } from '@/lib/db/drizzleType';
+import { useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   price: number;
@@ -29,6 +31,9 @@ const PricingCard = ({
   displayPlan,
   displayPrice,
 }: Props) => {
+  const { user } = useUser();
+  const router = useRouter();
+  
   const finalPrice = useMemo(() => {
     if (!discount) {
       return displayPrice;
@@ -109,7 +114,13 @@ const PricingCard = ({
       </div>
 
       <Button
-        onClick={() => handleSubscription(price, plan, discount?.id)}
+        onClick={() => {
+          if (user) {
+            handleSubscription(price, plan, discount?.id);
+          } else {
+            router.push('/sign-in');
+          }
+        }}
         className="w-full mt-8 text-xl font-bold border-2 text-emerald-500 border-emerald-500 bg-white rounded-full hover:bg-emerald-500 hover:text-white"
       >
         Select

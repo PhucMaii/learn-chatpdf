@@ -39,17 +39,6 @@ export default function Flashcards() {
         `/api/flashcard-set/get?projectId=${projectId}&guestSessionId=${guestSession?.sessionId}`,
       );
 
-      // if (response.data.error) {
-      //   toast.error('Something went wrong in fetching flash card sets');
-      //   // setIsLoading(false);
-      //   return;
-      // }
-
-      // if (!response.data.flashCardSetsWithChatsAndFlashCards.length) {
-      //   window.location.href = '/flash-cards';
-      //   return;
-      // }
-
       setFlashCardSet(response.data.flashCardSetsWithChatsAndFlashCards[0]);
       // setIsLoading(false);
     } catch (error: any) {
@@ -99,7 +88,8 @@ export default function Flashcards() {
         return;
       }
 
-      setFlashcards(response.data.data);
+      await fetchFlashcards();  
+      await fetchFlashCardSet();
       return response.data.data;
     } catch (error: any) {
       console.log(error);
