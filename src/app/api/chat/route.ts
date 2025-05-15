@@ -29,7 +29,7 @@ const handler = async (req: Request) => {
       return NextResponse.json({ error: authStatus.error }, { status: 401 });
     }
 
-    const { messages, projectId, language, isAnswerOutOfContext } =
+    const { messages, projectId, language } =
       await req.json();
 
     const _chats = await db
@@ -57,7 +57,7 @@ const handler = async (req: Request) => {
       .where(eq(medias.projectId, Number(projectId)))
 
     const context = await getContext(lastMessage.content, projectMedias);
-    const prompt: any = generatePrompt(context, language, isAnswerOutOfContext);
+    const prompt: any = generatePrompt(context, language);
     const response: any = await openai.createChatCompletion({
       model: 'gpt-4o-mini',
       messages: [

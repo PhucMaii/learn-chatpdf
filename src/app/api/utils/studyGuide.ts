@@ -14,7 +14,7 @@ export const createStudyGuide = async (
   try {
     const context = await getContext(studyGuidePrompt, medias);
 
-    const prompt: any = generatePrompt(context, 'English', false);
+    const prompt: any = generatePrompt(context, 'English');
 
     const response = await openai.createChatCompletion({
         model: 'gpt-4o-mini',
@@ -32,8 +32,9 @@ export const createStudyGuide = async (
     console.log(completionData.choices[0].message, 'completionData');
 
     const formattedMessages: any = JSON.parse(completionData.choices[0].message.content);
+    // console.log(formattedMessages, 'formattedMessages');
 
-    console.log(formattedMessages, 'formattedMessages');
+    // console.log(x/, 'formattedMessages');
 
     // const cleanedContent = formattedMessages.content.replaceAll('\\n', '\n');
 

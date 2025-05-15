@@ -128,10 +128,17 @@ export default function Flashcards() {
       ) : flashcards.length === 0 ? (
         <>
           <div className="flex flex-col gap-4 items-center">
-            <EmptyDisplay
+            {isGenerating ? <div className="flex flex-col gap-4 items-center">
+            <img 
+              src="/images/loading.png"
+              width={200}
+              height={200}
+            />
+            <h6 className="text-lg text-center text-gray-600">Give us a moment, your flashcards are on the way...</h6>
+            </div> :<EmptyDisplay
               src="/images/no-flashcard.png"
               text="You haven't had your own flashcards yet. Let's generate some!"
-            />
+            />}
 
             <Button
               onClick={generateFlashCards}
