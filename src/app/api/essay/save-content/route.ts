@@ -1,6 +1,5 @@
 import { essays } from "@/lib/db/schema";
 import { db } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { withAuthGuard } from "@/utils/guard";
