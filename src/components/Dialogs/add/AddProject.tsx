@@ -62,6 +62,7 @@ export default function AddProject({ refresh }: IProps) {
         });
         setProjectName(''); // Clear input field after successful creation
         setOpen(false);
+        router.push(`/projects/${response.data.project.id}`);
       } else {
         toast.error('Failed to create project. Please try again.');
       }
@@ -114,6 +115,11 @@ export default function AddProject({ refresh }: IProps) {
             className="rounded-md p-2"
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSubmit();
+              }
+            }}
           />
         </div>
         <DialogFooter>

@@ -71,7 +71,7 @@ const FileUpload = ({
         ['.docx'],
       'text/plain': ['.txt'],
     },
-    maxFiles: 3,
+    maxFiles: 5,
     onDrop: async (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (file.size > 50 * 1024 * 1024) {

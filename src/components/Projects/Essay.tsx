@@ -16,6 +16,7 @@ export default function Essay() {
   const { user } = useContext(UserContext) as any;
 
   const [isInitializing, setIsInitializing] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isHumanized, setIsHumanized] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -69,16 +70,14 @@ export default function Essay() {
 
       // Save AI Check Score
       await axios.put(`/api/essay/save-content`, {
-        essayId: essay?.id,
+        essayId: essay?.id || '-1',
         updatedFields: {
           aiCheckScore: Number(response.data.scores.overall),
+          content: content,
         },
       });
 
-      setEssay((prev: any) => ({
-        ...prev,
-        aiCheckScore: Math.ceil(Number(response.data.scores.overall)),
-      }));
+      await fetchEssay();
       setIsChecked(true);
       toast.success('Essay checked successfully');
       return response.data.scores.overall;
@@ -114,13 +113,17 @@ export default function Essay() {
   };
 
   const handleHumanizeEssay = async () => {
+    if (user?.status !== SUBSCRIPTION_TYPE.PRO) {
+      toast.error('You need PRO to humanize an essay');
+      return;
+    }
     try {
       setIsGeneratingHumanized(true);
       const response = await axios.post(
         `https://v1-humanizer.rephrasy.ai/api`,
         {
           text: essay?.content,
-          model: 'Essays',
+          model: 'undetectable',
           words: true,
           costs: true,
         },
@@ -136,15 +139,15 @@ export default function Essay() {
       const aiCheckScore = await handleCheckAI(response.data.output);
 
       // Save humanized content
-      const saveResponse = await axios.put(`/api/essay/save-content`, {
+      await axios.put(`/api/essay/save-content`, {
         essayId: essay?.id,
         updatedFields: {
           content: response.data.output,
-          aiCheckScore: Number(aiCheckScore),
+          aiCheckScore: Math.ceil(Number(aiCheckScore)),
         },
       });
 
-      setEssay(saveResponse.data.data);
+      await fetchEssay();
       setIsHumanized(true);
       toast.success('Essay humanized successfully');
     } catch (error: any) {
@@ -152,6 +155,27 @@ export default function Essay() {
       toast.error('Failed to humanize essay');
     } finally {
       setIsGeneratingHumanized(false);
+    }
+  };
+
+  const handleSaveEssay = async () => {
+    try {
+      setIsSaving(true);
+      const response = await axios.put(`/api/essay/save-content`, {
+        essayId: essay?.id,
+        updatedFields: {
+          content: essay?.content,
+        },
+        projectId: Number(projectId),
+      });
+
+      setEssay(response.data.data);
+      toast.success('Essay saved successfully');
+    } catch (error: any) {
+      console.error(error);
+      toast.error('Failed to save essay');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -172,6 +196,16 @@ export default function Essay() {
       </div>
 
       <div className="w-full border-1 border-gray-300 rounded-md p-4 flex flex-col gap-4">
+        <div className="flex items-center justify-end">
+          <Button
+            variant="outline"
+            className="w-fit"
+            onClick={handleSaveEssay}
+            disabled={isSaving}
+          >
+            {isSaving ? 'Saving...' : 'Save'}
+          </Button>
+        </div>
         {/* textarea height is based on the number of words */}
         <textarea
           placeholder="Write your essay here..."
@@ -191,7 +225,6 @@ export default function Essay() {
                   onClick={handleHumanizeEssay}
                   className="w-fit"
                   disabled={
-                    user?.status !== SUBSCRIPTION_TYPE.PRO ||
                     isGeneratingHumanized ||
                     isInitializing ||
                     isGenerating
