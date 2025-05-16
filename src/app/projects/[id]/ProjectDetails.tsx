@@ -8,6 +8,7 @@ import {
   Image as ImageIcon,
   FoldersIcon,
   NotepadTextIcon,
+  FileTextIcon,
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import Media from '@/components/Projects/Media';
@@ -18,6 +19,7 @@ import axios from 'axios';
 import useLocalStorage from '../../../../hooks/useLocalStorage';
 import LoadingComponent from '@/components/LoadingComponent';
 import toast from 'react-hot-toast';
+import Essay from '@/components/Projects/Essay';
 
 export default function ProjectDetails() {
   const { id } = useParams();
@@ -115,6 +117,14 @@ export default function ProjectDetails() {
           <NotepadTextIcon className="w-5 h-5" />
           <span className="hidden sm:block">Study Guide</span>
         </Button>
+        <Button
+          variant={selectedTab === 'essay' ? 'default' : 'ghost'}
+          onClick={() => setSelectedTab('essay')}
+          className="justify-start gap-2"
+        >
+          <FileTextIcon className="w-5 h-5" />
+          <span className="hidden sm:block">Essay</span>
+        </Button>
         {/* <Button
           variant={selectedTab === 'exam' ? 'default' : 'ghost'}
           onClick={() => setSelectedTab('exam')}
@@ -148,6 +158,10 @@ export default function ProjectDetails() {
 
           <TabsContent value="studyGuide">
             <StudyGuide />
+          </TabsContent>
+
+          <TabsContent value="essay">
+            <Essay />
           </TabsContent>
         </Tabs>
       </main>

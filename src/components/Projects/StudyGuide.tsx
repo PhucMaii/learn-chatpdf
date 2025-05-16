@@ -106,16 +106,6 @@ export default function StudyGuide() {
         <Button variant="outline" onClick={() => setIsEditMode(!isEditMode)}>
           {isEditMode ? 'View' : 'Edit'}
         </Button>
-        {/* {studyGuide && (
-          <div className="flex gap-2">
-            <Button onClick={() => setIsEditMode(!isEditMode)}>
-              {isEditMode ? 'View' : 'Edit'}
-            </Button>
-          {isEditMode && <Button onClick={handleSaveStudyGuide} disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Save Changes'}
-          </Button>}
-          </div>
-        )} */}
       </div>
 
       {isLoading ? (
@@ -126,7 +116,7 @@ export default function StudyGuide() {
           handleSaveStudyGuide={handleSaveStudyGuide}
         />
       ) : studyGuide && !isEditMode ? (
-        <div className="font-sans font-regularleading-[2]">
+        <div className="font-sans font-regular leading-[1.7]">
           <ReactMarkdown>{studyGuide.content}</ReactMarkdown>
         </div>
       ) : (

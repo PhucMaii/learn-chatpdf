@@ -101,6 +101,19 @@ export const chats = pgTable('chats', {
   }),
 });
 
+export const essays = pgTable('essays', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  aiCheckScore: integer('ai_check_score').default(0),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  userId: varchar('user_id', { length: 256 }),
+  guestId: varchar('guest_id', { length: 256 }),
+  projectId: integer('project_id').references(() => project.id, {
+    onDelete: 'cascade',
+  }),
+});
+
 export type DrizzleChat = typeof chats.$inferSelect;
 
 export const flashCardSet = pgTable('flash_card_set', {

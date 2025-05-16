@@ -45,26 +45,26 @@ export const tabs = [
 export const pricingTabs = [
   {
     title: 'Weekly',
-    price: 1.99,
+    price: 2.99,
     plan: 'week',
-    displayPrice: 1.99,
+    displayPrice: 2.99,
     displayPlan: 'week',
   },
   {
     title: 'Annually',
-    price: 35.88,
+    price: 59.88,
     plan: 'year',
     isPopular: true,
-    save: ['Save 75% vs weekly 💸', 'Save 33% vs monthly 💸'],
-    displayPrice: 2.99,
+    save: ['Save 62% vs weekly 💸', 'Save 29% vs monthly 💸'],
+    displayPrice: 4.99,
     displayPlan: 'month',
   },
   {
     title: 'Monthly',
-    price: 4.99,
+    price: 6.99,
     plan: 'month',
-    save: ['Save up to 55% vs weekly 💸'],
-    displayPrice: 4.99,
+    save: ['Save up to 46% vs weekly 💸'],
+    displayPrice: 5.99,
     displayPlan: 'month',
   },
 ];
@@ -127,6 +127,28 @@ export const languages = [
   'Vietnamese',
 ];
 
+export const wordCounts = [
+  '100',
+  '200',
+  '300',
+  '400',
+  '500',
+  '600',
+  '700',
+  '800',
+  '900',
+  '1000',
+  '1100',
+  '1200',
+  '1300',
+  '1400',
+  '1500',
+  '1600',
+  '1700',
+  '1800',
+  '1900',
+  '2000',
+];
 export const features: IFeature[] = [
   {
     id: 1,
