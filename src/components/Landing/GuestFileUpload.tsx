@@ -26,7 +26,7 @@ const GuestFileUpload = ({ className, msg, projectId }: IProps) => {
 
   const [isLearning, setIsLearning] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [progress, setProgress] = useState<number>(0);
+  // const [progress, setProgress] = useState<number>(0);
   const [isGuestUploaded, setIsGuestUploaded] = useState<boolean>(true);
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -49,7 +49,7 @@ const GuestFileUpload = ({ className, msg, projectId }: IProps) => {
       try {
         setIsUploading(true);
         const dataList = acceptedFiles.map((file) => {
-          return uploadToS3(file, setProgress);
+          return uploadToS3(file, user?.id);
         });
 
         const resolvedData = await Promise.all(dataList);
@@ -141,9 +141,9 @@ const GuestFileUpload = ({ className, msg, projectId }: IProps) => {
           {isUploading ? (
             <>
               <p className="mt-2 text-sm text-slate-500">
-                Uploading your file {progress}%...
+                Uploading your file...
               </p>
-              <Progress value={progress} className="w-full" />
+              <Progress value={100} className="w-full" />
             </>
           ) : isLearning ? (
             <>

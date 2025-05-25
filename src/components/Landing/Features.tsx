@@ -10,9 +10,9 @@ export default function Features() {
     <MotionSection>
       <div className={`max-w-[1400px] mx-auto p-8`}>
         <div className="max-w-[2000px] mx-auto">
-          <h1 className="text-center text-5xl font-semibold">Features</h1>
+          <h1 className="text-center text-5xl font-semibold">How It Works</h1>
 
-          <div className="w-full flex sm:flex-row flex-col items-center justify-center gap-4 mt-8">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-8 mt-8">
             {features.map((feature: IFeature, index: number) => (
               <FeatureCard key={index} card={feature} />
             ))}

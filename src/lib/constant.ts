@@ -152,24 +152,24 @@ export const wordCounts = [
 export const features: IFeature[] = [
   {
     id: 1,
-    title: 'Flash Cards',
+    title: 'Create Your Project',
     description:
-      'Transform your PDF files into dynamic flashcards designed to empower students and elevate their learning journey!',
-    image: '/images/feature-summary/flashcard.png',
+      'Project helps organize your study materials and build a study plan.',
+    image: '/images/how-it-works/create_project.png',
   },
   {
     id: 2,
-    title: 'Multi-language chat',
+    title: 'Drop All Files',
     description:
-      'Our application breaks down language barriers, empowering everyone to solve their problems seamlessly in their own language.',
-    image: '/images/feature-summary/multi-language.png',
+      'Drop all your study materials into the project and let the AI learn them for you.',
+    image: '/images/how-it-works/drop_files.png',
   },
   {
     id: 3,
-    title: 'Chat with PDFs',
+    title: 'Study With AI',
     description:
-      'Meet your smartest, fastest study partner—delivering instant answers to all your questions, outpacing your classmates every time!',
-    image: '/images/feature-summary/chatpdf.png',
+      'All your study tools in one place. AI Chat, Flash Cards, Study Guides, Essays Generator and more.',
+    image: '/images/how-it-works/study_tools.png',
   },
 ];
 

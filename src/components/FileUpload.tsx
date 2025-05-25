@@ -44,7 +44,7 @@ const FileUpload = ({
   const [isUploading, setIsUploading] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isUploadingLink, setIsUploadingLink] = useState<boolean>(false);
-  const [progress, setProgress] = useState<number>(0);
+  // const [progress, setProgress] = useState<number>(0);
 
   // const { mutate } = useMutation({
   //   mutationFn: async ({
@@ -83,8 +83,10 @@ const FileUpload = ({
       try {
         setIsUploading(true);
         const dataList = acceptedFiles.map((file) => {
-          return uploadToS3(file, setProgress);
+          return uploadToS3(file, user?.id);
         });
+        await Promise.all(dataList);
+
         setDisplay((prevDisplays: any) => {
           console.log('prevDisplays', prevDisplays);
           const newFiles = acceptedFiles.map((data: any) => {
@@ -234,9 +236,9 @@ const FileUpload = ({
             <>
               {/* <Loader2 className="w-10 h-10 text-slate-400 animate-spin" /> */}
               <p className="mt-2 text-sm text-slate-500">
-                Uploading your file {progress}%...
+                Uploading your file...
               </p>
-              <Progress value={progress} className="w-full" />
+              <Progress value={100} className="w-full" />
             </>
           ) : isLearning ? (
             <>
