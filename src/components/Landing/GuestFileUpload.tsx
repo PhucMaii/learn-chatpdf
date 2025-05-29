@@ -102,7 +102,6 @@ const GuestFileUpload = ({ className, msg, projectId }: IProps) => {
           const response = await axios.get(
             `/api/guest?guestSessionId=${guestSession.sessionId}`,
           );
-          console.log('response: ', response.data);
           if (response.data.error) {
             setIsGuestUploaded(false);
             // toast.error('Something went wrong in fetching user chats');

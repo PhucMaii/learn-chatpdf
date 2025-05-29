@@ -15,8 +15,6 @@ const r2Client = new S3Client({
 }) as any;
 
 export async function uploadToS3(file: File, userId: string) {
-  console.log('uploading to s3', file);
-  // return;
   try {
     // AWS.config.update({
     //   accessKeyId: process.env.NEXT_PUBLIC_S3_ACCESS_KEY_ID,
@@ -35,10 +33,7 @@ export async function uploadToS3(file: File, userId: string) {
       ContentType: file.type,
     });
 
-    console.log(putObjectCommand, 'putObjectCommand');
-
-    const response = await r2Client.send(putObjectCommand);
-    console.log(response, 'response in s3');
+    await r2Client.send(putObjectCommand);
 
     // const s3 = new AWS.S3({
     //   params: {

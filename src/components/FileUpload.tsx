@@ -88,17 +88,13 @@ const FileUpload = ({
         await Promise.all(dataList);
 
         setDisplay((prevDisplays: any) => {
-          console.log('prevDisplays', prevDisplays);
           const newFiles = acceptedFiles.map((data: any) => {
-            console.log('data', data);
             return {
               // fileKey: data.fileKey,
               fileName: data.name,
               loading: true,
             };
           });
-
-          console.log('newFiles', newFiles);
 
           return [...prevDisplays, ...newFiles];
         });
@@ -111,7 +107,6 @@ const FileUpload = ({
         // setIsLearning(true);
         setTimeout(() => setIsLearning(true), 1);
 
-        console.log(resolvedData, 'resolvedData');
         if (resolvedData.length === 0) {
           toast.error(
             'Oops! Looks like the file is not uploaded correctly. Please try again later.',
@@ -131,12 +126,9 @@ const FileUpload = ({
 
         const fileListParam = encodeURIComponent(JSON.stringify(resolvedData));
 
-        console.log(fileListParam, 'fileListParam');
         const eventSource = new EventSource(
           `/api/media/stream?projectId=${projectId}&fileList=${fileListParam}&guestSessionId=${currentSession.sessionId}&guestSessionSignature=${currentSession.signature}`,
         );
-
-        console.log(eventSource, 'eventSource');
 
         eventSource.onmessage = (event) => {
           const { stage, projectMedias } = JSON.parse(event.data);
@@ -146,7 +138,6 @@ const FileUpload = ({
           //     signature: guestSession.guestSessionSignature,
           //   });
           // }
-          console.log('[SSE]', stage);
 
           if (stage === 'done') {
             // router.push(`/chat/${chatId}`);

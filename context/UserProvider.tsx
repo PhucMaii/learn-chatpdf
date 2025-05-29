@@ -29,8 +29,6 @@ export const UserProvider = ({ children }: Props) => {
       try {
         const response = await axios.get(`${API_URL.USER}/get-user`);
 
-        console.log('response', response);
-
         if (response.data.error) {
           toast.error('Error fetching user: ' + response.data.error);
           setUser(null);
@@ -49,7 +47,6 @@ export const UserProvider = ({ children }: Props) => {
     fetchUser();
   }, []);
 
-  console.log('user', user);
   return (
     <UserContext.Provider value={{ user, isInitializing, setUser }}>
       {children}

@@ -124,7 +124,6 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  console.log(userId, 'user id');
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
