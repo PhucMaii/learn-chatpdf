@@ -64,10 +64,10 @@ const PUT = async (req: Request) => {
           userId,
         };
 
-        console.log('newCard', newCard);
+        // console.log('newCard', newCard);
         await db.insert(flashCard).values(newCard);
       } else {
-        console.log({ dbCard, card });
+        // console.log({ dbCard, card });
         if (
           dbCard.question !== card.question ||
           dbCard.answer !== card.answer

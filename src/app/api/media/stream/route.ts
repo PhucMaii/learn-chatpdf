@@ -1,16 +1,12 @@
 import { db } from '@/lib/db';
-import {
-  guests,
-  medias,
-  project,
-  users,
-} from '@/lib/db/schema';
+import { guests, medias, project, users } from '@/lib/db/schema';
 import { loadS3IntoPinecone } from '@/lib/pinecone';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { createFlashCards } from '../../utils/flashcards';
 import { createStudyGuide } from '../../utils/studyGuide';
+import { getVectorsFromMedias } from '@/lib/context';
 
 // interface IBody {
 //   projectId: number;
@@ -32,25 +28,25 @@ export async function GET(req: NextRequest) {
   // const { projectId, fileList, url, guestSessionId, guestSessionSignature } =
   //   await req.json();
 
-  console.log({
-    projectId,
-    parsedFileList,
-    url,
-    guestSessionId,
-    guestSessionSignature,
-  });
+  // console.log({
+  //   projectId,
+  //   parsedFileList,
+  //   url,
+  //   guestSessionId,
+  //   guestSessionSignature,
+  // });
 
   if (!projectId) {
     return NextResponse.json({ error: 'Missing projectId' }, { status: 400 });
   }
 
-  console.log({
-    projectId,
-    fileList,
-    url,
-    guestSessionId,
-    guestSessionSignature,
-  });
+  // console.log({
+  //   projectId,
+  //   fileList,
+  //   url,
+  //   guestSessionId,
+  //   guestSessionSignature,
+  // });
 
   if (!fileList && !url) {
     return NextResponse.json(
@@ -116,7 +112,7 @@ export async function GET(req: NextRequest) {
         } as any)
         .returning();
 
-      console.log('newGuest', newGuest);
+      // console.log('newGuest', newGuest);
       toUseId = {
         id: guestSessionId,
         table: guests,
@@ -140,7 +136,7 @@ export async function GET(req: NextRequest) {
         // Convert the object to a JSON string and enqueue it as a data event
         let vectors = [];
         // const vectors = await loadS3IntoPinecone(fileKey);
-        if (parsedFileList) {
+        if (parsedFileList && parsedFileList.length > 0) {
           // vectors = await loadS3IntoPinecone(
           //   existingProject[0]?.id.toString(),
           //   'fileKey',
@@ -150,7 +146,6 @@ export async function GET(req: NextRequest) {
           });
 
           vectors = await Promise.all(promiseVectors);
-          console.log('vectors', vectors);
         } else if (url) {
           vectors = await loadS3IntoPinecone(url, url, 'url');
         }
@@ -158,7 +153,7 @@ export async function GET(req: NextRequest) {
         send({ stage: 'Saving medias...' });
 
         let mediaData: any = null;
-        if (parsedFileList) {
+        if (parsedFileList && parsedFileList.length > 0) {
           mediaData = parsedFileList.map((file: any) => {
             return {
               projectId: projectId,
@@ -179,41 +174,47 @@ export async function GET(req: NextRequest) {
           };
         }
 
-        await db
-          .insert(medias)
-          .values(mediaData as any)
+        const projectMediasWithoutNewFiles = await db
+          .select()
+          .from(medias)
+          .where(eq(medias.projectId, Number(projectId)));
+
+        const vectorsWithoutNewFiles = await getVectorsFromMedias(
+          projectMediasWithoutNewFiles,
+        );
+        vectors = [...vectors, ...vectorsWithoutNewFiles];
+
+        await db.insert(medias).values(mediaData as any);
 
         const projectMedias = await db
           .select()
           .from(medias)
           .where(eq(medias.projectId, Number(projectId)));
 
-          send({ stage: 'Generating flashcards...' });
-          // create flashcard
-          await createFlashCards(
-            projectMedias,
-            Number(projectId),
-            toUseId.id,
-            vectors,
-            toUseId.isGuest,
-          );
+        send({ stage: 'Generating flashcards...' });
+        // create flashcard
+        await createFlashCards(
+          projectMedias,
+          Number(projectId),
+          toUseId.id,
+          vectors,
+          toUseId.isGuest,
+        );
 
-          send({ stage: 'Generating study guide...' });
-          await createStudyGuide(
-            projectMedias,
-            Number(projectId),
-            toUseId.id,
-            toUseId.isGuest,
-            vectors,
-          );
+        send({ stage: 'Generating study guide...' });
+        await createStudyGuide(
+          projectMedias,
+          Number(projectId),
+          toUseId.id,
+          toUseId.isGuest,
+          vectors,
+        );
 
         send({
           stage: 'done',
           // mediaId: mediaInsert[0]?.id,
           projectMedias: projectMedias,
         });
-
-
 
         // Create Study Guide
         // await createStudyGuide(

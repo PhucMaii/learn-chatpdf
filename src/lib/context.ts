@@ -13,9 +13,13 @@ export async function getMatchesFromEmbeddings(
 
   try {
     const queryResulePromises = projectMedias.map((media) => {
-      const namespace = convertToAscii(media?.fileKey || media?.url || '');
+      const namespace =
+        media.type === 'url'
+          ? convertToAscii(media.url || '')
+          : convertToAscii(media.fileKey || '');
+
       return index.namespace(namespace).query({
-        topK: 10,
+        topK: 15,
         vector: embeddings,
         includeMetadata: true,
       });
@@ -27,22 +31,12 @@ export async function getMatchesFromEmbeddings(
       (queryResult) => queryResult.matches || [],
     );
 
-    console.log({queryResultMatches, queryResults}, 'queryResultMatches');
-
-    // const namespace = convertToAscii(projectId+'');
-    // console.log(namespace, 'namespace')
-    // // console.log(namespace, 'namespace');
-    // const queryResult = await index.namespace(namespace).query({
-    //   topK: 10,
-    //   vector: embeddings,
-    //   includeMetadata: true,
-    // });
-
-    // console.log({ queryResult, embeddings });
+    // console.log({ queryResults }, 'queryResultMatches');
 
     return queryResultMatches;
   } catch (error) {
     console.error('Error querying embeddings: ', error);
+    return [];
   }
 }
 
@@ -51,13 +45,56 @@ export async function getContext(
   medias: DrizzleMedia[],
   vectors: any = null,
 ) {
-  console.log(medias, 'medias');
+  // console.log(medias, 'medias');
+  // const queryEmbeddings = await getEmbeddings(query);
+  // // console.log(queryEmbeddings, 'queryEmbeddings');
+  // let matches;
+
+  // if (vectors) {
+  //   console.log({ queryEmbeddings, vectors }, 'vectors');
+  //   // const similarity = cosineSimilarity(queryEmbeddings, vectors.values);
+  //   // matches = [{
+  //   //   ...vectors,
+  //   //   score: similarity,
+  //   // }]
+  //   matches = vectors.map((vectorData: any) => {
+  //     const similarity = cosineSimilarity(queryEmbeddings, vectorData.values);
+
+  //     return {
+  //       ...vectorData,
+  //       score: similarity,
+  //     };
+  //   });
+  // } else {
+  //   matches = await getMatchesFromEmbeddings(queryEmbeddings, medias);
+  // }
+
+  // // console.log({ matches, queryEmbeddings });
+
+  // const qualifyingDocs = matches.filter(
+  //   (match: any) => match.score && match.score > 0.5,
+  // );
+
+  // type Metadata = {
+  //   text: string;
+  //   pageNumber: number;
+  // };
+
+  // const docs = qualifyingDocs.map((match: any) => {
+  //   return (match.metadata as Metadata).text;
+  // });
+
+  // // console.log({ docs, qualifyingDocs });
+
+  // // 5 vectors
+  // return docs.join('\n').substring(0, 3000);
+  // Get embeddings for the last message
   const queryEmbeddings = await getEmbeddings(query);
-  console.log(queryEmbeddings, 'queryEmbeddings');
-  let matches;
+
+  let matches: any[] = [];
 
   if (vectors) {
-    console.log({ queryEmbeddings, vectors }, 'vectors');
+    // console.log({ queryEmbeddings, vectors }, 'vectors');
     // const similarity = cosineSimilarity(queryEmbeddings, vectors.values);
     // matches = [{
     //   ...vectors,
@@ -72,29 +109,51 @@ export async function getContext(
       };
     });
   } else {
-    matches = await getMatchesFromEmbeddings(queryEmbeddings, medias);
+    // Get vectors from Pinecone for each media
+    const pinecone = await getPineconeClient();
+    const index = pinecone.Index('learn-chatpdf');
 
+    // Query each media's namespace and combine results
+    const queryPromises = medias.map(async (media) => {
+      const namespace =
+        media.type === 'url'
+          ? convertToAscii(media.url || '')
+          : convertToAscii(media.fileKey || '');
+
+      try {
+        const queryResult = await index.namespace(namespace).query({
+          topK: 15,
+          vector: queryEmbeddings,
+          includeMetadata: true,
+        });
+        return queryResult.matches || [];
+      } catch (error) {
+        console.error(`Error querying namespace ${namespace}:`, error);
+        return [];
+      }
+    });
+
+    const queryResults = await Promise.all(queryPromises);
+    matches = queryResults.flat();
   }
 
-  // console.log({ matches, queryEmbeddings });
+  // const allMatches = queryResults.flat();
 
-  const qualifyingDocs = matches.filter(
-    (match: any) => match.score && match.score > 0.5,
-  );
+  // Sort matches by score
+  const sortedMatches = matches.sort((a, b) => (b.score || 0) - (a.score || 0));
 
-  type Metadata = {
-    text: string;
-    pageNumber: number;
-  };
+  // Filter and get top matches
+  const qualifyingDocs = sortedMatches
+    .filter((match) => match.score && match.score > 0.5)
+    .slice(0, 5); // Get top 5 matches
 
-  const docs = qualifyingDocs.map((match: any) => {
-    return (match.metadata as Metadata).text;
-  });
+  // Extract text from matches
+  const contextText = qualifyingDocs
+    .map((match) => match.metadata?.text || '')
+    .join('\n')
+    .substring(0, 3000);
 
-  // console.log({ docs, qualifyingDocs });
-
-  // 5 vectors
-  return docs.join('\n').substring(0, 3000);
+  return contextText;
 }
 
 function cosineSimilarity(vec1: number[], vec2: number[]): number {
@@ -103,3 +162,35 @@ function cosineSimilarity(vec1: number[], vec2: number[]): number {
   const magnitude2 = Math.sqrt(vec2.reduce((acc, val) => acc + val * val, 0));
   return dotProduct / (magnitude1 * magnitude2);
 }
+
+export const getVectorsFromMedias = async (medias: DrizzleMedia[]) => {
+  const pinecone = await getPineconeClient();
+  const index = pinecone.Index('learn-chatpdf');
+
+  const fetchPromises = medias.map(async (media) => {
+    const namespace =
+      media.type === 'url'
+        ? convertToAscii(media.url || '')
+        : convertToAscii(media.fileKey || '');
+
+    try {
+      // Fetch all vectors from the namespace
+      const fetchResult = await index.namespace(namespace).fetch({
+        ids: [], // Empty array means fetch all vectors
+        includeMetadata: true,
+      } as any); // Using type assertion since Pinecone types are not fully accurate
+
+      // console.log({ fetchResult }, 'fetchResult');
+      return Object.values(fetchResult || {});
+    } catch (error) {
+      console.error(
+        `Error fetching vectors from namespace ${namespace}:`,
+        error,
+      );
+      return [];
+    }
+  });
+
+  const fetchResults = await Promise.all(fetchPromises);
+  return fetchResults.flat();
+};

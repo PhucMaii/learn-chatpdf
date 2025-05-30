@@ -67,11 +67,11 @@ export const checkSubscription = async (guestSessionId?: string) => {
   const isPro = await checkIsPro(guestSessionId); // Wait for the async operation to complete
   const isTrial = await getIsTrial(guestSessionId);
 
-  console.log({
-    isPro,
-    isAbleToAddMoreChats: isPro ? true : isTrial?.isAbleToAddMoreChats || false,
-    isTrial: isTrial?.isTrial || false,
-  });
+  // console.log({
+  //   isPro,
+  //   isAbleToAddMoreChats: isPro ? true : isTrial?.isAbleToAddMoreChats || false,
+  //   isTrial: isTrial?.isTrial || false,
+  // });
   return {
     isPro,
     isAbleToAddMoreChats: isPro ? true : isTrial?.isAbleToAddMoreChats || false,

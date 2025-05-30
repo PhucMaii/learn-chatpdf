@@ -9,6 +9,9 @@ import { getQueryParams } from '@/utils/query';
 import { handleAuthGuard } from '@/utils/auth';
 import { generatePrompt } from '@/lib/prompt';
 import { openai } from '../utils/openai';
+import { getPineconeClient } from '@/lib/pinecone';
+import { convertToAscii } from '@/lib/utils';
+import { getEmbeddings } from '@/lib/embedding';
 
 export const runtime = 'nodejs';
 
@@ -29,20 +32,23 @@ const handler = async (req: Request) => {
       return NextResponse.json({ error: authStatus.error }, { status: 401 });
     }
 
-    const { messages, projectId, language } =
-      await req.json();
+    const { messages, projectId, language } = await req.json();
 
     const _chats = await db
       .select()
       .from(chats)
       .where(eq(chats.projectId, Number(projectId)));
 
-      // If there is no chat, create a new one
-      let chatId: any = _chats[0]?.id || null;
+    // If there is no chat, create a new one
+    let chatId: any = _chats[0]?.id || null;
     if (_chats.length < 1) {
       const newChat = await db
         .insert(chats)
-        .values({ projectId: Number(projectId), userId, guestId: guestSessionId })
+        .values({
+          projectId: Number(projectId),
+          userId,
+          guestId: guestSessionId,
+        })
         .returning();
 
       chatId = newChat[0].id;
@@ -54,10 +60,55 @@ const handler = async (req: Request) => {
     const projectMedias = await db
       .select()
       .from(medias)
-      .where(eq(medias.projectId, Number(projectId)))
+      .where(eq(medias.projectId, Number(projectId)));
 
-    const context = await getContext(lastMessage.content, projectMedias);
-    const prompt: any = generatePrompt(context, language);
+    // Get embeddings for the last message
+    const queryEmbeddings = await getEmbeddings(lastMessage.content);
+
+    // Get vectors from Pinecone for each media
+    const pinecone = await getPineconeClient();
+    const index = pinecone.Index('learn-chatpdf');
+
+    // Query each media's namespace and combine results
+    const queryPromises = projectMedias.map(async (media) => {
+      const namespace =
+        media.type === 'url'
+          ? convertToAscii(media.url || '')
+          : convertToAscii(media.fileKey || '');
+
+      try {
+        const queryResult = await index.namespace(namespace).query({
+          topK: 15,
+          vector: queryEmbeddings,
+          includeMetadata: true,
+        });
+        return queryResult.matches || [];
+      } catch (error) {
+        console.error(`Error querying namespace ${namespace}:`, error);
+        return [];
+      }
+    });
+
+    const queryResults = await Promise.all(queryPromises);
+    const allMatches = queryResults.flat();
+
+    // Sort matches by score
+    const sortedMatches = allMatches.sort(
+      (a, b) => (b.score || 0) - (a.score || 0),
+    );
+
+    // Filter and get top matches
+    const qualifyingDocs = sortedMatches
+      .filter((match) => match.score && match.score > 0.5)
+      .slice(0, 5); // Get top 5 matches
+
+    // Extract text from matches
+    const contextText = qualifyingDocs
+      .map((match) => match.metadata?.text || '')
+      .join('\n')
+      .substring(0, 3000);
+
+    const prompt: any = generatePrompt(contextText, language);
     const response: any = await openai.createChatCompletion({
       model: 'gpt-4o-mini',
       messages: [
