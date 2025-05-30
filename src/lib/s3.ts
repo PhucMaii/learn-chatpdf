@@ -24,7 +24,7 @@ export async function uploadToS3(file: File, userId: string) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const fileKey = `${userId}/${file.name}`;
+    const fileKey = `${userId}/${Date.now()}-${file.name}`;
 
     const putObjectCommand = new PutObjectCommand({
       Bucket: process.env.NEXT_PUBLIC_R2_BUCKET_NAME,

@@ -47,7 +47,7 @@ export async function loadS3IntoPinecone(
     let text = '';
     if (type === 'fileKey') {
       const fileName = await downloadFromS3(input);
-      console.log(fileName);
+      console.log(fileName, 'FILENAME');
       if (!fileName) {
         throw new Error('Failed to download file');
       }

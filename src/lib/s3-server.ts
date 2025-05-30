@@ -1,5 +1,7 @@
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import fs from 'fs';
+import { createWriteStream } from 'fs';
+import path from 'path';
+import { pipeline } from 'stream/promises';
 export async function downloadFromS3(fileKey: string) {
   try {
     const r2Client = new S3Client({
@@ -18,8 +20,10 @@ export async function downloadFromS3(fileKey: string) {
 
     const obj = await r2Client.send(getObjectCommand);
 
-    const fileName = `/tmp/pdf-${Date.now()}.pdf`;
-    fs.writeFileSync(fileName, obj.Body as Buffer);
+    const fileName = path.join('/tmp', `pdf-${Date.now()}.pdf`);
+    const writeStream = createWriteStream(fileName);
+
+    await pipeline(obj.Body, writeStream); // Proper stream handling
     return fileName;
   } catch (error: unknown) {
     console.log('There was an error', error);
