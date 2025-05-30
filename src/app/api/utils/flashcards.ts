@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { flashCard, flashCardSet } from '@/lib/db/schema';
 import { flashCardPrompt, generatePrompt } from '@/lib/prompt';
 import { openai } from './openai';
+import { eq } from 'drizzle-orm';
 
 export const createFlashCards = async (
   medias: DrizzleMedia[],
@@ -13,8 +14,9 @@ export const createFlashCards = async (
   isGuest: boolean = false,
 ) => {
   try {
-    const context = await getContext(flashCardPrompt, medias, vectors);
+    const context = await getContext(flashCardPrompt, medias, vectors.flat());
     const prompt: any = generatePrompt(context, 'English');
+    console.log('prompt', {prompt, medias, context, vectors});
 
     const response: any = await openai.createChatCompletion({
       model: 'gpt-4o-mini',
@@ -34,10 +36,18 @@ export const createFlashCards = async (
       completionData.choices[0].message.content,
     );
 
-    // console.log('pass json.parse')
+   const existingFlashCardSet = await db
+    .select()
+    .from(flashCardSet)
+    .where(eq(flashCardSet.projectId, Number(projectId)));
+
+    if (existingFlashCardSet.length > 0) {
+      // Delete existing flash card set
+      await db.delete(flashCardSet).where(eq(flashCardSet.projectId, Number(projectId)));
+      await db.delete(flashCard).where(eq(flashCard.flashCardSetId, existingFlashCardSet[0].id));
+    }
 
     // Use card title for chat title
-
     const newFlashCardsSet = await db
       .insert(flashCardSet)
       .values({

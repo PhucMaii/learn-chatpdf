@@ -9,6 +9,8 @@ import { loadS3IntoPinecone } from '@/lib/pinecone';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
+import { createFlashCards } from '../../utils/flashcards';
+import { createStudyGuide } from '../../utils/studyGuide';
 
 // interface IBody {
 //   projectId: number;
@@ -78,7 +80,6 @@ export async function GET(req: NextRequest) {
     isGuest: false,
   };
 
-
   if (!userId) {
     if (!guestSessionId || !guestSessionSignature) {
       return new NextResponse(
@@ -124,7 +125,6 @@ export async function GET(req: NextRequest) {
     }
   }
 
-
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
@@ -146,21 +146,13 @@ export async function GET(req: NextRequest) {
           //   'fileKey',
           // );
           const promiseVectors = parsedFileList.map((file: any) => {
-            return loadS3IntoPinecone(
-              file.fileKey,
-              file.fileKey,
-              'fileKey',
-            );
+            return loadS3IntoPinecone(file.fileKey, file.fileKey, 'fileKey');
           });
 
           vectors = await Promise.all(promiseVectors);
           console.log('vectors', vectors);
         } else if (url) {
-          vectors = await loadS3IntoPinecone(
-            url,
-            url,
-            'url',
-          );
+          vectors = await loadS3IntoPinecone(url, url, 'url');
         }
 
         send({ stage: 'Saving medias...' });
@@ -187,39 +179,56 @@ export async function GET(req: NextRequest) {
           };
         }
 
-        // const mediaData: any = {
-        //   projectId: projectId,
-        //   type: url ? 'url' : fileName.split('.')[1].toLowerCase(),
-        //   userId: !toUseId.isGuest ? toUseId.id : null,
-        //   guestId: toUseId.isGuest ? toUseId.id : null,
-        // };
-
-        // if (fileName) {
-        //   mediaData.fileName = fileName;
-        // }
-        // if (fileKey) {
-        //   mediaData.fileKey = fileKey;
-        // }
-        // if (url) {
-        //   mediaData.url = url;
-        // }
-
         await db
           .insert(medias)
           .values(mediaData as any)
-          .returning();
 
         const projectMedias = await db
           .select()
           .from(medias)
           .where(eq(medias.projectId, Number(projectId)));
 
+          send({ stage: 'Generating flashcards...' });
+          // create flashcard
+          await createFlashCards(
+            projectMedias,
+            Number(projectId),
+            toUseId.id,
+            vectors,
+            toUseId.isGuest,
+          );
+
+          send({ stage: 'Generating study guide...' });
+          await createStudyGuide(
+            projectMedias,
+            Number(projectId),
+            toUseId.id,
+            toUseId.isGuest,
+            vectors,
+          );
+
         send({
           stage: 'done',
           // mediaId: mediaInsert[0]?.id,
           projectMedias: projectMedias,
         });
+
+
+
+        // Create Study Guide
+        // await createStudyGuide(
+        //   mediasToFlashcards,
+        //   Number(projectId),
+        //   toUseId.id,
+        //   toUseId.isGuest,
+        // );
+
+        // send({
+        //   stage: 'done',
+        // });
         controller.close();
+
+        // return new StreamingTextResponse(stream);
       } catch (error: any) {
         console.error('Internal Server Error: ', error);
         send({ stage: 'error', error: error.message || 'Unknown error' });
