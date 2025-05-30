@@ -9,6 +9,8 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useParams } from 'next/navigation';
 import useLocalStorage from '../../../hooks/useLocalStorage';
+import YoutubeLinkUpload from '../YoutubeLinkUpload';
+import { Separator } from '../ui/separator';
 
 export default function Media() {
   const { id: projectId } = useParams() ?? { id: null };
@@ -49,6 +51,11 @@ export default function Media() {
 
       <BorderSection>
         <h4 className="px-4 font-medium text-lg">Upload Medias</h4>
+        <YoutubeLinkUpload
+          projectId={Number(projectId)}
+          setDisplay={setMedias}
+        />
+        <Separator className="my-4" />
         <FileUpload
           projectId={projectId?.toString()}
           setDisplay={setMedias}

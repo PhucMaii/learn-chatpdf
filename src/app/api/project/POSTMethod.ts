@@ -44,7 +44,7 @@ export default async function POSTMethod(req: Request) {
 
     const newProject = await db.insert(project).values(projectData).returning();
 
-    console.log('newProject', newProject);
+    // console.log('newProject', newProject);
 
     if (!newProject) {
       return NextResponse.json(

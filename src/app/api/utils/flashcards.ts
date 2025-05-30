@@ -16,7 +16,7 @@ export const createFlashCards = async (
   try {
     const context = await getContext(flashCardPrompt, medias, vectors.flat());
     const prompt: any = generatePrompt(context, 'English');
-    console.log('prompt', {prompt, medias, context, vectors});
+    // console.log('prompt', {prompt, medias, context, vectors});
 
     const response: any = await openai.createChatCompletion({
       model: 'gpt-4o-mini',

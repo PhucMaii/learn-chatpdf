@@ -27,8 +27,8 @@ Return a **valid JSON object** without any Markdown code fences or language tags
 Here is the format:
 
 {
-  "title": "Sleep Hygiene and Its Impact on Individuals with Parkinson's Disease",
-  "studyGuide": "# Sleep Hygiene and Its Impact on Individuals with Parkinson's Disease\\n\\n## Executive Summary\\n...
+  "title": "Study Guide Title",
+  "studyGuide": "Study Guide Content"
 }
 
 

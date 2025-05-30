@@ -10,6 +10,7 @@ import md5 from 'md5';
 import { convertToAscii } from './utils';
 import { getTextExtractor } from 'office-text-extractor';
 import { readFile } from 'node:fs/promises';
+import { extractYouTubeID } from './youtube-transcript';
 
 let pinecone: Pinecone | null = null;
 
@@ -54,10 +55,15 @@ export async function loadS3IntoPinecone(
 
       const buffer = await readFile(fileName);
       text = await extractor.extractText({ input: buffer, type: 'buffer' });
+      // console.log('text', text);
     } else if (type === 'url') {
-      text = await extractor.extractText({ input: input, type: 'url' });
+      const videoId = extractYouTubeID(input);
+      const url = `https://deserving-harmony-9f5ca04daf.strapiapp.com/utilai/yt-transcript/${videoId}`;
+      const transcript = await fetch(url);
+      text = await transcript.text();
+      text = `Youtube Transcript: ${text} \n input`;
+      // console.log('text', text);
     }
-    console.log('text', text);
 
     // const loader = new PDFLoader(fileName);
     // const pages = (await loader.load()) as PDFPage[];
@@ -84,7 +90,7 @@ export async function loadS3IntoPinecone(
       }),
     ]);
 
-    console.log(`Split into ${documents.length} chunks`);
+    // console.log(`Split into ${documents.length} chunks`);
 
     // 3. Embed each document chunk
     const vectors: any[] = await Promise.all(documents.map(embedDocuments));
