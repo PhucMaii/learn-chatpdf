@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { chats, guests, messages, project } from '@/lib/db/schema';
+import { chats, guests, medias, messages, project } from '@/lib/db/schema';
 import { getQueryParams } from '@/utils/query';
 import { auth } from '@clerk/nextjs/server';
 import { asc, eq } from 'drizzle-orm';
@@ -43,7 +43,10 @@ const GETMethod = async (req: Request) => {
       .where(eq(chats.projectId, Number(projectId)));
 
     if (existingChat.length === 0) {
-      return NextResponse.json({ message: 'Chat not found' }, { status: 200 });
+      return NextResponse.json(
+        { message: 'Chat not found', isEmptyChat: true },
+        { status: 200 },
+      );
     }
 
     const _messages = await db
@@ -52,7 +55,20 @@ const GETMethod = async (req: Request) => {
       .where(eq(messages.chatId, existingChat[0].id))
       .orderBy(asc(messages.createdAt));
 
-    return NextResponse.json({messages: _messages});
+    const projectMedias = await db
+      .select()
+      .from(medias)
+      .where(eq(medias.projectId, Number(projectId)));
+
+    console.log({
+      messages: _messages,
+      isEmptyChat: projectMedias.length > 0 && _messages.length === 0,
+    });
+
+    return NextResponse.json({
+      messages: _messages,
+      isEmptyChat: projectMedias.length > 0 && _messages.length === 0,
+    });
   } catch (error: any) {
     console.log('Internal Server Error: ', error);
     return NextResponse.json({ error: error.message });

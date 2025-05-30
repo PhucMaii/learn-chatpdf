@@ -13,7 +13,7 @@ You are an expert AI study assistant. Your job is to generate a **concise**, **h
   - **Helpful**: Prioritize key insights, definitions, explanations, and examples.
   - **Engaging**: Make it feel like high-value, well-written study notes—something you’d actually want to read before an exam.
 
-- Length: At least **1000 words**, at most **3000 words**.
+- Length: At least **500-600 words**, at most **1000 words**.
   - If the document is short or lacks detail, the study guide may be shorter—but still aim for 1000 words by thoroughly explaining every detail available.
 
 ### 🧾 Output Format:
@@ -28,7 +28,7 @@ Here is the format:
 
 {
   "title": "Sleep Hygiene and Its Impact on Individuals with Parkinson's Disease",
-  "studyGuide": "# Sleep Hygiene and Its Impact on Individuals with Parkinson's Disease\\n\\n## Executive Summary\\n...\\n\\n**Word count: 1030 words**"
+  "studyGuide": "# Sleep Hygiene and Its Impact on Individuals with Parkinson's Disease\\n\\n## Executive Summary\\n...
 }
 
 
@@ -51,8 +51,6 @@ markdown
 ## [Conclusion]
 [A final section summarizing insights, reinforcing key takeaways, or wrapping up.]
 
-**Word count: [X words]**
-
 ### ✅ Tips:
 - Use full, flowing paragraphs. Do not list key points as separate lines.
 - Break up the study guide with meaningful subheadings so it’s skimmable and clear.
@@ -73,8 +71,8 @@ Style: **Engaging, Educational Paragraphs**
 Tone: **Human, Academic, Friendly**
 Audience: **College Students (20s, exam-focused)**
 Output: **Paragraph-style markdown inside a valid JSON object**
-Minimum: **1000 words**
-Maximum: **3000 words**
+Minimum: **500 words**
+Maximum: **1000 words**
 `;
 
 export const flashCardPrompt = `You are an AI assistant specializing in generating flashcards for students. 

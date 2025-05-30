@@ -15,28 +15,31 @@ export default function ChatWithAI() {
   const [initialMsg, setInitialMsg] = useState<any>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [guestSession, setGuestSession, isInitialized] = useLocalStorage('guest-session', {});
+  const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
+    'guest-session',
+    {},
+  );
 
   const [language, setLanguage] = useState<string>('English');
 
-  const { input, handleSubmit, handleInputChange, messages, isLoading } = useChat({
-    api: `/api/chat?guestSessionId=${guestSession?.sessionId}`,
-    body: {
-      projectId,
-      language,
-      isAnswerOutOfContext: false,
-    },
-    initialMessages: initialMsg || [],
-  });
+  const { input, handleSubmit, handleInputChange, messages, isLoading } =
+    useChat({
+      api: `/api/chat?guestSessionId=${guestSession?.sessionId}`,
+      body: {
+        projectId,
+        language,
+        isAnswerOutOfContext: false,
+      },
+      initialMessages: initialMsg || [],
+    });
 
-  
   useEffect(() => {
     // Ensure guestSession is ready before fetching messages
     if (isInitialized) {
       fetchMsg();
     }
   }, [isInitialized]);
-  
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -55,7 +58,9 @@ export default function ChatWithAI() {
 
   const fetchMsg = async () => {
     try {
-      const response = await axios.get(`/api/messages?projectId=${projectId}&guestSessionId=${guestSession?.sessionId}`);
+      const response = await axios.get(
+        `/api/messages?projectId=${projectId}&guestSessionId=${guestSession?.sessionId}`,
+      );
 
       if (response.data.error) {
         toast.error('Something went wrong in fetching messages');
@@ -67,13 +72,15 @@ export default function ChatWithAI() {
       console.log('There was an error in fetching messages: ', error);
       toast.error('Something went wrong in fetching messages');
     }
-  }
+  };
 
   return (
     <div className="flex flex-col h-screen gap-4 w-full mx-auto md:w-xl lg:w-2xl xl:w-4xl">
-      {messages.length > 0 ? <div className="w-full md:w-xl lg:w-2xl xl:w-4xl mb-24 flex items-center justify-center">
-        <MessageList messages={messages} isLoading={isLoading} />
-      </div> : (
+      {messages.length > 0 ? (
+        <div className="w-full md:w-xl lg:w-2xl xl:w-4xl mb-24 flex items-center justify-center">
+          <MessageList messages={messages} isLoading={isLoading} />
+        </div>
+      ) : (
         <div className="w-full md:w-xl lg:w-2xl xl:w-4xl flex items-center justify-center">
           <h1 className="text-4xl font-bold">How can I help you today?</h1>
         </div>
@@ -90,15 +97,14 @@ export default function ChatWithAI() {
             onChange={handleInputChange}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                handleSubmit()
+                e.preventDefault();
+                handleSubmit();
               }
             }}
             className="w-full px-6 py-3 text-gray-900 rounded-xl focus:outline-none resize-none "
             placeholder="Ask me anything..."
             spellCheck="false"
             rows={3}
-            
           />
 
           <div className="flex w-[95%] justify-between items-center gap-2 mt-2">

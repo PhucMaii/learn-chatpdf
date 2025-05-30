@@ -53,7 +53,7 @@ export async function getContext(
 ) {
   console.log(medias, 'medias');
   const queryEmbeddings = await getEmbeddings(query);
-  // console.log(queryEmbeddings, 'queryEmbeddings');
+  console.log(queryEmbeddings, 'queryEmbeddings');
   let matches;
 
   if (vectors) {
