@@ -2,7 +2,6 @@ import { extractYouTubeID } from '@/lib/youtube-transcript';
 import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import toast from 'react-hot-toast';
-import axios from 'axios';
 
 interface IProps {
   projectId: number;
@@ -49,7 +48,7 @@ const YoutubeLinkUpload = ({ defaultLink, className, projectId, setDisplay }: IP
       );
 
       eventSource.onmessage = (event) => {
-        const { stage, projectMedias } = JSON.parse(event.data);
+        const { stage } = JSON.parse(event.data);
         // if (guestSession) {
         //   setGuestSession({
         //     sessionId: guestSession.guestSessionId,
