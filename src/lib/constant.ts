@@ -6,6 +6,7 @@ import {
   FoldersIcon,
   // FacebookIcon,
   GraduationCapIcon,
+  InstagramIcon,
   MailIcon,
   // MessageCircleMoreIcon,
   NotebookIcon,
@@ -248,6 +249,11 @@ export const contactList = [
     icon: MailIcon,
     title: 'Contact us',
     link: 'mailto:maithienphuc0102@gmail.com',
+  },
+  {
+    icon: InstagramIcon,
+    title: 'Instagram',
+    link: 'https://www.instagram.com/info.learnpdf',
   },
   {
     icon: TwitterIcon,
