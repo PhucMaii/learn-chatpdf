@@ -2,6 +2,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 export const handleSubscription = async (
+  title: string,
   price: number,
   plan: string,
   discountId: string = '',
@@ -12,6 +13,7 @@ export const handleSubscription = async (
         price,
         plan,
         discountId,
+        title,
       },
     });
 

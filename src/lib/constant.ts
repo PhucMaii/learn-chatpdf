@@ -3,6 +3,7 @@ import {
   BookCopyIcon,
   ClockArrowDownIcon,
   ContactRound,
+  CrownIcon,
   FoldersIcon,
   // FacebookIcon,
   GraduationCapIcon,
@@ -11,6 +12,8 @@ import {
   // MessageCircleMoreIcon,
   NotebookIcon,
   NotebookPenIcon,
+  PersonStandingIcon,
+  RocketIcon,
   ShieldCheckIcon,
   TwitterIcon,
 } from 'lucide-react';
@@ -45,28 +48,65 @@ export const tabs = [
 
 export const pricingTabs = [
   {
-    title: 'Weekly',
-    price: 2.99,
-    plan: 'week',
-    displayPrice: 2.99,
-    displayPlan: 'week',
+    title: 'Starter',
+    price: 0,
+    icon: PersonStandingIcon,
+    // plan: 'week',
+    displayMonthlyPrice: 'Free',
+    displayYearlyPrice: 'Free',
+    forWho:
+      'Just getting started with AI? Try it out and see how it fits your study flow.',
+    // displayPlan: 'week',
+    features: [
+      '3 free projects',
+      'Unlimited AI chat',
+      'Unlimited file upload',
+      'Unlimited Essays Generator',
+      'Unlimited Flashcards Generator',
+      'Unlimited Study Guides Generator',
+    ],
   },
   {
-    title: 'Annually',
-    price: 59.88,
-    plan: 'year',
-    isPopular: true,
-    save: ['Save 62% vs weekly 💸', 'Save 29% vs monthly 💸'],
-    displayPrice: 4.99,
-    displayPlan: 'month',
-  },
-  {
-    title: 'Monthly',
-    price: 6.99,
+    title: 'Pro',
+    icon: RocketIcon,
+    monthlyPrice: 2.99,
+    yearlyPrice: 29.99,
     plan: 'month',
-    save: ['Save up to 46% vs weekly 💸'],
-    displayPrice: 5.99,
-    displayPlan: 'month',
+    forWho:
+      'Busy student? Stay on top of school with AI that saves time and cuts stress.',
+    isPopular: true,
+    displayMonthlyPrice: '$2.99',
+    displayYearlyPrice: '$2.49',
+    features: [
+      'Unlimited projects',
+      'Unlimited AI chat',
+      'Unlimited file upload',
+      'Unlimited AI Detectable',
+      'Unlimited Essays Generator',
+      'Unlimited Flashcards Generator',
+      'Unlimited Study Guides Generator',
+    ],
+  },
+  {
+    title: 'Elite',
+    icon: CrownIcon,
+    monthlyPrice: 5.99,
+    yearlyPrice: 59.99,
+    plan: 'month',
+    forWho:
+      'Want it all? Go unlimited and study your way, no limits, no burnout.',
+    displayMonthlyPrice: '$5.99',
+    displayYearlyPrice: '$4.99',
+    features: [
+      'Unlimited projects',
+      'Unlimited AI chat',
+      'Unlimited file upload',
+      'Unlimited AI Detectable',
+      'Unlimited Humanize Essay',
+      'Unlimited Essays Generator',
+      'Unlimited Flashcards Generator',
+      'Unlimited Study Guides Generator',
+    ],
   },
 ];
 
@@ -186,8 +226,7 @@ Studies show flashcards can improve scores by up to 50%.`,
   {
     id: 2,
     title: 'Chat in your own language 🌎',
-    description:
-      `Learning shouldn’t be limited by language.
+    description: `Learning shouldn’t be limited by language.
 Talk to your PDFs and get support in the language you're most comfortable with.`,
     image: '/images/features-details/multi-language.jpeg',
   },
@@ -274,7 +313,7 @@ export const trialProjects = 3;
 
 export const flashCardWidthResponsive = `
   2xl:w-[1200px] xl:w-[900px] lg:w-[700px] md:w-[500px] sm:w-[300px] w-[250px] h-[500px] md:h-[600px]
-`
+`;
 export const flashCardTextResponsive = `
 text-lg sm:text-xl md:text-2xl lg:text-3xl
-`
+`;

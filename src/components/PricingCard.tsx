@@ -1,130 +1,133 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { BadgeCheck } from 'lucide-react';
-import React, { useMemo } from 'react';
+import { CircleCheckIcon } from 'lucide-react';
+import React, { useContext, useMemo } from 'react';
 import { Button } from './ui/button';
-import { handleSubscription } from '@/utils/subscription';
-import { DrizzleDiscountCode } from '@/lib/db/drizzleType';
-import { useUser } from '@clerk/nextjs';
+// import { handleSubscription } from '@/utils/subscription';
+// import { DrizzleDiscountCode } from '@/lib/db/drizzleType';
+// import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import { UserContext } from '../../context/UserProvider';
+import { handleSubscription } from '@/utils/subscription';
+import { useUser } from '@clerk/nextjs';
 
 type Props = {
-  price: number;
-  title: string;
-  isPopular?: boolean;
-  plan: string;
-  save?: string[];
-  discount?: DrizzleDiscountCode;
-  helperText?: string;
-  displayPlan: string;
-  displayPrice: number;
+  plan: any;
+  isYearly: boolean;
 };
 
-const PricingCard = ({
-  price,
-  title,
-  isPopular,
-  plan,
-  save,
-  discount,
-  helperText,
-  displayPlan,
-  displayPrice,
-}: Props) => {
-  const { user } = useUser();
+const PricingCard = ({ plan, isYearly }: Props) => {
+  // const { user } = useUser();
+  const { user }: any = useContext(UserContext);
+  const { user: clerkUser } = useUser();
   const router = useRouter();
-  
-  const finalPrice = useMemo(() => {
-    if (!discount) {
-      return displayPrice;
+
+  const isSelected = useMemo(() => {
+    if (plan.title === 'Starter') {
+      return (
+        user?.status === 'Free' || user?.status === 'Trial' || !user?.status
+      );
     }
 
-    if (discount.type === 'percent') {
-      return (displayPrice - displayPrice * (discount.value / 100))?.toFixed(2);
+    if (plan.title === 'Pro') {
+      return user?.status === 'Pro';
     }
 
-    return (displayPrice - discount.value)?.toFixed(2);
-  }, [displayPrice, discount]);
+    if (plan.title === 'Elite') {
+      return user?.status === 'Elite';
+    }
+  }, [user, plan]);
+
+  const isUserNotHasPlan = useMemo(() => {
+    return user?.status === 'Free' || user?.status === 'Trial' || !user?.status;
+  }, [user, plan]);
+
+  console.log(user);
+
+  // const finalPrice = useMemo(() => {
+  //   if (!discount) {
+  //     return displayPrice;
+  //   }
+
+  //   if (discount.type === 'percent') {
+  //     return (displayPrice - displayPrice * (discount.value / 100))?.toFixed(2);
+  //   }
+
+  //   return (displayPrice - discount.value)?.toFixed(2);
+  // }, [displayPrice, discount]);
 
   return (
-    <div className="relative w-96 border-2 border-gray-300 p-8 rounded-3xl">
-      <div className="absolute w-full flex items-center justify-between top-2 left-2 px-4 p-2 text-blue-500 w-full rounded-full">
-        <h1
-          className={cn('text-3xl font-bold text-emerald-600', {
-            'text-blue-500': isPopular,
-          })}
-        >
-          {title}
-        </h1>
-        {finalPrice !== displayPrice && (
-          <div className="bg-red-600 px-4 py-1 rounded-full">
-            <h1 className="text-xl font-bold text-white">🔥 90% OFF 💰</h1>
-          </div>
-        )}
-        {isPopular && finalPrice === displayPrice && (
-          <div className="w-auto bg-blue-500 px-4 py-1 rounded-full">
-            <h1 className="text-sm font-bold text-white">Popular</h1>
-          </div>
-        )}
-      </div>
-
-      <div className="flex items-end justify-start mt-12">
-        {finalPrice !== displayPrice && (
-          <h1 className="text-2xl text-gray-300 line-through">${finalPrice}</h1>
-        )}
-        <h1 className="text-5xl font-bold">${finalPrice}</h1>
-        <h6 className="text-xl font-semibold text-gray-400">/{displayPlan}</h6>
-      </div>
-
-      {helperText && (
-        <h6 className="text-lg font-semibold text-gray-400 mt-4">
-          {helperText}
-        </h6>
+    <div className="relative w-[350px] h-[650px] border-2 border-gray-300 p-4 sm:p-6 md:p-8 rounded-3xl flex flex-col">
+      {plan.isPopular && (
+        <div className="absolute top-2 right-2 bg-red-500 rounded-full px-4 py-2">
+          <h6 className="text-xs sm:text-sm font-medium text-white">
+            Popular 🔥
+          </h6>
+        </div>
       )}
-
-      <div className="border-2 border-gray-500 my-4"></div>
-
-      <div className="flex flex-col gap-4 mt-4">
-        {save &&
-          save.map((saveText: string, index: number) => (
-            <div className="flex items-center gap-2" key={index}>
-              <BadgeCheck className="w-6 h-6 text-emerald-500 font-bold" />
-              <h6 className="text-xl font-semibold">{saveText}</h6>
-            </div>
-          ))}
-        <div className="flex items-center gap-2">
-          <BadgeCheck className="w-6 h-6 text-emerald-500 font-bold" />
-          <h6 className="text-xl font-semibold">Unlimited chats</h6>
+      <div className="flex flex-col gap-2">
+        <div className="flex w-8 h-8 sm:w-10 sm:h-10 items-center justify-center bg-emerald-500 rounded-full">
+          <plan.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
         </div>
+        <h1 className="text-xl sm:text-2xl font-bold">{plan.title}</h1>
+        <h6 className="text-xs sm:text-sm font-medium text-gray-400">
+          {plan.forWho}
+        </h6>
+      </div>
 
-        <div className="flex items-center gap-2">
-          <BadgeCheck className="w-6 h-6 text-emerald-500 font-bold" />
-          <h6 className="text-xl font-semibold">Unlimited PDF Documents</h6>
+      <div className="flex flex-col items-center justify-center gap-2">
+        <div className="flex items-center justify-center mt-4">
+          <h1 className="text-4xl sm:text-5xl font-medium">
+            {isYearly ? plan.displayYearlyPrice : plan.displayMonthlyPrice}
+          </h1>
+          <h6 className="text-xs sm:text-sm font-medium text-gray-400">
+            /month
+          </h6>
         </div>
-
-        <div className="flex items-center gap-2">
-          <BadgeCheck className="w-6 h-6 text-emerald-500 font-bold" />
-          <h6 className="text-xl font-semibold">Flash cards generation</h6>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <BadgeCheck className="w-6 h-6 text-emerald-500 font-bold" />
-          <h6 className="text-xl font-semibold">Email Support</h6>
-        </div>
+        {isYearly && plan.yearlyPrice && (
+          <p className="text-xs sm:text-sm font-medium text-gray-400">
+            Billed annually: ${plan.yearlyPrice}
+          </p>
+        )}
       </div>
 
       <Button
+        variant="outline"
+        className={cn(
+          'w-full mt-4 border-2 border-emerald-500 text-emerald-500 font-bold text-sm sm:text-md hover:bg-emerald-500 hover:text-white',
+          isSelected && 'bg-emerald-500 text-white opacity-50',
+        )}
         onClick={() => {
-          if (user) {
-            handleSubscription(price, plan, discount?.id);
+          if (clerkUser) {
+            handleSubscription(
+              plan.title,
+              isYearly ? plan.yearlyPrice : plan.monthlyPrice,
+              isYearly ? 'year' : 'month',
+            );
           } else {
             router.push('/sign-in');
           }
         }}
-        className="w-full mt-8 text-xl font-bold border-2 text-emerald-500 border-emerald-500 bg-white rounded-full hover:bg-emerald-500 hover:text-white"
       >
-        Select
+        {isSelected
+          ? 'Current Plan'
+          : isUserNotHasPlan
+            ? 'Select'
+            : 'Manage Subscription'}
       </Button>
+
+      <div className="flex-1 flex flex-col mt-4">
+        <h6 className="text-xs sm:text-sm font-medium">Free Features</h6>
+
+        <div className="flex flex-col gap-2 mt-4 overflow-y-auto">
+          {plan.features.map((feature: string, index: number) => (
+            <div key={index} className="flex items-center gap-2">
+              <CircleCheckIcon className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500 font-bold flex-shrink-0" />
+              <h6 className="text-xs sm:text-sm">{feature}</h6>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
