@@ -88,6 +88,7 @@ export default function MediasTable({ medias, setMedias }: IProps) {
                   {user && <Button
                     variant="ghost"
                     size="icon"
+                    name="delete-media"
                     // onClick={(e) => handleDeletemedia(e, media)}
                     className="h-8 w-8 p-0 hover:bg-red-200 hover:text-red-500 active:scale-98 transition-all duration-300"
                     disabled={

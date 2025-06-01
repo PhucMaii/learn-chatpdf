@@ -105,6 +105,7 @@ const ChatsTable = ({ userChats, setUserChats, subscription }: Props) => {
                     size="icon"
                     onClick={(e) => handleDeleteChat(e, chat)}
                     className="h-8 w-8 p-0 hover:bg-red-200 hover:text-red-500 active:scale-98 transition-all duration-300"
+                    name="delete-chat"
                   >
                     {deleting.isDeleting && deleting.id === chat.id ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

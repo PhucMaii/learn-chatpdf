@@ -6,6 +6,7 @@ import { DrizzleUser, users } from '@/lib/db/schema';
 import { daysOfTrial } from '@/lib/constant';
 import { transporter } from '@/lib/email';
 import { newUser } from '../../../../config/emailTemplate';
+import { SUBSCRIPTION_TYPE } from '@/lib/type';
 
 const handler = async (req: Request) => {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -80,7 +81,7 @@ const handler = async (req: Request) => {
       email: email_addresses[0]?.email_address,
       ...(first_name ? { firstName: first_name } : {}),
       createdAt: new Date(created_at),
-      status: 'Trial',
+      status: SUBSCRIPTION_TYPE.STARTER,
       trialEnd,
     };
 

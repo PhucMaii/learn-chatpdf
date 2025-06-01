@@ -117,7 +117,7 @@ export default function ChatWithAI() {
                 onChange={(value) => setLanguage(value)}
               />
             </div>
-            <Button variant="ghost" onClick={handleSubmit}>
+            <Button name="send-message" variant="ghost" onClick={handleSubmit}>
               <ArrowUpIcon />
             </Button>
           </div>

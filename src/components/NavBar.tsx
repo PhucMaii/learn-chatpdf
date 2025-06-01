@@ -8,7 +8,7 @@ import NavDialog from './Dialogs/NavDialog';
 import { motion } from 'framer-motion';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import axios from 'axios';
-
+import Image from 'next/image';
 
 const NavBar = () => {
   const { user, setUser, isInitializing }: any = useContext(UserContext);
@@ -82,7 +82,14 @@ const NavBar = () => {
       <div className="flex items-center justify-between px-8 w-full">
         <div className="flex items-center gap-2">
           <Link href={'/'}>
-            <img src="images/logo.png" className="w-10 h-10 rounded-full" />
+            <Image
+              width={40}
+              height={40}
+              alt="logo"
+              src="/images/logo.png"
+              className="w-10 h-10 rounded-full"
+              loading="eager"
+            />
           </Link>
           <h1 className="text-emerald-500 font-bold text-xl">LearnPDF</h1>
         </div>
@@ -94,7 +101,7 @@ const NavBar = () => {
 
         <div className="hidden md:flex items-center gap-8 mr-2">
           <Link
-            href={clerkUser ? "/projects" : "/sign-in"}
+            href={clerkUser ? '/projects' : '/sign-in'}
             // className={`${landingPage ? 'text-white' : 'text-emerald-500'} font-semibold `}
             className="text-black font-semibold"
           >
@@ -110,7 +117,10 @@ const NavBar = () => {
             <UserButton />
           ) : (
             <Link className="text-black hidden md:block" href="/sign-in">
-              <Button className="rounded-xl font-semibold text-md">
+              <Button
+                className="rounded-xl font-semibold text-md"
+                name="login"
+              >
                 Login
               </Button>
             </Link>

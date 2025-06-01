@@ -166,6 +166,7 @@ const GuestFileUpload = ({ className, msg, projectId }: IProps) => {
             className="absolute top-0 flex justify-center items-center w-full h-full"
           >
             <Button
+              name="create-account"
               variant="outline"
               onClick={() => router.push('/sign-up')}
               className="px-6 py-6 text-sm font-semibold rounded-md"

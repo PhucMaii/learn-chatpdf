@@ -18,10 +18,10 @@ export default function GainCard({ gain, isPurple }: Props) {
       >
         <gain.icon className="w-8 h-8" />
       </div>
-      <h6 className="text-2xl  font-bold text-center">
+      <h2 className="text-2xl font-bold text-center">
         {gain.title}
-      </h6>
-      <h6 className="text-gray-500 text-lg text-center">{gain.description}</h6>
+      </h2>
+      <h5 className="text-gray-500 text-lg text-center">{gain.description}</h5>
     </div>
   );
 }

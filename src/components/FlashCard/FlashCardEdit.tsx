@@ -41,6 +41,7 @@ const SingleCardEdit = ({
           <Button
             className="bg-red-100 hover:bg-red-200 text-red-600"
             onClick={() => onRemove(index)}
+            name="delete-flashcard"
           >
             <Trash2Icon />
           </Button>
@@ -160,6 +161,7 @@ export default function FlashCardEdit({ flashCardSet, refresh, onEditOff }: IPro
             className="hover:scale-105 active:scale-90 transition-all duration-300"
             variant="ghost"
             onClick={onEditOff}
+            name="back-to-flashcards"
           >
             <ArrowLeftIcon className="w-6 h-6 text-gray-500"  />
           </Button>
@@ -169,6 +171,7 @@ export default function FlashCardEdit({ flashCardSet, refresh, onEditOff }: IPro
           disabled={isLoading}
           onClick={handleSaveCard}
           className="text-white text-lg"
+          name="save-flashcards"
         >
           {isLoading ? 'Saving...' : 'Save'}
         </Button>
@@ -196,7 +199,7 @@ export default function FlashCardEdit({ flashCardSet, refresh, onEditOff }: IPro
         ),
       )}
 
-      <Button variant="outline" className="text-xl py-2" onClick={onAddNewCard}>+ Add New Card</Button>
+      <Button name="add-new-card" variant="outline" className="text-xl py-2" onClick={onAddNewCard}>+ Add New Card</Button>
     </div>
   );
 }

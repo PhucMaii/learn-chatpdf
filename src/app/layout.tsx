@@ -4,6 +4,7 @@ import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
 import Providers from '@/components/Providers';
 import { Toaster } from 'react-hot-toast';
+import { domAnimation, LazyMotion } from 'framer-motion';
 
 // const geistSans = localFont({
 //   src: './fonts/Inter-Regular.ttf',
@@ -63,12 +64,14 @@ export default function RootLayout({
   return (
     <ClerkProvider afterSignOutUrl="/">
       <Providers>
-        <html lang="en">
-          <body className={`${teachers.className} antialiased`}>
-            {children}
-          </body>
-          <Toaster />
-        </html>
+        <LazyMotion features={domAnimation}>
+          <html lang="en">
+            <body className={`${teachers.className} antialiased`}>
+              {children}
+            </body>
+            <Toaster />
+          </html>
+        </LazyMotion>
       </Providers>
     </ClerkProvider>
   );

@@ -103,7 +103,7 @@ export default function StudyGuide() {
     <div className="flex flex-col w-full mx-auto md:w-xl lg:w-2xl xl:w-4xl">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl justify-start">Study Guide</h1>
-        <Button variant="outline" onClick={() => setIsEditMode(!isEditMode)}>
+        <Button name="edit-study-guide" variant="outline" onClick={() => setIsEditMode(!isEditMode)}>
           {isEditMode ? 'View' : 'Edit'}
         </Button>
       </div>
@@ -129,6 +129,7 @@ export default function StudyGuide() {
             disabled={isAdding}
             onClick={handleCreateStudyGuide}
             className="px-6 py-4 text-lg font-semibold"
+            name="create-study-guide"
           >
             {isAdding ? 'Creating...' : 'Create Study Guide'}
           </Button>

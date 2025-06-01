@@ -7,6 +7,7 @@ import LoadingComponent from '../LoadingComponent';
 import { Button } from '../ui/button';
 import { DrizzleFlashCard } from '@/lib/db/drizzleType';
 import FlashCardTrack from './FlashCardTrack';
+import Image from 'next/image';
 
 type Props = {
   chatId: number;
@@ -69,12 +70,13 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
         </div>
       ) : loading.isAdding ? (
         <div className="flex flex-col justify-center items-center h-full w-full">
-          <img
+          <Image
             src="/images/loading.png"
             alt="loading"
             width={100}
             height={100}
             className="w-32 h-32"
+            loading="eager"
           />
           <div className="flex gap-2 items-center">
             <h4 className="text-center mt-8 font-medium text-lg">
@@ -86,12 +88,13 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
         </div>
       ) : flashCardData?.length === 0 ? (
         <div className="flex flex-col justify-center items-center h-full w-full">
-          <img
+          <Image
             src="/images/no-flashcard.png"
             alt="no-flashcard"
             className="w-32 h-32"
             width={100}
             height={100}
+            loading="eager"
           />
           <h4 className="text-center mt-8 font-medium text-lg">
             Sorry, we&apos;re failed to generate your flashcards. Don&apos;t
@@ -99,6 +102,7 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
           </h4>
           <Button
             onClick={generateFlashCards}
+            name="generate-flashcards"
             className="bg-white text-emerald-500 border-dashed border-2 border-emerald-500 hover:bg-emerald-500 hover:text-white flex gap-2 mt-4"
           >
             Generate Flash Cards{' '}

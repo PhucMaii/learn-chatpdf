@@ -76,6 +76,7 @@ const Pricing = () => {
               <Button
                 onClick={() => handleGetCode()}
                 className="lg:w-fit w-full bg-blue-500 text-white font-bold text-md"
+                name="apply-code"
               >
                 {isLoading ? 'Applying...' : 'Apply'}
               </Button>
@@ -99,6 +100,7 @@ const Pricing = () => {
                     "flex-1 flex items-center justify-center transition-colors duration-300",
                     !isYearly ? "text-white" : "text-gray-400"
                   )}
+                  name="monthly"
                 >
                   <h4 className="text-lg font-medium">Monthly</h4>
                 </button>
@@ -108,6 +110,7 @@ const Pricing = () => {
                     "flex-1 flex items-center justify-center transition-colors duration-300",
                     isYearly ? "text-white" : "text-gray-400"
                   )}
+                  name="yearly"
                 >
                   <h4 className="text-lg font-medium">Yearly</h4>
                 </button>

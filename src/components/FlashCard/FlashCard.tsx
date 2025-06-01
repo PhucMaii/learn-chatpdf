@@ -122,7 +122,7 @@ const FlashCard = ({
     >
       {!progress && user && (
         <div className="w-full flex items-center justify-end space-x-2 mb-2">
-          <Button variant="outline" className="jutify-end" onClick={onEdit}>
+          <Button name="edit-flashcard" variant="outline" className="jutify-end" onClick={onEdit}>
             <div className="flex items-center space-x-2">
               <Edit className="w-6 h-6" />
               <h6 className="text-lg">Edit</h6>
@@ -135,6 +135,7 @@ const FlashCard = ({
         <div className="flex justify-between w-full items-center">
           <div className="self-end">
             <Button
+              name="delete-flashcard"
               onClick={deleteCard}
               className="px-4 py-2 bg-red-500 text-white shadow-md font-semibold transition-all duration-300 hover:bg-red-600 hover:text-white hover:scale-102 active:scale-90"
             >
@@ -207,6 +208,7 @@ const FlashCard = ({
                 <Button
                   className="bg-white self-end shadow-xl font-bold text-emerald-500 hover:bg-gray-200 active:scale-90 transition-all duration-300"
                   onClick={handleUpdateCard}
+                  name="save-flashcard"
                 >
                   {isLoading ? (
                     <Loader2 className="w-6 h-6 animate-spin" />
@@ -250,6 +252,7 @@ const FlashCard = ({
                 <Button
                   className="bg-white self-end shadow-xl font-bold text-blue-500"
                   onClick={handleUpdateCard}
+                  name="save-flashcard"
                 >
                   {isLoading ? (
                     <Loader2 className="w-6 h-6 animate-spin" />

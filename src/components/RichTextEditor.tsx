@@ -61,7 +61,7 @@ export default function RichTextEditor({
   return (
     <div className="bg-gray-100 border border-gray-400 rounded-md p-4 focus:outline-none focus:border-transparent">
       {handleSaveStudyGuide && <div className="flex justify-end gap-2 mb-4">
-        <Button  onClick={handleSave}>Save</Button>
+        <Button name="save-study-guide" onClick={handleSave}>Save</Button>
       </div>}
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />

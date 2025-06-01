@@ -52,6 +52,14 @@ export default function Essay() {
   };
 
   const handleCheckAI = async (content: string = essay?.content || '') => {
+    if (
+      user?.status !== SUBSCRIPTION_TYPE.PRO &&
+      user?.status !== SUBSCRIPTION_TYPE.ELITE
+    ) {
+      toast.error('You need Pro or Elite to check an essay');
+      return;
+    }
+
     try {
       setIsGenerating(true);
       const response = await axios.post(
@@ -113,10 +121,11 @@ export default function Essay() {
   };
 
   const handleHumanizeEssay = async () => {
-    if (user?.status !== SUBSCRIPTION_TYPE.PRO) {
-      toast.error('You need PRO to humanize an essay');
+    if (user?.status !== SUBSCRIPTION_TYPE.ELITE) {
+      toast.error('You need Elite to humanize an essay');
       return;
     }
+
     try {
       setIsGeneratingHumanized(true);
       const response = await axios.post(
@@ -202,6 +211,7 @@ export default function Essay() {
             className="w-fit"
             onClick={handleSaveEssay}
             disabled={isSaving}
+            name="save-essay"
           >
             {isSaving ? 'Saving...' : 'Save'}
           </Button>
@@ -225,10 +235,12 @@ export default function Essay() {
                   onClick={handleHumanizeEssay}
                   className="w-fit"
                   disabled={
+                    user?.status !== SUBSCRIPTION_TYPE.ELITE ||
                     isGeneratingHumanized ||
                     isInitializing ||
                     isGenerating
                   }
+                  name="humanize-essay"
                 >
                   {isGeneratingHumanized ? 'Humanizing...' : 'Humanize'}
                 </Button>
@@ -239,8 +251,13 @@ export default function Essay() {
                   onClick={() => handleCheckAI(essay?.content || '')}
                   className="w-fit"
                   disabled={
-                    isGenerating || isInitializing || isGeneratingHumanized
+                    (user?.status !== SUBSCRIPTION_TYPE.PRO &&
+                      user?.status !== SUBSCRIPTION_TYPE.ELITE) ||
+                    isGenerating ||
+                    isInitializing ||
+                    isGeneratingHumanized
                   }
+                  name="check-essay"
                 >
                   {isGenerating ? 'Checking...' : 'Check'}
                 </Button>
@@ -275,6 +292,7 @@ export default function Essay() {
               onClick={handleGenerateEssay}
               className="w-fit"
               disabled={isGenerating || isInitializing}
+              name="generate-essay"
             >
               {isGenerating ? 'Generating...' : 'Generate'}
             </Button>

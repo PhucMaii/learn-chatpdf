@@ -56,7 +56,7 @@ const AddCard = ({ flashCardSetId, chatId }: Props) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-black text-white font-semibold transition-all duration-300 hover:scale-102 hover:bg-black hover:text-white">
+        <Button name="new-card" className="bg-black text-white font-semibold transition-all duration-300 hover:scale-102 hover:bg-black hover:text-white">
           + New Card
         </Button>
       </DialogTrigger>
@@ -99,6 +99,7 @@ const AddCard = ({ flashCardSetId, chatId }: Props) => {
           <Button
             onClick={handleAddCard}
             type="submit"
+            name="add-card"
             className="text-white font-semibold hover:bg-emerald-600 hover:scale-102 hover:text-white transition-all duration-300 text-white "
           >
             {isLoading ? 'Adding...' : 'Add Card'}

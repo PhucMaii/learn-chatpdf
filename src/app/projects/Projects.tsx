@@ -8,6 +8,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import useDebounce from '../../../hooks/useDebounce';
 import useLocalStorage from '../../../hooks/useLocalStorage';
+import Image from 'next/image';
 
 export default function Projects() {
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
@@ -72,21 +73,8 @@ export default function Projects() {
             value={searchKeywords}
             onChange={(e) => setSearchKeywords(e.target.value)}
             className="rounded-md border-1 border-gray-300"
+            name="search-projects"
           />
-          {/* {subscription?.isPro || subscription?.isAbleToAddMoreChats ? (
-            <Link href="/create-chat">
-              <Button className="bg-black text-white font-semibold transition-all duration-300 active:scale-90">
-                + New Chat
-              </Button>
-            </Link>
-          ) : (
-            <Button
-              disabled
-              className="bg-[#1E1E1E] text-white cursor-not-allowed"
-            >
-              + New Chat
-            </Button>
-          )} */}
           <AddProject refresh={fetchProjects} />
         </div>
 
@@ -106,13 +94,13 @@ export default function Projects() {
             ))
           ) : (
             <div className="col-span-5 flex flex-col items-center justify-center w-full h-full">
-              <img
+              <Image
                 src="/images/no-projects.png"
                 alt="No projects"
                 className="w-[200px] h-[200px] object-contain mx-auto my-4"
                 width={200}
                 height={200}
-                loading="lazy"
+                loading="eager"
               />
 
               <h4>

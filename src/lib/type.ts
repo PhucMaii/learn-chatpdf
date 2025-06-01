@@ -20,6 +20,8 @@ export enum SUBSCRIPTION_TYPE {
   PRO = 'Pro',
   TRIAL = 'Trial',
   FREE = 'Free',
+  STARTER = 'Starter',
+  ELITE = 'Elite',
 }
 
 export interface IFlashCardSet extends DrizzleFlashCardSet {

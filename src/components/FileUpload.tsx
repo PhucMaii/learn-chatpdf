@@ -256,6 +256,7 @@ const FileUpload = ({
               variant="outline"
               onClick={() => router.push('/sign-up')}
               className="px-6 py-6 text-xl font-semibold rounded-md"
+              name="create-account"
             >
               Create your account to upload unlimited files 🚀
             </Button>

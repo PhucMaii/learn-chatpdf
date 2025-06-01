@@ -72,6 +72,7 @@ const handler = async (req: Request) => {
       ],
       metadata: {
         userId,
+        title,
       },
     });
 

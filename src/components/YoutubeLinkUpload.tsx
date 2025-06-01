@@ -102,6 +102,7 @@ const YoutubeLinkUpload = ({ defaultLink, className, projectId, setDisplay }: IP
         className="w-full md:w-auto"
         onClick={handleUpload}
         disabled={isLoading}
+        name="upload-youtube-link"
       >
         {isLoading ? 'Uploading...' : 'Upload'}
       </Button>

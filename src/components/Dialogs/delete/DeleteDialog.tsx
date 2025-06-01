@@ -46,10 +46,10 @@ export default function DeleteDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>
+          <Button name="cancel-delete" variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button disabled={isLoading} onClick={handleDelete} className="bg-red-500 text-white hover:bg-red-600">
+          <Button name="delete-project" disabled={isLoading} onClick={handleDelete} className="bg-red-500 text-white hover:bg-red-600">
             {isLoading ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>

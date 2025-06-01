@@ -79,7 +79,7 @@ export default function EditProject({ open, onClose, project, refresh }: IProps)
           />
         </div>
         <DialogFooter>
-          <Button disabled={isLoading} onClick={handleSubmit} type="submit">
+          <Button name="update-project" disabled={isLoading} onClick={handleSubmit} type="submit">
             {isLoading ? 'Updating...' : 'Update Project'}
           </Button>
         </DialogFooter>

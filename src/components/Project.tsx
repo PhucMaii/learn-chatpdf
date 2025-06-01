@@ -85,6 +85,7 @@ export default function Project({ className, project, refresh }: IProps) {
               variant="ghost"
               className="hover:bg-red-100"
               disabled={!project?.userId}
+              name="delete-project"
             >
               <Trash2Icon className="w-4 h-4 text-red-500" />
             </Button>
@@ -96,6 +97,7 @@ export default function Project({ className, project, refresh }: IProps) {
               e.stopPropagation();
               setIsOpenEdit(true)
             }}
+            name="edit-project"
             >
               <EditIcon className="w-4 h-4 text-blue-500" />
             </Button>

@@ -10,6 +10,7 @@ import EmptyDisplay from '../EmptyDisplay';
 import { Button } from '../ui/button';
 import FlashCardEdit from '../FlashCard/FlashCardEdit';
 import useLocalStorage from '../../../hooks/useLocalStorage';
+import Image from 'next/image';
 
 export default function Flashcards() {
   const { id: projectId } = useParams() ?? { id: null };
@@ -129,10 +130,12 @@ export default function Flashcards() {
         <>
           <div className="flex flex-col gap-4 items-center">
             {isGenerating ? <div className="flex flex-col gap-4 items-center">
-            <img 
+            <Image 
               src="/images/loading.png"
+              alt="loading"
               width={200}
               height={200}
+              loading="eager"
             />
             <h6 className="text-lg text-center text-gray-600">Give us a moment, your flashcards are on the way...</h6>
             </div> :<EmptyDisplay
@@ -144,6 +147,7 @@ export default function Flashcards() {
               onClick={generateFlashCards}
               disabled={isGenerating}
               className="px-6 py-4 text-lg font-semibold"
+              name="generate-flashcards"
             >
               {isGenerating ? 'Generating...' : 'Generate Flashcards'}
             </Button>

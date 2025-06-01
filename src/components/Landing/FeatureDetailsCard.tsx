@@ -35,9 +35,9 @@ export default function FeatureDetailsCard({ feature }: Props) {
     <div className="flex flex-col items-center justify-center sm:justify-between">
       <div className="flex flex-1 flex-col gap-1 p-8 justify-center">
         <h4 className="font-semibold text-4xl text-center ">{feature.title}</h4>
-        <h6 className="text-gray-700 font-medium text-xl max-w-2xl text-center">
+        <h5 className="text-gray-700 font-medium text-xl max-w-2xl text-center">
           {feature.description}
-        </h6>
+        </h5>
       </div>
       {feature?.id === 1 ? (
         <div className="flex flex-1 rounded-3xl justify-center">

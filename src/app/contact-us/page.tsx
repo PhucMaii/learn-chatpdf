@@ -118,6 +118,7 @@ export default function HelpPage() {
             onClick={handleSendMessage}
             className="w-full font-semibold text-lg text-white hover:bg-emerald-600 hover:text-white transition-all duration-300"
             disabled={isLoading}
+            name="send-message"
           >
             {isLoading ? 'Sending...' : 'Send Message'}
           </Button>

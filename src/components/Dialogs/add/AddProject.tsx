@@ -82,6 +82,7 @@ export default function AddProject({ refresh }: IProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
+          name="new-project"
           onClick={() => {
             if (
               user?.status !== SUBSCRIPTION_TYPE.PRO &&
@@ -123,7 +124,7 @@ export default function AddProject({ refresh }: IProps) {
           />
         </div>
         <DialogFooter>
-          <Button disabled={isLoading} onClick={handleSubmit} type="submit">
+          <Button name="create-project" disabled={isLoading} onClick={handleSubmit} type="submit">
             {isLoading ? 'Creating...' : 'Create Project'}
           </Button>
         </DialogFooter>

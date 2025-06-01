@@ -6,11 +6,14 @@ import Link from 'next/link';
 import { UserButton } from '@clerk/nextjs';
 
 export default function NavDialog({ user }: any) {
-
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="text-black font-semibold transition-all duration-300 hover:scale-102 hover:bg-black hover:text-white">
+        <Button
+          variant="ghost"
+          name="open-nav-dialog"
+          className="text-black font-semibold transition-all duration-300 hover:scale-102 hover:bg-black hover:text-white"
+        >
           <MenuIcon className="w-8 h-8 text-black" />
         </Button>
       </DialogTrigger>
@@ -21,7 +24,7 @@ export default function NavDialog({ user }: any) {
                 <X />
             </Button> */}
           <Link
-            href={user?.status ? "/projects" : "/sign-in"}
+            href={user?.status ? '/projects' : '/sign-in'}
             className={`text-white font-semibold hover:bg-gray-300 `}
           >
             Dashboard
@@ -33,7 +36,7 @@ export default function NavDialog({ user }: any) {
             <UserButton />
           ) : (
             <Link className="text-white hidden md:block" href="/sign-in">
-              <Button className="rounded-xl font-semibold text-md">
+              <Button name="login" className="rounded-xl font-semibold text-md">
                 Login
               </Button>
             </Link>

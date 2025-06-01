@@ -45,6 +45,7 @@ export default function ChatSidebar({ chats, chatId, subscription }: Props) {
         }
         className="w-full border-dashed border-2 border-gray-800 text-black bg-white hover:bg-emerald-500 hover:text-white active:scale-90 transition-all duration-300"
         onClick={() => router.push('/create-chat')}
+        name="new-chat"
       >
         <PlusCircle className="mr-2 w-4 h-4" />
         New Chat

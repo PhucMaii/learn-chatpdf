@@ -27,7 +27,10 @@ export default function ProjectDetails() {
   const [isChecking, setIsChecking] = useState<boolean>(true);
   const [selectedTab, setSelectedTab] = useState('chat');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [guestSession, setGuestSession, isInitialized] = useLocalStorage('guest-session', {});
+  const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
+    'guest-session',
+    {},
+  );
 
   const router = useRouter();
 
@@ -42,20 +45,19 @@ export default function ProjectDetails() {
   }, []);
 
   const checkProjectOwner = async () => {
-    setIsChecking(true);
+    // setIsChecking(true);
     try {
       await axios.post(`/api/project/check-owner`, {
         guestSessionId: guestSession.sessionId,
         projectId: id,
       });
 
+      setIsChecking(false);
     } catch (error: any) {
       console.log(error);
-      router.push('/')
-    } finally {
-      setIsChecking(false);
+      router.push('/');
     }
-  }
+  };
 
   const fetchProject = async () => {
     try {
@@ -69,7 +71,7 @@ export default function ProjectDetails() {
       console.log(error);
       toast.error('Failed to fetch project');
     }
-  }
+  };
 
   if (isChecking) {
     return <LoadingComponent />;
@@ -79,16 +81,21 @@ export default function ProjectDetails() {
     <div className="grid grid-cols-12 max-w-[1920px] mx-auto h-screen bg-white text-gray-900">
       {/* Sidebar */}
       <aside className="sticky top-0 h-screen col-span-2 max-w-[300px] p-4 border-1 border-gray-100 flex flex-col gap-2">
-          <Button className="justify-start gap-2" variant="ghost" onClick={() => router.push('/projects')}
-          >
-            <FoldersIcon className="w-5 h-5" />
-            <h6 className="hidden sm:block">Projects</h6>
-          </Button>
+        <Button
+          className="justify-start gap-2"
+          variant="ghost"
+          onClick={() => router.push('/projects')}
+          name="projects"
+        >
+          <FoldersIcon className="w-5 h-5" />
+          <h6 className="hidden sm:block">Projects</h6>
+        </Button>
         <h2 className="text-xl font-semibold mb-2 hidden sm:block">Explore</h2>
         <Button
           variant={selectedTab === 'chat' ? 'default' : 'ghost'}
           onClick={() => setSelectedTab('chat')}
           className="justify-start gap-2"
+          name="chat"
         >
           <MessageSquare className="w-5 h-5" />
           <span className="hidden sm:block">Chat with AI</span>
@@ -97,6 +104,7 @@ export default function ProjectDetails() {
           variant={selectedTab === 'medias' ? 'default' : 'ghost'}
           onClick={() => setSelectedTab('medias')}
           className="justify-start gap-2"
+          name="medias"
         >
           <ImageIcon className="w-5 h-5" />
           <span className="hidden sm:block">Media</span>
@@ -105,6 +113,7 @@ export default function ProjectDetails() {
           variant={selectedTab === 'flashcards' ? 'default' : 'ghost'}
           onClick={() => setSelectedTab('flashcards')}
           className="justify-start gap-2"
+          name="flashcards"
         >
           <BookOpen className="w-5 h-5" />
           <span className="hidden sm:block">Flashcards</span>
@@ -113,6 +122,7 @@ export default function ProjectDetails() {
           variant={selectedTab === 'studyGuide' ? 'default' : 'ghost'}
           onClick={() => setSelectedTab('studyGuide')}
           className="justify-start gap-2"
+          name="studyGuide"
         >
           <NotepadTextIcon className="w-5 h-5" />
           <span className="hidden sm:block">Study Guide</span>
@@ -121,6 +131,7 @@ export default function ProjectDetails() {
           variant={selectedTab === 'essay' ? 'default' : 'ghost'}
           onClick={() => setSelectedTab('essay')}
           className="justify-start gap-2"
+          name="essay"
         >
           <FileTextIcon className="w-5 h-5" />
           <span className="hidden sm:block">Essay</span>

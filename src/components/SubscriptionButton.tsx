@@ -28,6 +28,7 @@ const SubscriptionButton = (props: Props) => {
         className="w-full bg-white text-yellow-700 font-bold flex items-center gap-2 hover:bg-white hover:text-emerald-500"
         disabled={isLoading}
         onClick={handleSubscription}
+        name="manage-subscription"
       >
         <SparkleIcon className="w-4 h-4" />
         {props.isPro ? 'Manage Subscription' : 'Upgrade Pro'}

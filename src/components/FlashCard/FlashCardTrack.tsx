@@ -248,6 +248,7 @@ const FlashCardTrack = ({ flashCards, isInChat, onEdit }: Props) => {
             onClick={() => {
               handleProgressEnd(true);
             }}
+            name="learn-again"
             className="bg-transparent text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent active:scale-90 transition-all duration-300"
           >
             {bool.isCheckingCards ? (
@@ -289,6 +290,7 @@ const FlashCardTrack = ({ flashCards, isInChat, onEdit }: Props) => {
 
               <div className="flex-1 w-full h-full flex items-center justify-end">
                 <Button
+                  name="shuffle-cards"
                   onClick={shuffleCards}
                   className="bg-transparent border-2 border-emerald-500 rounded-full text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent hover:scale-105 active:scale-90 transition-all duration-300"
                 >
@@ -346,6 +348,7 @@ const FlashCardTrack = ({ flashCards, isInChat, onEdit }: Props) => {
           {!mdDown && (
             <div className="flex-1 w-full h-full flex items-center justify-end">
               <Button
+                name="shuffle-cards"
                 onClick={shuffleCards}
                 className="bg-transparent border-2 border-emerald-500 rounded-full text-emerald-500 flex items-center gap-2 text-md font-bold hover:text-blue-600 hover:bg-transparent hover:scale-105 active:scale-90 transition-all duration-300"
               >

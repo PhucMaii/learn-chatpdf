@@ -181,6 +181,7 @@ const Chat = ({ params: { chatId } }: Props) => {
               variant="ghost"
               className="h-fit"
               onClick={() => setIsChatSidebarOpen(true)}
+              name="open-chat-sidebar"
             >
               <TableOfContents style={{ width: '24px', height: '24px' }} />
             </Button>

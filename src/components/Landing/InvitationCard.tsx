@@ -19,11 +19,15 @@ export default function InvitationCard() {
           <h2 className="font-bold text-white text-3xl text-center md:text-left">
             Learn. Simplified. Succeed
           </h2>
-          <h6 className="text-white text-lg text-center md:text-left">
+          <h5 className="text-white text-lg text-center md:text-left">
             Transform the way you study with instant answers, smart flashcards,
             and effortless productivity.
-          </h6>
-          <Button onClick={() => router.push('/sign-in')} className="bg-white text-emerald-500 rounded-xl font-bold text-xl mt-4 w-fit p-6 hover:bg-gray-200 focus:scale-98 transition-all duration-300">
+          </h5>
+          <Button
+            name="join-us"
+            onClick={() => router.push('/sign-in')}
+            className="bg-white text-emerald-500 rounded-xl font-bold text-xl mt-4 w-fit p-6 hover:bg-gray-200 focus:scale-98 transition-all duration-300"
+          >
             Join Us
           </Button>
         </div>

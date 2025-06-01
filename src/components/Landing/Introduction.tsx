@@ -5,6 +5,7 @@ import { Button } from '../ui/button';
 import GuestFileUpload from './GuestFileUpload';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
+import Image from 'next/image';
 export default function Introduction() {
   // const { isInitializing }: any = useContext(UserContext);
   const { user: clerkUser } = useUser();
@@ -39,18 +40,22 @@ export default function Introduction() {
               <br />
               Not Harder
             </h1>
-            <h6 className="text-xl max-w-5xl font-medium mt-2 text-center md:text-left">
+            <h2 className="text-xl max-w-5xl font-medium mt-2 text-center md:text-left">
               Study made simple. Learn faster, <br />
               stress less, and feel confident <br />
               with LearnPDF
-            </h6>
-            <Button className="mt-4 py-6 px-8 rounded-xl font-semibold text-xl w-[300px] mx-auto md:mx-0 mt-8" onClick={() => {
-              if (clerkUser) {
-                router.push('/projects');
-              } else {
-                router.push('/sign-up');
-              }
-            }}>
+            </h2>
+            <Button
+              name="sign-up"
+              className="mt-4 py-6 px-8 rounded-xl font-semibold text-xl w-[300px] mx-auto md:mx-0 mt-8"
+              onClick={() => {
+                if (clerkUser) {
+                  router.push('/projects');
+                } else {
+                  router.push('/sign-up');
+                }
+              }}
+            >
               {clerkUser ? 'Go to Dashboard' : 'Sign Up For Free'}
             </Button>
             {!clerkUser && (
@@ -61,12 +66,13 @@ export default function Introduction() {
             <div className="flex flex-col justify-center mt-8"></div>
           </div>
           <div className="flex-1">
-            <img
+            <Image
               src="/images/learning.png"
               alt="learning"
               className="w-full h-full"
               width={500}
               height={500}
+              loading="eager"
             />
           </div>
         </div>
