@@ -12,6 +12,8 @@ export const userSystemEnums = pgEnum('user_system_enum', ['system', 'user']);
 export const userStatusEnums = pgEnum('user_status_enum', [
   'Pro',
   'Trial',
+  'Elite',
+  'Starter',
   'Free',
   'Guest',
 ]);

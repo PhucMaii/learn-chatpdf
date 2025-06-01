@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { UserContext } from '../../context/UserProvider';
 import { handleSubscription } from '@/utils/subscription';
 import { useUser } from '@clerk/nextjs';
+import { SUBSCRIPTION_TYPE } from '@/lib/type';
 
 type Props = {
   plan: any;
@@ -25,7 +26,10 @@ const PricingCard = ({ plan, isYearly }: Props) => {
   const isSelected = useMemo(() => {
     if (plan.title === 'Starter') {
       return (
-        user?.status === 'Free' || user?.status === 'Trial' || !user?.status
+        user?.status === SUBSCRIPTION_TYPE.FREE ||
+        user?.status === SUBSCRIPTION_TYPE.STARTER ||
+        user?.status === SUBSCRIPTION_TYPE.TRIAL ||
+        !user?.status
       );
     }
 
@@ -39,7 +43,12 @@ const PricingCard = ({ plan, isYearly }: Props) => {
   }, [user, plan]);
 
   const isUserNotHasPlan = useMemo(() => {
-    return user?.status === 'Free' || user?.status === 'Trial' || !user?.status;
+    return (
+      user?.status === SUBSCRIPTION_TYPE.FREE ||
+      user?.status === SUBSCRIPTION_TYPE.STARTER ||
+      user?.status === SUBSCRIPTION_TYPE.TRIAL ||
+      !user?.status
+    );
   }, [user, plan]);
 
   console.log(user);

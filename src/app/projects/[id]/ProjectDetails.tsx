@@ -42,18 +42,17 @@ export default function ProjectDetails() {
   }, []);
 
   const checkProjectOwner = async () => {
-    setIsChecking(true);
+    // setIsChecking(true);
     try {
       await axios.post(`/api/project/check-owner`, {
         guestSessionId: guestSession.sessionId,
         projectId: id,
       });
 
+      setIsChecking(false);
     } catch (error: any) {
       console.log(error);
-      router.push('/')
-    } finally {
-      setIsChecking(false);
+      router.push('/');
     }
   }
 

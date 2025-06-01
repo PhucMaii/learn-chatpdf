@@ -20,8 +20,6 @@ const handler = async (req: Request) => {
 
     const { userId, guestId } = targetProject[0];
 
-    console.log({ userId, guestId, authId, guestSessionId });
-
     if (userId && authId === userId) {
       return new Response('Project found', { status: 200 });
     }

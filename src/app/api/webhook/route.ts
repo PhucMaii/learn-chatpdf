@@ -49,11 +49,13 @@ const handler = async (req: Request) => {
         stripePromotionCode: subscription?.discount?.promotion_code as string,
       });
 
+      console.log(session.metadata);
+
       // Update user subscription status
       await db
         .update(users)
         .set({
-          status: SUBSCRIPTION_TYPE.PRO,
+          status: session.metadata.title as SUBSCRIPTION_TYPE,
         })
         .where(eq(users.id, session.metadata.userId));
 
