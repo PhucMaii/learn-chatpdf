@@ -9,6 +9,7 @@ import {
   FoldersIcon,
   NotepadTextIcon,
   FileTextIcon,
+  FileQuestionIcon,
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import Media from '@/components/Projects/Media';
@@ -20,6 +21,7 @@ import useLocalStorage from '../../../../hooks/useLocalStorage';
 import LoadingComponent from '@/components/LoadingComponent';
 import toast from 'react-hot-toast';
 import Essay from '@/components/Projects/Essay';
+import Quizzes from '@/components/Projects/Quizzes';
 
 export default function ProjectDetails() {
   const { id } = useParams();
@@ -136,13 +138,13 @@ export default function ProjectDetails() {
           <FileTextIcon className="w-5 h-5" />
           <span className="hidden sm:block">Essay</span>
         </Button>
-        {/* <Button
-          variant={selectedTab === 'exam' ? 'default' : 'ghost'}
-          onClick={() => setSelectedTab('exam')}
+        <Button
+          variant={selectedTab === 'quizzes' ? 'default' : 'ghost'}
+          onClick={() => setSelectedTab('quizzes')}
           className="justify-start gap-2"
         >
-          <PlayCircle className="w-5 h-5" /> Exam Mode
-        </Button> */}
+          <FileQuestionIcon className="w-5 h-5" /> Quizzes
+        </Button>
       </aside>
 
       {/* Main Content */}
@@ -173,6 +175,10 @@ export default function ProjectDetails() {
 
           <TabsContent value="essay">
             <Essay />
+          </TabsContent>
+
+          <TabsContent value="quizzes">
+            <Quizzes />
           </TabsContent>
         </Tabs>
       </main>

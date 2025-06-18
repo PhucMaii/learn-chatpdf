@@ -9,6 +9,7 @@ import { useParams } from 'next/navigation';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import SectionContainer from '../SectionContainer';
 
 export default function ChatWithAI() {
   const { id: projectId } = useParams();
@@ -75,7 +76,7 @@ export default function ChatWithAI() {
   };
 
   return (
-    <div className="flex flex-col h-screen gap-4 w-full mx-auto md:w-xl lg:w-2xl xl:w-4xl">
+    <SectionContainer>
       {messages.length > 0 ? (
         <div className="w-full md:w-xl lg:w-2xl xl:w-4xl mb-24 flex items-center justify-center">
           <MessageList messages={messages} isLoading={isLoading} />
@@ -125,6 +126,6 @@ export default function ChatWithAI() {
         </div>
       </div>
       {/* </div> */}
-    </div>
+    </SectionContainer>
   );
 }
