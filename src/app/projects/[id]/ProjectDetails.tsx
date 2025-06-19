@@ -31,6 +31,12 @@ export default function ProjectDetails() {
     'guest-session',
     {},
   );
+  const [loading, setLoading] = useState<any>({
+    flashcards: false,
+    chat: false,
+    studyGuide: false,
+    essay: false,
+  });
 
   const router = useRouter();
 
@@ -156,11 +162,11 @@ export default function ProjectDetails() {
           </TabsList>
 
           <TabsContent value="medias">
-            <Media />
+            <Media setLoading={setLoading} />
           </TabsContent>
 
           <TabsContent value="flashcards">
-            <Flashcards />
+            <Flashcards loading={loading.flashcards} />
           </TabsContent>
 
           <TabsContent value="chat">
@@ -168,7 +174,7 @@ export default function ProjectDetails() {
           </TabsContent>
 
           <TabsContent value="studyGuide">
-            <StudyGuide />
+            <StudyGuide loading={loading.studyGuide} />
           </TabsContent>
 
           <TabsContent value="essay">

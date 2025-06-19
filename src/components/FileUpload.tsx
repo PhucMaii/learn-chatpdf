@@ -23,6 +23,7 @@ interface IProps {
   projectId?: number | string;
   // setOptimisticDisplays?: any;
   setDisplay?: any;
+  setLoading?: any; // only applicable in project detail page
 }
 
 const FileUpload = ({
@@ -33,6 +34,7 @@ const FileUpload = ({
   projectId,
   setDisplay,
   // setOptimisticDisplays,
+  setLoading,
 }: IProps) => {
   const router = useRouter();
   const { user, isInitializing }: any = useContext(UserContext);
@@ -82,6 +84,12 @@ const FileUpload = ({
 
       try {
         setIsUploading(true);
+        setLoading?.({
+          flashcards: true,
+          chat: true,
+          studyGuide: true,
+          essay: true,
+        });
         const dataList = acceptedFiles.map((file) => {
           return uploadToS3(file, user?.id);
         });
@@ -140,6 +148,12 @@ const FileUpload = ({
           // }
 
           if (stage === 'done') {
+            setLoading?.({
+              flashcards: false,
+              chat: false,
+              studyGuide: false,
+              essay: false,
+            });
             // router.push(`/chat/${chatId}`);
             toast.success('Upload Successfully', { id: 'upload-progress' });
             setDisplay(projectMedias);
@@ -149,6 +163,22 @@ const FileUpload = ({
             //   // Replace the rest with new server data
             //   return [...projectMedias, ...optimisticOnly];
             // });
+          } else if (stage === 'Generating flashcards...') {
+            toast.loading(stage, { id: 'upload-progress' });
+            setLoading?.({
+              flashcards: true,
+              chat: false,
+              studyGuide: true,
+              essay: false,
+            });
+          } else if (stage === 'Generating study guide...') {
+            toast.loading(stage, { id: 'upload-progress' });
+            setLoading?.({
+              flashcards: false,
+              chat: false,
+              studyGuide: true,
+              essay: false,
+            });
           } else {
             toast.loading(stage, { id: 'upload-progress' });
           }
@@ -206,7 +236,7 @@ const FileUpload = ({
   }, [guestSession, isInitializing]);
 
   if (isInitializing) {
-    return <Skeleton />
+    return <Skeleton />;
   }
 
   return (
