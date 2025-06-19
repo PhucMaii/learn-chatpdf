@@ -1,6 +1,6 @@
 'use client';
 
-import { uploadToS3 } from '@/lib/s3';
+import { uploadToS3WithPresignedUrl } from '@/lib/s3';
 // import { useMutation } from '@tanstack/react-query';
 import { Inbox, Loader2 } from 'lucide-react';
 import React, { useContext, useEffect, useState } from 'react';
@@ -91,7 +91,7 @@ const FileUpload = ({
           essay: true,
         });
         const dataList = acceptedFiles.map((file) => {
-          return uploadToS3(file, user?.id);
+          return uploadToS3WithPresignedUrl(file, user?.id);
         });
         await Promise.all(dataList);
 

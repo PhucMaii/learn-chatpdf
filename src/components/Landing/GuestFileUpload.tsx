@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import { Progress } from '@/components/ui/progress';
 import { Inbox, Loader2 } from 'lucide-react';
 import { UserContext } from '../../../context/UserProvider';
-import { uploadToS3 } from '@/lib/s3';
+import { uploadToS3WithPresignedUrl } from '@/lib/s3';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { Button } from '../ui/button';
 import axios from 'axios';
@@ -49,7 +49,7 @@ const GuestFileUpload = ({ className, msg, projectId }: IProps) => {
       try {
         setIsUploading(true);
         const dataList = acceptedFiles.map((file) => {
-          return uploadToS3(file, user?.id);
+          return uploadToS3WithPresignedUrl(file, user?.id);
         });
 
         const resolvedData = await Promise.all(dataList);
