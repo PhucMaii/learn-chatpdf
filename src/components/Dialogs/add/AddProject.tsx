@@ -32,6 +32,7 @@ export default function AddProject({ refresh }: IProps) {
 
   const handleSubmit = async () => {
     if (
+      user?.status !== SUBSCRIPTION_TYPE.ELITE &&
       user?.status !== SUBSCRIPTION_TYPE.PRO &&
       user?.projects &&
       user?.projects?.length >= trialProjects

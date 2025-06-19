@@ -11,9 +11,15 @@ import { Button } from '../ui/button';
 import FlashCardEdit from '../FlashCard/FlashCardEdit';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import Image from 'next/image';
+import GeneratingDisplay from '../GeneratingDisplay';
 
-export default function Flashcards() {
+interface IProps {
+  loading: boolean;
+}
+
+export default function Flashcards({ loading }: IProps) {
   const { id: projectId } = useParams() ?? { id: null };
+  console.log(loading, 'loading');
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
@@ -32,7 +38,11 @@ export default function Flashcards() {
       fetchFlashcards();
       fetchFlashCardSet();
     }
-  }, [isInitialized]);
+
+    if (!loading && flashcards.length === 0) {
+      fetchFlashcards();
+    }
+  }, [isInitialized, loading]);
 
   const fetchFlashCardSet = async () => {
     try {
@@ -89,7 +99,7 @@ export default function Flashcards() {
         return;
       }
 
-      await fetchFlashcards();  
+      await fetchFlashcards();
       await fetchFlashCardSet();
       return response.data.data;
     } catch (error: any) {
@@ -103,7 +113,7 @@ export default function Flashcards() {
   if (isEditMode) {
     return (
       <div className="flex flex-col">
-        <h1 className="text-2xl font-semibold justify-start">Flashcards</h1>
+        <h1 className="text-2xl justify-start">Flashcards</h1>
         <FlashCardEdit
           flashCardSet={flashCardSet}
           refresh={() => {
@@ -113,6 +123,12 @@ export default function Flashcards() {
           onEditOff={() => setIsEditMode(false)}
         />
       </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <GeneratingDisplay text="Flashcards are being initialized, please give us a moment. Good things are coming..." />
     );
   }
 
@@ -129,19 +145,25 @@ export default function Flashcards() {
       ) : flashcards.length === 0 ? (
         <>
           <div className="flex flex-col gap-4 items-center">
-            {isGenerating ? <div className="flex flex-col gap-4 items-center">
-            <Image 
-              src="/images/loading.png"
-              alt="loading"
-              width={200}
-              height={200}
-              loading="eager"
-            />
-            <h6 className="text-lg text-center text-gray-600">Give us a moment, your flashcards are on the way...</h6>
-            </div> :<EmptyDisplay
-              src="/images/no-flashcard.png"
-              text="You haven't had your own flashcards yet. Let's generate some!"
-            />}
+            {isGenerating ? (
+              <div className="flex flex-col gap-4 items-center">
+                <Image
+                  src="/images/loading.png"
+                  alt="loading"
+                  width={200}
+                  height={200}
+                  loading="eager"
+                />
+                <h6 className="text-lg text-center text-gray-600">
+                  Give us a moment, your flashcards are on the way...
+                </h6>
+              </div>
+            ) : (
+              <EmptyDisplay
+                src="/images/no-flashcard.png"
+                text="You haven't had your own flashcards yet. Let's generate some!"
+              />
+            )}
 
             <Button
               onClick={generateFlashCards}

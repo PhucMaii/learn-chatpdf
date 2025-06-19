@@ -12,7 +12,11 @@ import useLocalStorage from '../../../hooks/useLocalStorage';
 import YoutubeLinkUpload from '../YoutubeLinkUpload';
 import { Separator } from '../ui/separator';
 
-export default function Media() {
+interface IProps {
+  setLoading: any;
+}
+
+export default function Media({ setLoading }: IProps) {
   const { id: projectId } = useParams() ?? { id: null };
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
@@ -60,6 +64,7 @@ export default function Media() {
           projectId={projectId?.toString()}
           setDisplay={setMedias}
           noIncludeLink
+          setLoading={setLoading}
         />
       </BorderSection>
 

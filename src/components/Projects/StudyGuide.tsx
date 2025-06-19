@@ -9,8 +9,13 @@ import EmptyDisplay from '../EmptyDisplay';
 import { Button } from '../ui/button';
 import RichTextEditor from '../RichTextEditor';
 import useLocalStorage from '../../../hooks/useLocalStorage';
+import GeneratingDisplay from '../GeneratingDisplay';
 
-export default function StudyGuide() {
+interface IProps {
+  loading: boolean;
+}
+
+export default function StudyGuide({ loading }: IProps) {
   const { id: projectId } = useParams();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
@@ -27,7 +32,11 @@ export default function StudyGuide() {
     if (isInitialized) {
       fetchStudyGuide();
     }
-  }, [isInitialized]);
+
+    if (!loading && studyGuide === null) {
+      fetchStudyGuide();
+    }
+  }, [isInitialized, loading]);
 
   console.log(studyGuide, 'studyGuide');
 
@@ -99,11 +108,21 @@ export default function StudyGuide() {
     }
   };
 
+  if (loading) {
+    return (
+      <GeneratingDisplay text="Study guide is being initialized, please give us a moment. Good things are coming..." />
+    );
+  }
+
   return (
     <div className="flex flex-col w-full mx-auto md:w-xl lg:w-2xl xl:w-4xl">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl justify-start">Study Guide</h1>
-        <Button name="edit-study-guide" variant="outline" onClick={() => setIsEditMode(!isEditMode)}>
+        <Button
+          name="edit-study-guide"
+          variant="outline"
+          onClick={() => setIsEditMode(!isEditMode)}
+        >
           {isEditMode ? 'View' : 'Edit'}
         </Button>
       </div>

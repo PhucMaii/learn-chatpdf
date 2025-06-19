@@ -30,9 +30,13 @@ export default async function POSTMethod(req: Request) {
       );
     }
 
-    if (authGuard?.user?.status !== 'Pro' && authGuard?.user?.projects?.length >= trialProjects) {
+    if (
+      authGuard?.user?.status !== 'Pro' &&
+      authGuard?.user?.status !== 'Elite' &&
+      authGuard?.user?.projects?.length >= trialProjects
+    ) {
       return NextResponse.json(
-        { error: 'Upgrade to Pro plan to create projects' },
+        { error: 'Upgrade to Pro or Elite plan to create projects' },
         { status: 400 },
       );
     }
