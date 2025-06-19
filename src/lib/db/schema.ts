@@ -250,6 +250,7 @@ export const userSubscriptions = pgTable(
     stripeCurrentPeriodEndIdx: index(
       'user_subscriptions_stripe_current_period_end_idx',
     ).on(table.stripeCurrentPeriodEnd),
+    userIdIdx: index('user_subscriptions_user_id_idx').on(table.userId),
   }),
 );
 
@@ -284,5 +285,49 @@ export const discountCodes = pgTable(
     typeIdx: index('discount_codes_type_idx').on(table.type),
     valueIdx: index('discount_codes_value_idx').on(table.value),
     createdAtIdx: index('discount_codes_created_at_idx').on(table.createdAt),
+  }),
+);
+
+export const quiz = pgTable(
+  'quiz',
+  {
+    id: serial('id').primaryKey(),
+    projectId: integer('project_id').references(() => project.id, { 
+      onDelete: 'cascade',
+    }),
+    title: text('title').notNull(),
+    attempts: integer('attempts').default(0),
+    highestScore: integer('highest_score').default(0),
+    userId: varchar('user_id', { length: 256 }),
+    guestId: varchar('guest_id', { length: 256 }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => ({
+    userIdIdx: index('quizzes_user_id_idx').on(table.userId),
+    guestIdIdx: index('quizzes_guest_id_idx').on(table.guestId),
+    projectIdIdx: index('quizzes_project_id_idx').on(table.projectId),
+    createdAtIdx: index('quizzes_created_at_idx').on(table.createdAt),
+  }),
+);
+
+export const quizQuestion = pgTable(
+  'quiz_question',
+  {
+    id: serial('id').primaryKey(),
+    quizId: integer('quiz_id').references(() => quiz.id, {
+      onDelete: 'cascade',
+    }),
+    question: text('question').notNull(),
+    optionA: text('option_a').notNull(),
+    optionB: text('option_b').notNull(),
+    optionC: text('option_c').notNull(),
+    optionD: text('option_d').notNull(),
+    correctAnswer: text('correct_answer').notNull(),
+    explanation: text('explanation').notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => ({
+    quizIdIdx: index('quiz_question_quiz_id_idx').on(table.quizId),
+    createdAtIdx: index('quiz_question_created_at_idx').on(table.createdAt),
   }),
 );
