@@ -1,10 +1,8 @@
-import { db } from '@/lib/db';
-import { medias, project } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { createStudyGuide } from '../utils/studyGuide';
 import { handleAuthGuard } from '@/utils/auth';
 import { getQueryParams } from '@/utils/query';
+import { getMedias } from '../utils/medias';
 
 export default async function POSTMethod(req: Request) {
   try {
@@ -27,20 +25,23 @@ export default async function POSTMethod(req: Request) {
     }
 
     // Check project exist
-    const targetProject = await db
-      .select()
-      .from(project)
-      .where(eq(project.id, Number(projectId)));
+    const { medias: projectMedias } = await getMedias(
+      Number(projectId),
+    );
+    // const targetProject = await db
+    //   .select()
+    //   .from(project)
+    //   .where(eq(project.id, Number(projectId)));
 
-    if (targetProject.length !== 1) {
-      return NextResponse.json({ error: 'Chat not found' }, { status: 404 });
-    }
+    // if (targetProject.length !== 1) {
+    //   return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    // }
 
-    // Get all medias from the project
-    const projectMedias = await db
-      .select()
-      .from(medias)
-      .where(eq(medias.projectId, projectId));
+    // // Get all medias from the project
+    // const projectMedias = await db
+    //   .select()
+    //   .from(medias)
+    //   .where(eq(medias.projectId, projectId));
 
     const newStudyGuide = await createStudyGuide(
       projectMedias,

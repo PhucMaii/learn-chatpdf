@@ -317,6 +317,7 @@ export const quizQuestion = pgTable(
     quizId: integer('quiz_id').references(() => quiz.id, {
       onDelete: 'cascade',
     }),
+    index: integer('index'),
     question: text('question').notNull(),
     optionA: text('option_a').notNull(),
     optionB: text('option_b').notNull(),

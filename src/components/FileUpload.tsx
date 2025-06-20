@@ -14,6 +14,7 @@ import useLocalStorage from '../../hooks/useLocalStorage';
 import { UserContext } from '../../context/UserProvider';
 import axios from 'axios';
 import { Skeleton } from './ui/skeleton';
+import { useUser } from '@clerk/nextjs';
 
 interface IProps {
   noIncludeLink?: boolean;
@@ -37,6 +38,7 @@ const FileUpload = ({
   setLoading,
 }: IProps) => {
   const router = useRouter();
+  const { user: clerkUser } = useUser();
   const { user, isInitializing }: any = useContext(UserContext);
 
   const [isGuestUploaded, setIsGuestUploaded] = useState<boolean>(true);
@@ -277,7 +279,7 @@ const FileUpload = ({
             </>
           )}
         </div>
-        {isGuestUploaded && (
+        {isGuestUploaded && !clerkUser && (
           <div
             style={{ backdropFilter: 'blur(0px)' }}
             className="absolute top-0 flex justify-center items-center w-full h-full"

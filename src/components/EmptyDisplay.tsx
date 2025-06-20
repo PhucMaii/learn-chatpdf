@@ -4,14 +4,16 @@ import React from 'react';
 interface IProps {
     src: string;
     text: string;
+    width?: number;
+    height?: number;
 }
 
-export default function EmptyDisplay({ src, text }: IProps) {
+export default function EmptyDisplay({ src, text, width = 200, height = 200 }: IProps) {
   return (
     <div className="flex flex-col gap-2 items-center justify-center">
       <Image
-        width={200}
-        height={200}
+        width={width}
+        height={height}
         src={src}
         alt="Empty image"
         className="w-[200px] h-[200px]"

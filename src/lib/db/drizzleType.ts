@@ -1,4 +1,4 @@
-import { chats, discountCodes, flashCard, flashCardSet, medias, studyGuide, users, essays } from './schema';
+import { chats, discountCodes, flashCard, flashCardSet, medias, studyGuide, users, essays, project, quizQuestion, quiz } from './schema';
 
 export type DrizzleChat = typeof chats.$inferSelect;
 export type DrizzleUser = typeof users.$inferSelect;
@@ -9,3 +9,6 @@ export type DrizzleMedia = typeof medias.$inferInsert;
 export type DrizzleSubscription = typeof users.$inferSelect;
 export type DrizzleStudyGuide = typeof studyGuide.$inferSelect;
 export type DrizzleEssay = typeof essays.$inferSelect;
+export type DrizzleProject = typeof project.$inferSelect;
+export type DrizzleQuizQuestion = typeof quizQuestion.$inferSelect;
+export type DrizzleQuiz = typeof quiz.$inferSelect;
