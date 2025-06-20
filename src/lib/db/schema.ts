@@ -332,3 +332,32 @@ export const quizQuestion = pgTable(
     createdAtIdx: index('quiz_question_created_at_idx').on(table.createdAt),
   }),
 );
+
+export const quizAttempt = pgTable(
+  'quiz_attempt',
+  {
+    id: serial('id').primaryKey(),
+    quizId: integer('quiz_id').references(() => quiz.id, {
+      onDelete: 'cascade',
+    }),
+    projectId: integer('project_id').references(() => project.id, {
+      onDelete: 'cascade',
+    }),
+    userId: varchar('user_id', { length: 256 }),
+    guestId: varchar('guest_id', { length: 256 }),
+    startedAt: timestamp('started_at').notNull().defaultNow(),
+    endedAt: timestamp('ended_at').notNull().defaultNow(),
+    score: integer('score').notNull(),
+    totalQuestions: integer('total_questions').notNull(),
+    correctAnswers: integer('correct_answers').notNull(),
+    incorrectAnswers: integer('incorrect_answers').notNull(),
+    skippedQuestions: integer('skipped_questions').notNull(),
+    totalTime: integer('total_time').notNull(),
+    quizDuration: integer('quiz_duration').notNull(),
+  },
+  (table) => ({
+    userIdIdx: index('quiz_attempt_user_id_idx').on(table.userId),
+    guestIdIdx: index('quiz_attempt_guest_id_idx').on(table.guestId),
+    projectIdIdx: index('quiz_attempt_project_id_idx').on(table.projectId),
+  }),
+);
