@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import SectionContainer from '../SectionContainer';
 import Quiz from '../Quiz/Quiz';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -10,8 +10,13 @@ import { Button } from '../ui/button';
 import toast from 'react-hot-toast';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import QuestionsMap from '../Quiz/QuestionsMap';
+import GeneratingDisplay from '../GeneratingDisplay';
 
-export default function Quizzes() {
+interface IProps {
+  loading: boolean;
+}
+
+export default function Quizzes({loading}: IProps) {
   const { id: projectId }: any = useParams();
   const queryClient = useQueryClient();
   const [guestSession] = useLocalStorage('guest-session', {});
@@ -19,7 +24,7 @@ export default function Quizzes() {
   const [userAnswer, setUserAnswer] = useState<any>({});
   const quizRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
-  const { data: quiz, isLoading } = useQuery({
+  const { data: quiz, isLoading, refetch } = useQuery({
     queryKey: ['quiz', projectId],
     queryFn: async () => {
       const res = await axios.get(`/api/quiz?projectId=${projectId}`);
@@ -49,6 +54,13 @@ export default function Quizzes() {
     },
   });
 
+  // If loading is from true to false, fetch quiz
+  useEffect(() => {
+    if (!loading && quiz === null) {
+      refetch();
+    }
+  }, [loading, quiz]);
+
   const scrollToNextQuestion = useCallback((currentQuestionIndex: number) => {
     const nextQuestionIndex = currentQuestionIndex + 1;
     const nextQuestionId = quiz?.questions?.[nextQuestionIndex]?.id;
@@ -70,6 +82,12 @@ export default function Quizzes() {
     // Scroll to next question after answering
     // scrollToNextQuestion(questionIndex);
   };
+
+  if (loading) {
+    return (
+      <GeneratingDisplay text="Quiz is being initialized, please give us a moment. Good things are coming..." />
+    );
+  }
 
   return (
     <SectionContainer>

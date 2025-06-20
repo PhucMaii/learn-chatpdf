@@ -9,13 +9,9 @@ import EmptyDisplay from '../EmptyDisplay';
 import { Button } from '../ui/button';
 import RichTextEditor from '../RichTextEditor';
 import useLocalStorage from '../../../hooks/useLocalStorage';
-import GeneratingDisplay from '../GeneratingDisplay';
 
-interface IProps {
-  loading: boolean;
-}
 
-export default function StudyGuide({ loading }: IProps) {
+export default function StudyGuide() {
   const { id: projectId } = useParams();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
@@ -32,13 +28,8 @@ export default function StudyGuide({ loading }: IProps) {
     if (isInitialized) {
       fetchStudyGuide();
     }
+  }, [isInitialized]);
 
-    if (!loading && studyGuide === null) {
-      fetchStudyGuide();
-    }
-  }, [isInitialized, loading]);
-
-  console.log(studyGuide, 'studyGuide');
 
   const fetchStudyGuide = async () => {
     try {
@@ -107,12 +98,6 @@ export default function StudyGuide({ loading }: IProps) {
       setIsEditMode(false);
     }
   };
-
-  if (loading) {
-    return (
-      <GeneratingDisplay text="Study guide is being initialized, please give us a moment. Good things are coming..." />
-    );
-  }
 
   return (
     <div className="flex flex-col w-full mx-auto md:w-xl lg:w-2xl xl:w-4xl">

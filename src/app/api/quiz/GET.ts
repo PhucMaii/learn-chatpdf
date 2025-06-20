@@ -51,7 +51,7 @@ const handler = async (req: Request) => {
     const result = Object.values(groupedQuizzes);
     console.log('Result: ', result[0]?.questions);
     return NextResponse.json(
-      { data: result[0] || [], message: 'Quiz fetched successfully' },
+      { data: result[0] || null, message: 'Quiz fetched successfully' },
       { status: 200 },
     );
   } catch (error) {

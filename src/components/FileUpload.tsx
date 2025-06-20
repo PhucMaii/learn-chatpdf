@@ -91,6 +91,7 @@ const FileUpload = ({
           chat: true,
           studyGuide: true,
           essay: true,
+          quiz: true,
         });
         const dataList = acceptedFiles.map((file) => {
           return uploadToS3WithPresignedUrl(file, user?.id);
@@ -149,15 +150,26 @@ const FileUpload = ({
           //   });
           // }
 
+          if (stage === 'AI is learning...') {
+            setLoading?.({
+              flashcards: true,
+              chat: true,
+              studyGuide: true,
+            });
+          } else if (stage === 'upload successfully') {
+            toast.success('Upload Successfully', { id: 'upload-progress' });
+          }
+
           if (stage === 'done') {
             setLoading?.({
               flashcards: false,
               chat: false,
               studyGuide: false,
               essay: false,
+              quiz: false,
             });
             // router.push(`/chat/${chatId}`);
-            toast.success('Upload Successfully', { id: 'upload-progress' });
+            toast.success('Process Completed', { id: 'upload-progress' });
             setDisplay(projectMedias);
             // setOptimisticDisplays((prev: any[]) => {
             //   // Keep optimistic items (e.g. still loading: true)
@@ -165,21 +177,22 @@ const FileUpload = ({
             //   // Replace the rest with new server data
             //   return [...projectMedias, ...optimisticOnly];
             // });
-          } else if (stage === 'Generating flashcards...') {
-            toast.loading(stage, { id: 'upload-progress' });
+          }
+          else if (stage === 'Generating flashcards...') {
             setLoading?.({
               flashcards: true,
               chat: false,
               studyGuide: true,
               essay: false,
+              quiz: true,
             });
-          } else if (stage === 'Generating study guide...') {
-            toast.loading(stage, { id: 'upload-progress' });
+          } else if (stage === 'Generating quiz...') {
             setLoading?.({
               flashcards: false,
               chat: false,
-              studyGuide: true,
+              studyGuide: false,
               essay: false,
+              quiz: true,
             });
           } else {
             toast.loading(stage, { id: 'upload-progress' });

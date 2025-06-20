@@ -38,6 +38,7 @@ export default function ProjectDetails() {
     chat: false,
     studyGuide: false,
     essay: false,
+    quiz: false,
   });
 
   const router = useRouter();
@@ -176,7 +177,7 @@ export default function ProjectDetails() {
           </TabsContent>
 
           <TabsContent value="studyGuide">
-            <StudyGuide loading={loading.studyGuide} />
+            <StudyGuide />
           </TabsContent>
 
           <TabsContent value="essay">
@@ -184,7 +185,7 @@ export default function ProjectDetails() {
           </TabsContent>
 
           <TabsContent value="quizzes">
-            <Quizzes />
+            <Quizzes loading={loading.quiz} />
           </TabsContent>
         </Tabs>
       </main>
