@@ -44,8 +44,8 @@ const teachers = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Learn ChatPDF',
-    template: '%s - Learn ChatPDF',
+    default: 'LearnPDF',
+    template: '%s - LearnPDF',
   },
   description: 'Help students learn faster, less stress, and more fun.',
   icons: {

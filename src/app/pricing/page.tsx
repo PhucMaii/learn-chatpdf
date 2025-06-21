@@ -3,7 +3,7 @@ import Pricing from './Pricing'
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Pricing',
+  title: 'Pricing | LearnPDF',
 };
 
 export default function PricingPage() {

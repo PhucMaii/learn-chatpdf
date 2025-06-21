@@ -8,7 +8,7 @@ import Footer from '@/components/Landing/Footer';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Home"
+  title: "Home | LearnPDF"
 
 }
 

@@ -47,19 +47,19 @@ export async function generateMetadata({
     if (!res.ok) {
       console.error('Failed to fetch project metadata', res.status);
       return {
-        title: `Project Details`,
+        title: `Project Details | LearnPDF`,
       };
     }
 
     const project = await res.json();
 
     return {
-      title: `Project ${project?.project?.title || 'Details'}`,
+      title: `Project ${project?.project?.title || 'Details'} | LearnPDF`,
     };
   } catch (error) {
     console.error('Error fetching metadata:', error);
     return {
-      title: `Project Details`,
+      title: `Project Details | LearnPDF`,
     };
   }
 }
