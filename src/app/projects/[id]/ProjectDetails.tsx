@@ -21,7 +21,7 @@ import useLocalStorage from '../../../../hooks/useLocalStorage';
 import LoadingComponent from '@/components/LoadingComponent';
 import toast from 'react-hot-toast';
 import Essay from '@/components/Projects/Essay';
-import Quizzes from '@/components/Projects/Quizzes';
+import QuizSummary from '@/components/Projects/QuizSummary';
 
 export default function ProjectDetails() {
   const { id } = useParams();
@@ -185,7 +185,8 @@ export default function ProjectDetails() {
           </TabsContent>
 
           <TabsContent value="quizzes">
-            <Quizzes loading={loading.quiz} />
+            {/* <Quizzes loading={loading.quiz} /> */}
+            <QuizSummary loading={loading.quiz} />
           </TabsContent>
         </Tabs>
       </main>
