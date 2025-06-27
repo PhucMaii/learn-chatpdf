@@ -152,7 +152,7 @@ export default function Flashcards({ loading }: IProps) {
                   alt="loading"
                   width={200}
                   height={200}
-                  loading="eager"
+                  loading="lazy"
                 />
                 <h6 className="text-lg text-center text-gray-600">
                   Give us a moment, your flashcards are on the way...

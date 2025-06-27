@@ -20,7 +20,7 @@ interface IProps {
 export default function Project({ className, project, refresh }: IProps) {
   const { setUser } = useContext(UserContext) as any;
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
-  const  [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
+  const [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
   const router = useRouter();
 
   const handleDeleteProject = async () => {
@@ -51,9 +51,7 @@ export default function Project({ className, project, refresh }: IProps) {
   };
 
   return (
-    <div
-      className={`flex flex-col gap-2 cursor-pointer justify-between p-4 border-1 border-gray-100 rounded-lg max-w-[400px] h-[200px] ${className}`}
-    >
+    <>
       {/* If project is not created by guest, show delete dialog */}
       {project?.userId && (
         <DeleteDialog
@@ -65,50 +63,63 @@ export default function Project({ className, project, refresh }: IProps) {
       )}
 
       {project?.userId && (
-        <EditProject open={isOpenEdit} onClose={() => setIsOpenEdit(false)} project={project} refresh={refresh} />
+        <EditProject
+          open={isOpenEdit}
+          onClose={() => {
+            setIsOpenEdit(false);
+          }}
+          project={project}
+          refresh={refresh}
+        />
       )}
+
       <div
-        className="flex flex-col gap-2"
+        className={`flex flex-col gap-2 cursor-pointer justify-between p-4 border-1 border-gray-100 rounded-lg max-w-[400px] h-[200px] ${className}`}
         onClick={() => router.push(`/projects/${project.id}?tab=medias`)}
       >
-        <div className="w-full flex items-center justify-between gap-2">
-          {/* Will replace with project.medias.length */}
-          <h6 className="text-sm text-gray-400">
-            {project?.medias?.length} medias
-          </h6>
-          <div className="flex items-center">
-            <Button
-              onClick={(e: any) => {
-                e.stopPropagation();
-                setIsOpenDelete(true);
-              }}
-              variant="ghost"
-              className="hover:bg-red-100"
-              disabled={!project?.userId}
-              name="delete-project"
-            >
-              <Trash2Icon className="w-4 h-4 text-red-500" />
-            </Button>
-            <Button 
-            variant="ghost"
-            className="hover:bg-blue-100"
-            disabled={!project?.userId}
-            onClick={(e: any) => {
-              e.stopPropagation();
-              setIsOpenEdit(true)
-            }}
-            name="edit-project"
-            >
-              <EditIcon className="w-4 h-4 text-blue-500" />
-            </Button>
+        <div
+          className="flex flex-col gap-2"
+          onClick={() => router.push(`/projects/${project.id}?tab=medias`)}
+        >
+          <div className="w-full flex items-center justify-between gap-2">
+            {/* Will replace with project.medias.length */}
+            <h6 className="text-sm text-gray-400">
+              {project?.medias?.length} medias
+            </h6>
+            <div className="flex items-center">
+              <Button
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                  setIsOpenDelete(true);
+                }}
+                variant="ghost"
+                className="hover:bg-red-100"
+                disabled={!project?.userId}
+                name="delete-project"
+              >
+                <Trash2Icon className="w-4 h-4 text-red-500" />
+              </Button>
+              <Button
+                variant="ghost"
+                className="hover:bg-blue-100"
+                disabled={!project?.userId}
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                  setIsOpenEdit(true);
+                }}
+                name="edit-project"
+              >
+                <EditIcon className="w-4 h-4 text-blue-500" />
+              </Button>
+            </div>
           </div>
+          <h1 className="text-xl font-bold w-full">{project?.name}</h1>
         </div>
-        <h1 className="text-xl font-bold w-full">{project?.name}</h1>
-      </div>
 
-      <h6 className="text-sm text-gray-400">
-        Created at: {convertToFromNow(project.lastOpenedAt)}
-      </h6>
-    </div>
+        <h6 className="text-sm text-gray-400">
+          Created at: {convertToFromNow(project.lastOpenedAt)}
+        </h6>
+      </div>
+    </>
   );
 }

@@ -226,7 +226,7 @@ Studies show flashcards can improve scores by up to 50%.`,
   {
     id: 2,
     title: 'Chat in your own language 🌎',
-    description: `Learning shouldn’t be limited by language.
+    description: `Learning shouldn't be limited by language.
 Talk to your PDFs and get support in the language you're most comfortable with.`,
     image: '/images/features-details/multi-language.jpeg',
   },
@@ -241,45 +241,57 @@ Talk to your PDFs and get support in the language you're most comfortable with.`
 export const gainList = [
   {
     icon: ClockArrowDownIcon,
-    title: 'Save Time And Effort',
+    title: 'Auto-Generate Flashcards',
     description:
-      'Skip the hassle of sifting through lengthy PDFs. Get instant answers and summaries to focus on what truly matters—understanding the material.',
+      'Transform any document into smart flashcards instantly. Upload PDFs, Word docs, PowerPoints, and more. AI creates perfect study cards tailored to your content.',
   },
   {
     icon: BookCopyIcon,
-    title: 'Ace Your Homework Faster',
+    title: 'Create Interactive Quizzes',
     description:
-      'Breeze through assignments with AI-powered tools that deliver high-quality results in a fraction of the time.',
+      'Generate comprehensive quizzes from your study materials. Multiple choice, true/false, and essay questions automatically created with detailed explanations.',
   },
   {
     icon: NotebookIcon,
-    title: 'Turn Notes Into Flashcards',
+    title: 'AI Essay Generator',
     description:
-      'Generate smart, customizable flashcards from your PDFs with a single click. Study more effectively with tools tailored to your needs.',
+      'Write high-quality essays with AI assistance. Get structured outlines, content suggestions, and humanized writing that sounds natural and academic.',
   },
   {
     icon: NotebookPenIcon,
-    title: 'Stay Organized & Prepared',
+    title: 'Humanize Your Content',
     description:
-      'Simplify your study process by turning overwhelming PDF files into digestible insights and structured learning aids.',
+      'Transform AI-generated content into natural, human-like writing. Perfect for essays, reports, and assignments that need a personal touch.',
   },
   {
     icon: ShieldCheckIcon,
-    title: 'Boost Retention and Grades',
+    title: 'Track Learning Progress',
     description:
-      'With quick answers and personalized flashcards, you’ll retain information better and perform with confidence in class or exams.',
+      'Monitor your study performance with detailed analytics. See improvement trends, identify weak areas, and optimize your learning strategy.',
   },
   {
     icon: GraduationCapIcon,
-    title: 'Study Anywhere, Anytime',
+    title: 'Multi-Format Support',
     description:
-      'Access your notes, PDFs, and flashcards on the go. Your study tools are now as mobile as you are.',
+      'Upload any file type: PDFs, Word documents, PowerPoints, images, and more. Our AI processes everything to create comprehensive study materials.',
   },
   {
     icon: ArrowUpWideNarrowIcon,
-    title: 'Enhance Productivity',
+    title: 'Smart Study Organization',
     description:
-      'Transform tedious study sessions into efficient, focused learning experiences that leave you more time for what you love.',
+      'Keep all your study materials organized in one place. Create projects, categorize content, and access everything from anywhere, anytime.',
+  },
+  {
+    icon: ClockArrowDownIcon,
+    title: 'Save 80% Study Time',
+    description:
+      'Cut your study time in half with AI-powered tools. What used to take 4 hours now takes just 1 hour. Focus on understanding, not manual work.',
+  },
+  {
+    icon: ShieldCheckIcon,
+    title: 'Reduce Stress & Anxiety',
+    description:
+      'Eliminate the overwhelming feeling of endless study materials. AI breaks everything down into manageable, digestible pieces that reduce academic stress.',
   },
 ];
 
@@ -292,7 +304,7 @@ export const contactList = [
   {
     icon: InstagramIcon,
     title: 'Instagram',
-    link: 'https://www.instagram.com/info.learnpdf',
+    link: 'https://www.instagram.com/learnpdf.ca',
   },
   {
     icon: TwitterIcon,

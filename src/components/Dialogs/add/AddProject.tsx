@@ -96,6 +96,8 @@ export default function AddProject({ refresh }: IProps) {
               setOpen(true);
             }
           }}
+          className="h-12 px-6 text-lg rounded-xl bg-gradient-to-r from-emerald-400 to-emerald-600 text-white shadow-lg hover:from-emerald-500 hover:to-emerald-700 transition-all duration-300"
+          data-add-project-header
         >
           + New Project
         </Button>
@@ -126,7 +128,12 @@ export default function AddProject({ refresh }: IProps) {
           />
         </div>
         <DialogFooter>
-          <Button name="create-project" disabled={isLoading} onClick={handleSubmit} type="submit">
+          <Button
+            name="create-project"
+            disabled={isLoading}
+            onClick={handleSubmit}
+            type="submit"
+          >
             {isLoading ? 'Creating...' : 'Create Project'}
           </Button>
         </DialogFooter>

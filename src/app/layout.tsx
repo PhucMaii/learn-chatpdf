@@ -40,6 +40,8 @@ const teachers = localFont({
       style: 'normal',
     },
   ],
+  display: 'swap',
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -64,8 +66,12 @@ export default function RootLayout({
   return (
     <ClerkProvider afterSignOutUrl="/">
       <Providers>
-        <LazyMotion features={domAnimation}>
+        <LazyMotion features={domAnimation} strict>
           <html lang="en">
+            <head>
+              <link rel="preload" href="/images/learning.png" as="image" />
+              <link rel="preload" href="/images/logo.png" as="image" />
+            </head>
             <body className={`${teachers.className} antialiased`}>
               {children}
             </body>

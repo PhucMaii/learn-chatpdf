@@ -13,7 +13,7 @@ export default function GeneratingDisplay({ text }: IProps) {
       alt="loading"
       width={500}
       height={500}
-      loading="eager"
+      loading="lazy"
     />
     <h1 className="text-lg text-center text-gray-600">
       {text}
