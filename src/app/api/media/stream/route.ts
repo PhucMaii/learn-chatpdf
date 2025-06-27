@@ -5,8 +5,9 @@ import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { createFlashCards } from '../../utils/flashcards';
-import { createStudyGuide } from '../../utils/studyGuide';
+// import { createStudyGuide } from '../../utils/studyGuide';
 import { getVectorsFromMedias } from '@/lib/context';
+import { createQuiz } from '../../utils/quiz';
 
 // interface IBody {
 //   projectId: number;
@@ -191,6 +192,8 @@ export async function GET(req: NextRequest) {
           .from(medias)
           .where(eq(medias.projectId, Number(projectId)));
 
+        send({ stage: 'upload successfully' });
+
         send({ stage: 'Generating flashcards...' });
         // create flashcard
         await createFlashCards(
@@ -201,13 +204,20 @@ export async function GET(req: NextRequest) {
           toUseId.isGuest,
         );
 
-        send({ stage: 'Generating study guide...' });
-        await createStudyGuide(
+        // send({ stage: 'Generating study guide...' });
+        // await createStudyGuide(
+        //   projectMedias,
+        //   Number(projectId),
+        //   toUseId.id,
+        //   toUseId.isGuest,
+        //   vectors,
+        // );
+        send({ stage: 'Generating quiz...' });
+        await createQuiz(
           projectMedias,
           Number(projectId),
           toUseId.id,
           toUseId.isGuest,
-          vectors,
         );
 
         send({

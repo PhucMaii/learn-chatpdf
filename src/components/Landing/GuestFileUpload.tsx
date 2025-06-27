@@ -72,7 +72,7 @@ const GuestFileUpload = ({ className, msg, projectId }: IProps) => {
           const { stage, projectId: proId } = JSON.parse(event.data);
           if (stage === 'done') {
             toast.success('Upload Successfully', { id: 'upload-progress' });
-            router.push(`/projects/${proId ? proId : projectId}`);
+            router.push(`/projects/${proId ? proId : projectId}?tab=chat`);
           } else {
             toast.loading(stage, { id: 'upload-progress' });
           }

@@ -10,7 +10,8 @@ import CircularProgress from '../CircularProgress';
 import LoadingComponent from '../LoadingComponent';
 import { UserContext } from '../../../context/UserProvider';
 import { SUBSCRIPTION_TYPE } from '@/lib/type';
-
+import SectionContainer from '../SectionContainer';
+  
 export default function Essay() {
   const { id: projectId } = useParams();
   const { user } = useContext(UserContext) as any;
@@ -197,7 +198,7 @@ export default function Essay() {
   }
 
   return (
-    <div className="flex flex-col w-full mx-auto md:w-xl lg:w-2xl xl:w-4xl">
+    <SectionContainer>
       <div className="flex flex-col mb-4">
         <h6 className="text-xl justify-start font-regular">Essay</h6>
 
@@ -299,6 +300,6 @@ export default function Essay() {
           </div>
         )}
       </div>
-    </div>
+    </SectionContainer>
   );
 }

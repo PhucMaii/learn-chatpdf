@@ -250,6 +250,7 @@ export const userSubscriptions = pgTable(
     stripeCurrentPeriodEndIdx: index(
       'user_subscriptions_stripe_current_period_end_idx',
     ).on(table.stripeCurrentPeriodEnd),
+    userIdIdx: index('user_subscriptions_user_id_idx').on(table.userId),
   }),
 );
 
@@ -284,5 +285,99 @@ export const discountCodes = pgTable(
     typeIdx: index('discount_codes_type_idx').on(table.type),
     valueIdx: index('discount_codes_value_idx').on(table.value),
     createdAtIdx: index('discount_codes_created_at_idx').on(table.createdAt),
+  }),
+);
+
+export const quiz = pgTable(
+  'quiz',
+  {
+    id: serial('id').primaryKey(),
+    projectId: integer('project_id').references(() => project.id, { 
+      onDelete: 'cascade',
+    }),
+    title: text('title').notNull(),
+    attempts: integer('attempts').default(0),
+    highestScore: integer('highest_score').default(0),
+    userId: varchar('user_id', { length: 256 }),
+    guestId: varchar('guest_id', { length: 256 }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => ({
+    userIdIdx: index('quizzes_user_id_idx').on(table.userId),
+    guestIdIdx: index('quizzes_guest_id_idx').on(table.guestId),
+    projectIdIdx: index('quizzes_project_id_idx').on(table.projectId),
+    createdAtIdx: index('quizzes_created_at_idx').on(table.createdAt),
+  }),
+);
+
+export const quizQuestion = pgTable(
+  'quiz_question',
+  {
+    id: serial('id').primaryKey(),
+    quizId: integer('quiz_id').references(() => quiz.id, {
+      onDelete: 'cascade',
+    }),
+    index: integer('index'),
+    question: text('question').notNull(),
+    optionA: text('option_a').notNull(),
+    optionB: text('option_b').notNull(),
+    optionC: text('option_c').notNull(),
+    optionD: text('option_d').notNull(),
+    correctAnswer: text('correct_answer').notNull(),
+    explanation: text('explanation').notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => ({
+    quizIdIdx: index('quiz_question_quiz_id_idx').on(table.quizId),
+    createdAtIdx: index('quiz_question_created_at_idx').on(table.createdAt),
+  }),
+);
+
+export const quizAttemptQuestion = pgTable(
+  'quiz_attempt_question',
+  {
+    id: serial('id').primaryKey(),
+    quizAttemptId: integer('quiz_attempt_id').references(() => quizAttempt.id, {
+      onDelete: 'cascade',
+    }), 
+    questionId: integer('question_id').references(() => quizQuestion.id, {
+      onDelete: 'cascade',
+    }),
+    isCorrect: integer('is_correct').default(0),
+    isSkipped: integer('is_skipped').default(0),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },  
+  (table) => ({
+    quizAttemptIdIdx: index('quiz_attempt_question_quiz_attempt_id_idx').on(table.quizAttemptId),
+    questionIdIdx: index('quiz_attempt_question_question_id_idx').on(table.questionId),
+  }),
+);
+
+export const quizAttempt = pgTable(
+  'quiz_attempt',
+  {
+    id: serial('id').primaryKey(),
+    quizId: integer('quiz_id').references(() => quiz.id, {
+      onDelete: 'cascade',
+    }),
+    projectId: integer('project_id').references(() => project.id, {
+      onDelete: 'cascade',
+    }),
+    userId: varchar('user_id', { length: 256 }),
+    guestId: varchar('guest_id', { length: 256 }),
+    startedAt: timestamp('started_at'),
+    endedAt: timestamp('ended_at'),
+    score: integer('score'),
+    totalQuestions: integer('total_questions'),
+    correctAnswers: integer('correct_answers'),
+    incorrectAnswers: integer('incorrect_answers'),
+    skippedQuestions: integer('skipped_questions'),
+    totalTime: integer('total_time'),
+    quizDuration: integer('quiz_duration'),
+  },
+  (table) => ({
+    userIdIdx: index('quiz_attempt_user_id_idx').on(table.userId),
+    guestIdIdx: index('quiz_attempt_guest_id_idx').on(table.guestId),
+    projectIdIdx: index('quiz_attempt_project_id_idx').on(table.projectId),
   }),
 );

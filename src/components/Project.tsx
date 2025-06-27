@@ -69,7 +69,7 @@ export default function Project({ className, project, refresh }: IProps) {
       )}
       <div
         className="flex flex-col gap-2"
-        onClick={() => router.push(`/projects/${project.id}`)}
+        onClick={() => router.push(`/projects/${project.id}?tab=medias`)}
       >
         <div className="w-full flex items-center justify-between gap-2">
           {/* Will replace with project.medias.length */}
