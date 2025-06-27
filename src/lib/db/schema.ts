@@ -333,6 +333,26 @@ export const quizQuestion = pgTable(
   }),
 );
 
+export const quizAttemptQuestion = pgTable(
+  'quiz_attempt_question',
+  {
+    id: serial('id').primaryKey(),
+    quizAttemptId: integer('quiz_attempt_id').references(() => quizAttempt.id, {
+      onDelete: 'cascade',
+    }), 
+    questionId: integer('question_id').references(() => quizQuestion.id, {
+      onDelete: 'cascade',
+    }),
+    isCorrect: integer('is_correct').default(0),
+    isSkipped: integer('is_skipped').default(0),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },  
+  (table) => ({
+    quizAttemptIdIdx: index('quiz_attempt_question_quiz_attempt_id_idx').on(table.quizAttemptId),
+    questionIdIdx: index('quiz_attempt_question_question_id_idx').on(table.questionId),
+  }),
+);
+
 export const quizAttempt = pgTable(
   'quiz_attempt',
   {

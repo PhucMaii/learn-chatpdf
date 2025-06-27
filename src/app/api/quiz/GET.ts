@@ -6,7 +6,6 @@ import { asc, eq } from 'drizzle-orm';
 
 const handler = async (req: Request) => {
   try {
-    console.log('Fetching quiz');
     const projectId = getQueryParams(req, 'projectId');
 
     if (!projectId) {
@@ -49,7 +48,6 @@ const handler = async (req: Request) => {
     );
 
     const result = Object.values(groupedQuizzes);
-    console.log('Result: ', result[0]?.questions);
     return NextResponse.json(
       { data: result[0] || null, message: 'Quiz fetched successfully' },
       { status: 200 },

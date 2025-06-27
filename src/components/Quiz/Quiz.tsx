@@ -20,6 +20,7 @@ interface IProps {
   handleUserAnswer: (questionId: number, answer: string) => void;
   userAnswer: any;
   handleNextQuestion: () => void;
+  index: number;
 }
 
 
@@ -28,6 +29,7 @@ export default function Quiz({
   handleUserAnswer,
   userAnswer,
   handleNextQuestion,
+  index,
 }: IProps) {
   const [answer, setAnswer] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState<boolean>(false);
@@ -59,7 +61,7 @@ export default function Quiz({
   return (
     <div className="flex flex-col gap-4 border border-gray-200 rounded-lg p-4">
       <h4 className="text-lg font-medium">
-        {question?.index}. {question.question}
+        {index}. {question.question}
       </h4>
       
       <div className="flex flex-col justify-start gap-2">

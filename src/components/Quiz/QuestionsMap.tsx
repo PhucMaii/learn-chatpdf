@@ -2,17 +2,17 @@ import React from 'react';
 
 interface IProps {
   quizRefs: any;
-  quiz: any;
+  questions: any;
   userAnswer: any;
 }
 
-export default function QuestionsMap({ quizRefs, quiz, userAnswer }: IProps) {
+export default function QuestionsMap({ quizRefs, questions, userAnswer }: IProps) {
   return (
     <div className="flex-shrink-0">
       <div className="sticky top-4 border border-gray-200 rounded-lg p-4 h-fit">
         <h4 className="text-lg font-medium mb-2">Questions</h4>
         <div className="grid grid-cols-3 gap-1">
-          {quiz?.questions?.map((question: any, index: number) => (
+          {questions?.map((question: any, index: number) => (
             <div
               key={question.id}
               className={`rounded-md p-2 text-center text-sm font-medium cursor-pointer transition-colors ${

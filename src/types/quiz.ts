@@ -43,6 +43,7 @@ export interface QuizQuestion {
   createdAt: string;
   updatedAt: string;
   options?: QuizQuestionOption[];
+  correctAnswer?: string;
 }
 
 export interface QuizQuestionOption {

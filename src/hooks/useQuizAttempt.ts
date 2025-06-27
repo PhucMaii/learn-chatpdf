@@ -1,3 +1,5 @@
+import { DrizzleQuiz } from '@/lib/db/drizzleType';
+import { QuizQuestion } from '@/types/quiz';
 import { useState, useEffect } from 'react';
 
 interface QuizAttempt {
@@ -13,17 +15,27 @@ interface QuizAttempt {
   completedAt?: string;
   createdAt: string;
   updatedAt: string;
+  correctAnswers?: number;
+  incorrectAnswers?: number;
+  skippedQuestions?: number;
+  totalTime?: number;
+}
+
+interface FetchedQuizAttempt {
+  attempt: QuizAttempt;
+  quiz: DrizzleQuiz;
+  questions: QuizQuestion[];
 }
 
 interface UseQuizAttemptReturn {
-  quizAttempt: QuizAttempt | null;
+  quizAttempt: FetchedQuizAttempt | null;
   loading: boolean;
   error: string | null;
   refetch: () => void;
 }
 
 export function useQuizAttempt(attemptId: string): UseQuizAttemptReturn {
-  const [quizAttempt, setQuizAttempt] = useState<QuizAttempt | null>(null);
+  const [quizAttempt, setQuizAttempt] = useState<FetchedQuizAttempt | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,12 +50,14 @@ export function useQuizAttempt(attemptId: string): UseQuizAttemptReturn {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/quiz-attempts/${attemptId}`, {
+      const response = await fetch(`/api/quiz-attempt?attemptId=${attemptId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
+
+      console.log(response);
 
       if (!response.ok) {
         if (response.status === 404) {

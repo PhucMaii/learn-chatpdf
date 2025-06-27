@@ -13,6 +13,7 @@ import {
 } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { toast } from 'react-hot-toast';
 
 interface StartTestConfig {
 	questionCount: number;
@@ -22,7 +23,7 @@ interface StartTestConfig {
 interface StartTestDialogProps {
 	trigger: React.ReactNode;
 	maxQuestions?: number;
-	onStartTest: (config: StartTestConfig) => void;
+	onStartTest: (config: StartTestConfig) => Promise<void>;
 	className?: string;
 }
 
@@ -39,6 +40,7 @@ export default function StartTestDialog({
 	const [isOpen, setIsOpen] = useState(false);
 	const [questionCount, setQuestionCount] = useState(DEFAULT_QUESTION_COUNT);
 	const [duration, setDuration] = useState(DEFAULT_DURATION);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const handleQuestionCountChange = (value: string) => {
 		const numValue = parseInt(value) || 1;
@@ -52,13 +54,21 @@ export default function StartTestDialog({
 		setDuration(clampedValue);
 	};
 
-	const handleStartTest = () => {
+	const handleStartTest = async () => {
+		setIsLoading(true);
 		const config: StartTestConfig = {
 			questionCount,
 			duration,
 		};
-		onStartTest(config);
-		setIsOpen(false);
+		try {
+			await onStartTest(config);
+			setIsOpen(false);
+		} catch (error: any) {
+			console.error('Error starting test:', error);
+			toast.error('Failed to start test. Please try again.');
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	const isFormValid = 
@@ -134,10 +144,10 @@ export default function StartTestDialog({
 					<Button
 						type="submit"
 						onClick={handleStartTest}
-						disabled={!isFormValid}
+						disabled={!isFormValid || isLoading}
 						className="w-full sm:w-auto"
 					>
-						Start Test
+						{isLoading ? 'Starting Test...' : 'Start Test'}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

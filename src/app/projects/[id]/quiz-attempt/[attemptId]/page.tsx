@@ -2,26 +2,24 @@
 
 import React, { useContext } from 'react';
 import { useParams } from 'next/navigation';
-import QuizSummary from '@/components/Projects/QuizSummary';
 import AccessDenied from '@/components/ui/AccessDenied';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useQuizAttempt } from '@/hooks/useQuizAttempt';
 import { UserContext,    } from '../../../../../../context/UserProvider';
 import Quizzes from '@/components/Projects/Quizzes';
 import SectionContainer from '@/components/SectionContainer';
+import { DrizzleQuiz } from '@/lib/db/drizzleType';
 
 
 export default function QuizAttemptPage() {
 	const params = useParams();
-	const projectId = params.id as string;
 	const attemptId = params.attemptId as string;
 	
 	const { user, isInitializing: authLoading } = useContext(UserContext) as any;
-	// const { 
-	// 	quizAttempt, 
-	// 	loading: attemptLoading, 
-	// 	error: attemptError 
-	// } = useQuizAttempt(attemptId);
+	const { 
+		quizAttempt, 
+		loading: attemptLoading, 
+	} = useQuizAttempt(attemptId);
 
 	// Show loading while checking authentication and fetching data
 	if (authLoading) {
@@ -37,27 +35,13 @@ export default function QuizAttemptPage() {
 		return <AccessDenied message="Please log in to view this quiz attempt." />;
 	}
 
-	// // Check if quiz attempt exists
-	// if (!quizAttempt) {
-	// 	return <AccessDenied message="Quiz attempt not found." />;
-	// }
-
-	// // Check if user owns this quiz attempt
-	// if (quizAttempt.userId !== user?.id) {
-	// 	return <AccessDenied message="You don't have permission to view this quiz attempt." />;
-	// }
-
-	// // Check if project ID matches
-	// if (quizAttempt.projectId !== projectId) {
-	// 	return <AccessDenied message="Invalid project or attempt combination." />;
-	// }
-
 	return (
 		<SectionContainer className='my-10'>
 			<Quizzes 
-				loading={false}
-				// loading={false}
-				// maxQuestions={quizAttempt.maxQuestions}
+				loading={attemptLoading}
+				quizAttempt={quizAttempt?.attempt || null}
+				questions={quizAttempt?.questions || []}
+				quiz={quizAttempt?.quiz as DrizzleQuiz}
 			/>
 		</SectionContainer>
 	);
