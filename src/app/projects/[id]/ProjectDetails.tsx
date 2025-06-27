@@ -10,6 +10,7 @@ import {
   NotepadTextIcon,
   FileTextIcon,
   FileQuestionIcon,
+  PresentationIcon,
 } from 'lucide-react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Media from '@/components/Projects/Media';
@@ -22,31 +23,34 @@ import LoadingComponent from '@/components/LoadingComponent';
 import toast from 'react-hot-toast';
 import Essay from '@/components/Projects/Essay';
 import QuizSummary from '@/components/Projects/QuizSummary';
+import Presentation from '@/components/Projects/Presentation';
 
 // Memoized tab button component for better performance
 // eslint-disable-next-line react/display-name
-const TabButton = memo(({ 
-  tab, 
-  isActive, 
-  onClick, 
-  icon: Icon, 
-  label 
-}: {
-  tab: string;
-  isActive: boolean;
-  onClick: (tab: string) => void;
-  icon: any;
-  label: string;
-}) => (
-  <Button
-    variant={isActive ? 'default' : 'ghost'}
-    onClick={() => onClick(tab)}
-    className="justify-start gap-2 transition-all duration-150"
-  >
-    <Icon className="w-5 h-5" />
-    <span className="hidden sm:block">{label}</span>
-  </Button>
-));
+const TabButton = memo(
+  ({
+    tab,
+    isActive,
+    onClick,
+    icon: Icon,
+    label,
+  }: {
+    tab: string;
+    isActive: boolean;
+    onClick: (tab: string) => void;
+    icon: any;
+    label: string;
+  }) => (
+    <Button
+      variant={isActive ? 'default' : 'ghost'}
+      onClick={() => onClick(tab)}
+      className="justify-start gap-2 transition-all duration-150"
+    >
+      <Icon className="w-5 h-5" />
+      <span className="hidden sm:block">{label}</span>
+    </Button>
+  ),
+);
 
 export default function ProjectDetails() {
   const { id } = useParams();
@@ -80,17 +84,20 @@ export default function ProjectDetails() {
   }, [tab, router, id]);
 
   // Handle tab selection changes - optimized for responsiveness
-  const handleTabChange = useCallback((newTab: string) => {
-    // Immediately update local state for instant feedback
-    setSelectedTab(newTab);
-    
-    // Update URL without waiting for router
-    const url = `/projects/${id}?tab=${newTab}`;
-    window.history.pushState({}, '', url);
-    
-    // Use router.replace for faster navigation without adding to history
-    router.replace(url);
-  }, [router, id]);
+  const handleTabChange = useCallback(
+    (newTab: string) => {
+      // Immediately update local state for instant feedback
+      setSelectedTab(newTab);
+
+      // Update URL without waiting for router
+      const url = `/projects/${id}?tab=${newTab}`;
+      window.history.pushState({}, '', url);
+
+      // Use router.replace for faster navigation without adding to history
+      router.replace(url);
+    },
+    [router, id],
+  );
 
   useEffect(() => {
     if (isInitialized) {
@@ -191,6 +198,13 @@ export default function ProjectDetails() {
           icon={FileQuestionIcon}
           label="Quizzes"
         />
+        <TabButton
+          tab="presentation"
+          isActive={selectedTab === 'presentation'}
+          onClick={handleTabChange}
+          icon={PresentationIcon}
+          label="Presentation"
+        />
       </aside>
 
       {/* Main Content */}
@@ -226,6 +240,11 @@ export default function ProjectDetails() {
           <TabsContent value="quizzes">
             {/* <Quizzes loading={loading.quiz} /> */}
             <QuizSummary loading={loading.quiz} />
+          </TabsContent>
+
+          <TabsContent value="presentation">
+            {/* <Quizzes loading={loading.quiz} /> */}
+            <Presentation />
           </TabsContent>
         </Tabs>
       </main>

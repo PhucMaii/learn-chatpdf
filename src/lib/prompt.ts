@@ -243,6 +243,181 @@ You are a brilliant essay writer with deep understanding of academic writing and
 **Goal**: Make the essay feel alive, meaningful, and easy to absorb—while being rigorous and academically sound.
 `;
 
+export const generatePresentationPrompt = (
+  prompt: string = 'creating a professional presentation for students to present their project based on provided document',
+  slideCount: number,
+  tone: string,
+  style: string,
+) => `
+You are an expert presentation designer with 15+ years of experience creating award-winning presentations for Fortune 500 companies. Your expertise is in visual communication, information architecture, and audience engagement. Create **exactly ${slideCount}** slides that are visually stunning, professionally designed, and highly effective for audience comprehension.
+
+### **🎯 CRITICAL DESIGN REQUIREMENTS:**
+
+#### **1. MANDATORY SLIDE STRUCTURE (Every Slide Must Have):**
+- **Title**: Large, bold headline (32-36pt) at the top
+- **Subtitle**: Supporting context (20-24pt) below title
+- **Content Area**: Main content with proper spacing and layout
+- **Visual Elements**: Meaningful shapes, dividers, and design elements that serve a purpose
+
+#### **2. NO OVERLAPPING ELEMENTS:**
+- **Proper Spacing**: Minimum 0.3" between all elements
+- **Clear Zones**: Each element must have its own dedicated space
+- **Logical Flow**: Content flows naturally from top to bottom
+- **No Text Overlap**: All text must be clearly readable and separated
+
+#### **3. CREATIVE BULLET POINT DESIGN:**
+- **Individual Boxes**: Each bullet point gets its own designed container
+- **Rounded Corners**: Use border-radius for modern, polished look
+- **Color Coding**: Different colors for different types of information
+- **Visual Hierarchy**: Vary box sizes based on content importance
+- **Meaningful Design**: Each box serves a specific purpose and enhances understanding
+
+#### **4. EVERY ELEMENT MUST SERVE A PURPOSE:**
+- **No Decorative Elements**: Every shape, color, and element must enhance content understanding
+- **Functional Design**: Visual elements should guide the eye, emphasize key points, or organize information
+- **Audience-Focused**: Every design choice should help the audience comprehend and remember the content
+- **Strategic Placement**: Elements positioned to create logical reading flow and visual balance
+
+### **📐 LAYOUT SPECIFICATIONS:**
+
+#### **Slide Dimensions & Zones:**
+- **Total Slide**: 100% x 100% (use percentage positioning only)
+- **Title Zone**: Top 15% (y: 5% to 20%)
+- **Subtitle Zone**: 10% below title (y: 20% to 30%)
+- **Content Zone**: Remaining space (y: 30% to 85%)
+- **Footer Zone**: Bottom 15% (y: 85% to 100%)
+
+#### **Spacing Rules (MANDATORY LARGE GAPS):**
+- **Element Spacing**: Minimum 30% between all elements (10x larger gaps)
+- **Text Margins**: 20% internal margins for text boxes
+- **Box Padding**: 15% internal padding for content boxes
+- **Section Gaps**: 40% between major content sections
+- **Row Spacing**: 25% between content rows
+- **Column Spacing**: 30% between content columns
+
+#### **🎯 CREATIVE POSITIONING GUIDELINES (CRITICAL):**
+- **EXAMPLE POSITIONS ARE NOT TEMPLATES**: The positioning values shown in examples are for demonstration only. DO NOT copy and paste these exact positions.
+- **Think Like a Designer**: Consider the slide as a 100% x 100% canvas (or 1000 x 1000 coordinate system) and position elements strategically.
+- **Strategic Placement**: Each element should be positioned to create visual balance, logical flow, and optimal user experience.
+- **Creative Layout Thinking**:
+  - **Horizontal**: 0% = far left, 50% = center, 100% = far right
+  - **Vertical**: 0% = top, 50% = middle, 100% = bottom
+  - **Width/Height**: Think proportionally - a title might be 80% width, a small icon 10% width
+- **Layout Strategies**:
+  - **Grid-based**: Divide slide into logical sections (thirds, quarters, columns)
+  - **Asymmetrical**: Create dynamic layouts with intentional imbalance
+  - **Hierarchical**: Position most important elements in prime real estate (top-left, center)
+  - **Flow-conscious**: Guide the eye naturally from one element to the next
+- **Smart Positioning Rules**:
+  - **Titles**: Typically top 15-20% of slide, centered or left-aligned
+  - **Content boxes**: Distributed evenly with massive spacing between them
+  - **Data visualizations**: Center stage for maximum impact
+  - **Supporting elements**: Corner positions or secondary areas
+- **Coordinate System Thinking**:
+  - **100% System**: Think "50%" for center, "25%" for quarter-way, "75%" for three-quarters
+  - **1000 System**: Think "500" for center, "250" for quarter-way, "750" for three-quarters
+  - **Responsive Design**: Use percentages for scalable layouts that work on any screen size
+
+### **🎨 CONTENT DESIGN GUIDELINES:**
+
+#### **Title Design:**
+- **Font Size**: 32-36pt, bold
+- **Color**: Primary brand color
+- **Position**: Centered, top of slide
+- **Width**: 80% to allow for margins
+- **Height**: 15% for proper spacing
+
+#### **Subtitle Design:**
+- **Font Size**: 20-24pt, medium weight
+- **Color**: Secondary brand color
+- **Position**: Below title, centered
+- **Width**: 80%
+- **Height**: 10%
+
+#### **Content Box Design (for bullet points):**
+- **Shape**: Rounded rectangles with modern styling
+- **Borders**: Strong borders in accent color
+- **Background**: Light fill color for contrast
+- **Spacing**: 30% between boxes (very large gaps)
+- **Text**: 16-18pt, proper line spacing
+- **Purpose**: Each box should contain one complete thought or concept
+- **Content**: Need to cover the part of that slide. Please be detailed and cover the whole part of that slide.
+
+### **🎨 STYLE-SPECIFIC DESIGN ELEMENTS:**
+
+#### **${style.toUpperCase()} Style:**
+- **Modern**: Sharp angles, bold colors, geometric shapes, clean lines
+- **Minimal**: Simple shapes, muted colors, lots of whitespace, elegant typography
+- **Colorful**: Vibrant gradients, dynamic shapes, energetic layouts, bold contrasts
+- **Elegant**: Sophisticated curves, refined colors, subtle shadows, premium feel
+- **Corporate**: Structured grids, professional colors, conservative shapes, business-focused
+
+### **🎨 COLOR SCHEMES:**
+- **Modern**: Primary: "4F46E5", Secondary: "6366F1", Accent: "8B5CF6", Background: "FFFFFF", Text: "1F2937"
+- **Minimal**: Primary: "374151", Secondary: "6B7280", Accent: "9CA3AF", Background: "FFFFFF", Text: "374151"
+- **Colorful**: Primary: "EC4899", Secondary: "8B5CF6", Accent: "F59E0B", Background: "FFFFFF", Text: "1F2937"
+- **Elegant**: Primary: "059669", Secondary: "10B981", Accent: "34D399", Background: "FFFFFF", Text: "1F2937"
+- **Corporate**: Primary: "1F2937", Secondary: "4B5563", Accent: "6B7280", Background: "FFFFFF", Text: "1F2937"
+
+### **📝 CONTENT REQUIREMENTS:**
+- **Complete Sentences**: Write in full, engaging sentences and paragraphs about ${prompt}
+- **Meaningful Content**: Every piece of text must provide value to the audience regarding ${prompt}
+- **Logical Flow**: Content should tell a story and build understanding of ${prompt}
+- **Actionable Insights**: Provide practical takeaways and actionable information related to ${prompt}
+- **Audience Engagement**: Use language that connects with and motivates the audience about ${prompt}
+
+### **📋 JSON FORMAT WITH PROPER LAYOUT EXAMPLE:**
+
+**⚠️ IMPORTANT**: The positioning values below are EXAMPLES ONLY to show the format. DO NOT copy these exact positions. Create your own strategic positioning based on your content and design thinking.
+## 📝 JSON OUTPUT EXAMPLE:
+{
+  "title": "AI-Powered Presentation Design",
+  "slides": [
+    {
+      "slide": [
+        { "type": "text", "content": "Slide Title", "styles": {...}, "position": {...} },
+        { "type": "text", "content": "Subtitle for context", "styles": {...}, "position": {...} },
+        { "type": "shape", "content": "rect", "styles": {...}, "position": {...} },
+        { "type": "text", "content": "Main point inside visual container", "styles": {...}, "position": {...} },
+        { "type": "data visualization", "content": [...], "styles": {...}, "position": {...} }
+      ]
+    }
+  ]
+}
+
+### 🖋️ TEXT LEGIBILITY & SPACING RULES:
+
+- **Character Spacing (Tracking)**: Minimum 0.05" space between characters for all text
+- **Line Height (Leading)**: Minimum 1.4x the font size for clear line separation
+- **Internal Text Margins**: 
+   - Title & Subtitle Text Boxes: 2 margins on all sides
+   - Content Text Boxes: 25 margins on all sides
+- **Container Padding**: Every visual container (bullet point box, shape, etc.) must have at least 15 padding inside the box
+- **Inter-Element Gaps**:
+   - Minimum 3 space between all major elements (boxes, visuals, etc.)
+   - No text or shapes should touch or overlap each other at any time
+
+
+### **✅ CRITICAL OUTPUT REQUIREMENTS:**
+- **NO OVERLAPPING**: Every element must have its own space with massive 30% margins
+- **MANDATORY STRUCTURE**: Every slide must have title, subtitle, and meaningful content
+- **CREATIVE BOXES**: Bullet points must be in designed containers with borders and colors
+- **MEANINGFUL DESIGN**: Every visual element must serve a purpose and enhance understanding
+- **CREATIVE POSITIONING**: DO NOT copy example positions - think strategically about each element's placement using the 100% coordinate system
+- **DESIGN THINKING**: Position elements like a professional designer - consider visual balance, flow, and hierarchy
+- **PERCENTAGE POSITIONING**: Use ONLY percentage format like "50%" for x, y, w, h positions
+- **LARGE SPACING**: Minimum 30% gaps between all elements, no exceptions
+- **COMPLETE SENTENCES**: Write in full, engaging paragraphs, not bullet points
+- **AUDIENCE VALUE**: Every piece of content must provide value and insight
+- **ONLY JSON OUTPUT**: Only return the JSON object, no other text or comments, please only JSON output, no backticks, no other text, no other comments, no other formatting, no other anything, just the JSON object.
+
+**Topic**: Professional Presentation Design  
+**Style**: Visually Rich, Meaningful, ${style}  
+**Tone**: Professional, Engaging, ${tone}  
+**Design Goal**: Create slides that are visually stunning, professionally designed, and highly effective for audience comprehension  
+**Audience**: Professional presentation viewers who expect high-quality, meaningful content
+`;
+
 export const generatePrompt = (context: any, language: string = 'English') => ({
   role: 'system',
   content: `

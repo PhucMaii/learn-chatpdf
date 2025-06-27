@@ -14,7 +14,7 @@ export const createFlashCards = async (
   isGuest: boolean = false,
 ) => {
   try {
-    const context = await getContext(flashCardPrompt, medias, vectors.flat());
+    const context = await getContext(flashCardPrompt, medias, vectors?.flat() || null);
     const prompt: any = generatePrompt(context, 'English');
     // console.log('prompt', {prompt, medias, context, vectors});
 

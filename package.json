@@ -66,6 +66,7 @@
     "office-text-extractor": "^3.0.3",
     "openai-edge": "^1.2.2",
     "pdfjs-dist": "^4.7.76",
+    "pptxgenjs": "^4.0.1",
     "prettier": "^3.3.3",
     "react": "^18",
     "react-apexcharts": "^1.7.0",

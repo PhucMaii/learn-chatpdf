@@ -57,7 +57,6 @@ export default function EditProject({ open, onClose, project, refresh }: IProps)
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      
       <DialogContent className="bg-white">
         <DialogHeader>
           <DialogTitle>Edit Project</DialogTitle>

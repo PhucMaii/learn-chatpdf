@@ -5,7 +5,7 @@ import React, { useContext, useEffect } from 'react';
 import { Button } from './ui/button';
 import { UserContext } from '../../context/UserProvider';
 import NavDialog from './Dialogs/NavDialog';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import axios from 'axios';
 import Image from 'next/image';
@@ -78,7 +78,7 @@ const NavBar = () => {
   };
 
   return (
-    <motion.div variants={navbarVariants} initial="hidden" animate="visible">
+    <m.div variants={navbarVariants} initial="hidden" animate="visible">
       <div className="flex items-center justify-between px-8 w-full">
         <div className="flex items-center gap-2">
           <Link href={'/'}>
@@ -88,7 +88,7 @@ const NavBar = () => {
               alt="logo"
               src="/images/logo.png"
               className="w-10 h-10 rounded-full"
-              loading="eager"
+              loading="lazy"
             />
           </Link>
           <h1 className="text-emerald-500 font-bold text-xl">LearnPDF</h1>
@@ -127,7 +127,7 @@ const NavBar = () => {
           )}
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 };
 

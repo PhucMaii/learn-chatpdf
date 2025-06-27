@@ -7,7 +7,7 @@ import { pricingTabs } from '@/lib/constant';
 import axios from 'axios';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 const Pricing = () => {
@@ -47,7 +47,7 @@ const Pricing = () => {
   };
 
   return (
-    <motion.div variants={pageVariants} initial="hidden" animate="visible">
+    <m.div variants={pageVariants} initial="hidden" animate="visible">
       <div className="p-4 md:p-8 w-screen ">
         <NavBar />
 
@@ -126,7 +126,7 @@ const Pricing = () => {
           </div>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 };
 

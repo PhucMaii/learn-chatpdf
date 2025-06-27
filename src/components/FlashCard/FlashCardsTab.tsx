@@ -76,7 +76,7 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
             width={100}
             height={100}
             className="w-32 h-32"
-            loading="eager"
+            loading="lazy"
           />
           <div className="flex gap-2 items-center">
             <h4 className="text-center mt-8 font-medium text-lg">
@@ -94,7 +94,7 @@ const FlashCardsTab = ({ chatId, flashCards }: Props) => {
             className="w-32 h-32"
             width={100}
             height={100}
-            loading="eager"
+            loading="lazy"
           />
           <h4 className="text-center mt-8 font-medium text-lg">
             Sorry, we&apos;re failed to generate your flashcards. Don&apos;t
