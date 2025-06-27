@@ -1,14 +1,21 @@
 import { ApexOptions } from 'apexcharts';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ReactApexChart from 'react-apexcharts'
 
-export default function LineChart() {
+export default function LineChart({
+    seriesData,
+    options,
+    horizontalAxis,
+}: {
+    seriesData: any;
+    options: any;
+    horizontalAxis: any;
+}) {
     const [state, setState] = useState<any>({
-          
         series: [
           {
-            name: "Quiz Attempts",
-            data: [28, 29, 33, 36, 32, 32, 33]
+            name: "Score",
+            data: []
           },
         ],
         options: {
@@ -17,72 +24,201 @@ export default function LineChart() {
             type: 'line',
             dropShadow: {
               enabled: true,
-              color: '#000',
-              top: 18,
-              left: 7,
-              blur: 10,
-              opacity: 0.5
+              color: '#3B82F6',
+              top: 8,
+              left: 4,
+              blur: 15,
+              opacity: 0.3
             },
             zoom: {
               enabled: false
             },
             toolbar: {
               show: false
-            }
+            },
+            background: 'transparent',
+            foreColor: '#374151'
           },
-          colors: ['#77B6EA', '#545454'],
+          colors: ['#3B82F6'],
           dataLabels: {
             enabled: true,
+            style: {
+              fontSize: '12px',
+              fontWeight: '600',
+              colors: ['#1F2937']
+            },
+            background: {
+              enabled: true,
+              foreColor: '#FFFFFF',
+              borderRadius: 4,
+              borderWidth: 0,
+              opacity: 0.9,
+              dropShadow: {
+                enabled: false
+              }
+            }
           },
           stroke: {
-            curve: 'smooth'
+            curve: 'smooth',
+            width: 3,
+            colors: ['#3B82F6']
+          },
+          fill: {
+            type: 'gradient',
+            gradient: {
+              shade: 'light',
+              type: 'vertical',
+              shadeIntensity: 0.3,
+              gradientToColors: ['#60A5FA'],
+              inverseColors: false,
+              opacityFrom: 0.8,
+              opacityTo: 0.1,
+              stops: [0, 100]
+            }
           },
           title: {
-            text: 'Attemp Performance',
-            align: 'left'
+            text: 'Performance Over Time',
+            align: 'left',
+            style: {
+              fontSize: '18px',
+              fontWeight: '600',
+              color: '#1F2937'
+            }
           },
           grid: {
-            borderColor: '#e7e7e7',
+            borderColor: '#E5E7EB',
+            strokeDashArray: 4,
             row: {
-              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-              opacity: 0.5
+              colors: ['transparent', 'transparent'],
+              opacity: 0.1
             },
+            column: {
+              colors: ['transparent', 'transparent'],
+              opacity: 0.1
+            }
           },
           markers: {
-            size: 1
+            size: 6,
+            colors: ['#3B82F6'],
+            strokeColors: '#FFFFFF',
+            strokeWidth: 2,
+            hover: {
+              size: 8,
+              sizeOffset: 2
+            }
           },
           xaxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            categories: [],
             title: {
-              text: 'Month'
+              text: 'Date',
+              style: {
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#6B7280'
+              }
+            },
+            labels: {
+              style: {
+                colors: '#6B7280',
+                fontSize: '12px'
+              }
+            },
+            axisBorder: {
+              color: '#E5E7EB'
+            },
+            axisTicks: {
+              color: '#E5E7EB'
             }
           },
           yaxis: {
             title: {
-              text: 'Temperature'
+              text: 'Score (%)',
+              style: {
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#6B7280'
+              }
             },
-            min: 5,
-            max: 40
+            labels: {
+              style: {
+                colors: '#6B7280',
+                fontSize: '12px'
+              },
+              formatter: function(val: number) {
+                return val.toFixed(0) + '%';
+              }
+            },
+            min: 0,
+            max: 100,
+            tickAmount: 5
           },
           legend: {
             position: 'top',
             horizontalAlign: 'right',
             floating: true,
             offsetY: -25,
-            offsetX: -5
-          }
+            offsetX: -5,
+            labels: {
+              colors: '#6B7280'
+            },
+            markers: {
+              width: 12,
+              height: 12,
+              radius: 6
+            }
+          },
+          tooltip: {
+            theme: 'light',
+            style: {
+              fontSize: '12px'
+            },
+            y: {
+              formatter: function(val: number) {
+                return val.toFixed(1) + '%';
+              }
+            }
+          },
+          responsive: [{
+            breakpoint: 768,
+            options: {
+              chart: {
+                height: 250
+              },
+              dataLabels: {
+                enabled: false
+              }
+            }
+          }]
         },
-      
-      
     });
-  return (
-    <div>
-        <ReactApexChart 
-            options={state.options as ApexOptions} 
-            series={state.series} 
-            type="line"
-            height={350}
-        />
-    </div>
-  )
+
+    // Update chart data when props change
+    useEffect(() => {
+        setState({
+            series: [
+                {
+                    name: "Score",
+                    data: seriesData || []
+                },
+            ],
+            options: {
+                ...state.options,
+                xaxis: {
+                    ...state.options.xaxis,
+                    categories: horizontalAxis || []
+                }
+            }
+        });
+    }, [seriesData, horizontalAxis]);
+
+    return (
+        <div>
+            <ReactApexChart 
+                options={state.options as ApexOptions} 
+                series={state.series} 
+                type="line"
+                height={350}
+            />
+        </div>
+    )
 }

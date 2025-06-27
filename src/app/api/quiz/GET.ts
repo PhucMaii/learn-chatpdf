@@ -1,7 +1,7 @@
 import { getQueryParams } from '@/utils/query';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { quiz, quizQuestion } from '@/lib/db/schema';
+import { quiz, quizAttempt, quizQuestion } from '@/lib/db/schema';
 import { asc, eq } from 'drizzle-orm';
 
 const handler = async (req: Request) => {
@@ -16,7 +16,7 @@ const handler = async (req: Request) => {
     }
 
     // Get all quizzes with their questions using join
-    const quizWithQuestions = await db
+    const quizWithQuestions: any = await db
       .select({
         quiz: quiz,
         question: quizQuestion,
@@ -26,9 +26,16 @@ const handler = async (req: Request) => {
       .where(eq(quiz.projectId, Number(projectId)))
       .orderBy(asc(quizQuestion.index));
 
+    if (quizWithQuestions.length === 0) {
+      return NextResponse.json(
+        { data: {quiz: {}, quizAttempts: [], avgScore: 0}, message: 'No quiz found' },
+        { status: 200 },
+      );
+    }
+
     // Group the results by quiz
     const groupedQuizzes = quizWithQuestions.reduce(
-      (acc, row) => {
+      (acc: any, row: any) => {
         const quizId = row.quiz.id;
 
         if (!acc[quizId]) {
@@ -48,8 +55,16 @@ const handler = async (req: Request) => {
     );
 
     const result = Object.values(groupedQuizzes);
+
+    const quizAttempts = await db
+      .select()
+      .from(quizAttempt)
+      .where(eq(quizAttempt.quizId, Number(quizWithQuestions[0].quiz.id)));
+
+    const avgScore = quizAttempts.reduce((acc: number, attempt: any) => acc + attempt.score, 0) / quizAttempts.length;
+
     return NextResponse.json(
-      { data: result[0] || null, message: 'Quiz fetched successfully' },
+      { data: {...result[0] || {}, quizAttempts: quizAttempts, avgScore: avgScore}, message: 'Quiz fetched successfully' },
       { status: 200 },
     );
   } catch (error) {
