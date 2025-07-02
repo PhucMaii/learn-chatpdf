@@ -87,9 +87,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'your-google-verification-code',
-    yandex: 'your-yandex-verification-code',
-    yahoo: 'your-yahoo-verification-code',
+    google: '3bACgvbLFAm6mep-OeD3eMNgBOHGF3_0s7o7gQmjyBE',
   },
   category: 'education',
   classification: 'Educational Technology',
@@ -139,13 +137,6 @@ export default async function Home() {
               "price": "0",
               "priceCurrency": "USD",
               "description": "Free tier available with premium features"
-            },
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "1250",
-              "bestRating": "5",
-              "worstRating": "1"
             },
             "featureList": [
               "AI-powered PDF to flashcards conversion",

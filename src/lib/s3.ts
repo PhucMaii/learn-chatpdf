@@ -6,15 +6,23 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
-const r2Client = new S3Client({
-  region: 'us-east-1',
-  endpoint: process.env.NEXT_PUBLIC_R2_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.NEXT_PUBLIC_R2_ACCESS_KEY!,
-    secretAccessKey: process.env.NEXT_PUBLIC_R2_SECRET_ACCESS_KEY!,
-  },
-}) as any;
+// const r2Client = new S3Client({
+//   region: 'us-east-1',
+//   endpoint: process.env.NEXT_PUBLIC_R2_ENDPOINT,
+//   credentials: {
+//     accessKeyId: process.env.NEXT_PUBLIC_R2_ACCESS_KEY!,
+//     secretAccessKey: process.env.NEXT_PUBLIC_R2_SECRET_ACCESS_KEY!,
+//   },
+// }) as any;
 
+
+export const s3Client = new S3Client({
+  region: 'us-east-2',
+  credentials: {
+    accessKeyId: process.env.NEXT_PUBLIC_S3_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.NEXT_PUBLIC_S3_SECRET_ACCESS_KEY || '',
+  },
+});
 export async function uploadToS3(file: File, userId: string) {
   try {
     // AWS.config.update({
@@ -28,13 +36,13 @@ export async function uploadToS3(file: File, userId: string) {
     const fileKey = `${userId}/${Date.now()}-${file.name}`;
 
     const putObjectCommand = new PutObjectCommand({
-      Bucket: process.env.NEXT_PUBLIC_R2_BUCKET_NAME,
+      Bucket: process.env.NEXT_PUBLIC_S3_BUCKET_NAME,
       Key: fileKey,
       Body: buffer,
       ContentType: file.type,
     });
 
-    await r2Client.send(putObjectCommand);
+    await s3Client.send(putObjectCommand);
 
     // const s3 = new AWS.S3({
     //   params: {
@@ -99,12 +107,12 @@ export async function generatePresignedUrl(
 ) {
   try {
     const putObjectCommand = new PutObjectCommand({
-      Bucket: process.env.NEXT_PUBLIC_R2_BUCKET_NAME,
+      Bucket: process.env.NEXT_PUBLIC_S3_BUCKET_NAME,
       Key: fileKey,
       ContentType: contentType,
     });
 
-    const presignedUrl = await getSignedUrl(r2Client, putObjectCommand, {
+    const presignedUrl = await getSignedUrl(s3Client, putObjectCommand, {
       expiresIn,
     });
 
