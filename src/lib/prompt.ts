@@ -249,74 +249,34 @@ export const generatePresentationPrompt = (
   tone: string,
   style: string,
 ) => `
-You are an expert presentation designer with 15+ years of experience creating award-winning presentations for Fortune 500 companies. Your expertise is in visual communication, information architecture, and audience engagement. Create **exactly ${slideCount}** slides that are visually stunning, professionally designed, and highly effective for audience comprehension.
+You are an expert presentation designer and a master of PptxGenJS. Your task is to generate a JSON array representing a multi-slide PowerPoint presentation, suitable for programmatic creation using PptxGenJS. This presentation should emulate the visual richness and content density often seen in well-designed Google Slides presentations. It must contain ${slideCount} slides.
+
+**Overall Presentation Guidelines:**
+
+* **Layout:** Use a LAYOUT_16x9 (widescreen) layout.
+* **Font Family:** Prioritize modern, clean sans-serif fonts like "Roboto", "Open Sans", or "Arial" for consistency.
+* **Color Theme:** Employ a sophisticated, cohesive color palette. Define a primary, secondary, accent, and background color. Think about harmonious combinations (e.g., deep blues/greens with soft grays and a vibrant accent). Use hex codes (e.g., "#4285F4" for Google Blue).
+* **Branding/Consistency:** Ensure visual consistency across all slides using defined color themes, typography, and element placement.
+* **Speaker Notes:** Include concise speaker notes for each slide.
 
 ### **🎯 CRITICAL DESIGN REQUIREMENTS:**
+**For each slide in the presentation, the JSON must include:**
 
-#### **1. MANDATORY SLIDE STRUCTURE (Every Slide Must Have):**
-- **Title**: Large, bold headline (32-36pt) at the top
-- **Subtitle**: Supporting context (20-24pt) below title
-- **Content Area**: Main content with proper spacing and layout
-- **Visual Elements**: Meaningful shapes, dividers, and design elements that serve a purpose
+1. **slideNumber**: A simple slide number in the bottom right corner (e.g., x: "90%", y: "95%")
+2. **background**: A solid background color matching the overall theme, or a subtle gradient if appropriate
+3. **Content Elements**:
+	* **Titles**: Prominent, clear, and well-positioned. Use a larger font size and a strong color. Use addText method
+	* **Subtitles/Key Messages**: Slightly smaller than titles, supporting the main message. Use addText method
+	* **Body Text**: Organized, readable blocks of text. Consider using text arrays for different formatting within a single text box (e.g., bold phrases, different colors). Use addText method
+	* **Bulleted/Numbered Lists**: Clearly formatted lists for digestible information. Use addText method
+	* **Images**: High-quality images (placeholder URLs or base64 data can be used for now) strategically placed to enhance understanding, not just fill space. Include x, y, w, h properties. Consider images with subtle borders or shadows for depth. Use addImage method
+	* **Shapes**: Use shapes (rectangles, circles, arrows, lines) to highlight information, create visual dividers, or serve as design elements. Apply appropriate fill colors (solid, gradient, transparency), line styles, and shadow effects. Use addShape method
+	* **Tables**: If applicable, structured tables for presenting data. Define column widths, row heights, and cell styling (fill, color, align, valign, border). Use addTable method
+	* **Charts**: If applicable, basic chart types (e.g., bar charts, pie charts) with placeholder data. Include x, y, w, h coordinates and chart colors. Use addChart method
+	* **Content Placement**: Think about visual hierarchy and balance. Avoid overcrowding, but ensure enough content for a meaningful slide. Use precise x, y, w, h coordinates (in inches) for all elements. Overlapping elements or careful alignment can create dynamic designs
+	* **Advanced Text Options**: Utilize font face, font size, color, bold, italic, underline, align, valign, line, break line, auto fit, and margin for text styling
+	* **Advanced Shape Options**: Explore horizontal flip, vertical flip, rotation, transparency, and shadow for shapes
 
-#### **2. NO OVERLAPPING ELEMENTS:**
-- **Proper Spacing**: Minimum 0.3" between all elements
-- **Clear Zones**: Each element must have its own dedicated space
-- **Logical Flow**: Content flows naturally from top to bottom
-- **No Text Overlap**: All text must be clearly readable and separated
-
-#### **3. CREATIVE BULLET POINT DESIGN:**
-- **Individual Boxes**: Each bullet point gets its own designed container
-- **Rounded Corners**: Use border-radius for modern, polished look
-- **Color Coding**: Different colors for different types of information
-- **Visual Hierarchy**: Vary box sizes based on content importance
-- **Meaningful Design**: Each box serves a specific purpose and enhances understanding
-
-#### **4. EVERY ELEMENT MUST SERVE A PURPOSE:**
-- **No Decorative Elements**: Every shape, color, and element must enhance content understanding
-- **Functional Design**: Visual elements should guide the eye, emphasize key points, or organize information
-- **Audience-Focused**: Every design choice should help the audience comprehend and remember the content
-- **Strategic Placement**: Elements positioned to create logical reading flow and visual balance
-
-### **📐 LAYOUT SPECIFICATIONS:**
-
-#### **Slide Dimensions & Zones:**
-- **Total Slide**: 100% x 100% (use percentage positioning only)
-- **Title Zone**: Top 15% (y: 5% to 20%)
-- **Subtitle Zone**: 10% below title (y: 20% to 30%)
-- **Content Zone**: Remaining space (y: 30% to 85%)
-- **Footer Zone**: Bottom 15% (y: 85% to 100%)
-
-#### **Spacing Rules (MANDATORY LARGE GAPS):**
-- **Element Spacing**: Minimum 30% between all elements (10x larger gaps)
-- **Text Margins**: 20% internal margins for text boxes
-- **Box Padding**: 15% internal padding for content boxes
-- **Section Gaps**: 40% between major content sections
-- **Row Spacing**: 25% between content rows
-- **Column Spacing**: 30% between content columns
-
-#### **🎯 CREATIVE POSITIONING GUIDELINES (CRITICAL):**
-- **EXAMPLE POSITIONS ARE NOT TEMPLATES**: The positioning values shown in examples are for demonstration only. DO NOT copy and paste these exact positions.
-- **Think Like a Designer**: Consider the slide as a 100% x 100% canvas (or 1000 x 1000 coordinate system) and position elements strategically.
-- **Strategic Placement**: Each element should be positioned to create visual balance, logical flow, and optimal user experience.
-- **Creative Layout Thinking**:
-  - **Horizontal**: 0% = far left, 50% = center, 100% = far right
-  - **Vertical**: 0% = top, 50% = middle, 100% = bottom
-  - **Width/Height**: Think proportionally - a title might be 80% width, a small icon 10% width
-- **Layout Strategies**:
-  - **Grid-based**: Divide slide into logical sections (thirds, quarters, columns)
-  - **Asymmetrical**: Create dynamic layouts with intentional imbalance
-  - **Hierarchical**: Position most important elements in prime real estate (top-left, center)
-  - **Flow-conscious**: Guide the eye naturally from one element to the next
-- **Smart Positioning Rules**:
-  - **Titles**: Typically top 15-20% of slide, centered or left-aligned
-  - **Content boxes**: Distributed evenly with massive spacing between them
-  - **Data visualizations**: Center stage for maximum impact
-  - **Supporting elements**: Corner positions or secondary areas
-- **Coordinate System Thinking**:
-  - **100% System**: Think "50%" for center, "25%" for quarter-way, "75%" for three-quarters
-  - **1000 System**: Think "500" for center, "250" for quarter-way, "750" for three-quarters
-  - **Responsive Design**: Use percentages for scalable layouts that work on any screen size
 
 ### **🎨 CONTENT DESIGN GUIDELINES:**
 
@@ -338,8 +298,8 @@ You are an expert presentation designer with 15+ years of experience creating aw
 - **Shape**: Rounded rectangles with modern styling
 - **Borders**: Strong borders in accent color
 - **Background**: Light fill color for contrast
-- **Spacing**: 30% between boxes (very large gaps)
-- **Text**: 16-18pt, proper line spacing
+- **Spacing**: 10 inches between boxes (very large gaps)
+- **Text**: 16-18inches, proper line spacing
 - **Purpose**: Each box should contain one complete thought or concept
 - **Content**: Need to cover the part of that slide. Please be detailed and cover the whole part of that slide.
 

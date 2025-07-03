@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
+import pptxgenjs from 'pptxgenjs';
 import {
   Card,
   CardContent,
@@ -83,7 +84,6 @@ export default function Presentation() {
 
   const handleGenerate = async () => {
     if (!window) return;
-    if (!formData.prompt.trim()) return;
 
     setIsGenerating(true);
     setError(null);
@@ -398,7 +398,7 @@ export default function Presentation() {
                   )}
                   <Button
                     onClick={handleGenerate}
-                    disabled={!formData.prompt.trim() || isGenerating}
+                    disabled={isGenerating}
                     className="w-full py-4 px-8 rounded-xl font-semibold text-lg bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isGenerating ? (
