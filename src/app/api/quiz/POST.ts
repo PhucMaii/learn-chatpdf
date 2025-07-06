@@ -6,7 +6,6 @@ import { createQuiz } from '../utils/quiz';
 
 const handler = async (req: Request) => {
   try {
-    console.log('POST request received');
     const guestSessionId = getQueryParams(req, 'guestSessionId');
     const authRes: any = await handleAuthGuard(guestSessionId || undefined);
 
@@ -25,11 +24,8 @@ const handler = async (req: Request) => {
       );
     }
 
-    console.log(projectId, 'projectId');
     // Check project exist
     const { medias: projectMedias } = await getMedias(Number(projectId));
-
-    console.log(projectMedias, 'projectMedias');
 
     await createQuiz(
       projectMedias,

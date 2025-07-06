@@ -8,11 +8,15 @@ import {
 import { withAuthGuard } from '@/utils/guard';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
+import { createQuiz } from '../../utils/quiz';
+import { getMedias } from '../../utils/medias';
+import { handleAuthGuard } from '@/utils/auth';
+import { getQueryParams } from '@/utils/query';
 
 const handler = async (req: NextRequest) => {
   try {
     const body = await req.json();
-    console.log('Request body:', body);
+    const guestSessionId = getQueryParams(req, 'guestSessionId');
 
     const { questionCount, duration, projectId } = body;
 
@@ -26,23 +30,41 @@ const handler = async (req: NextRequest) => {
       );
     }
 
+    const authRes: any = await handleAuthGuard(guestSessionId || undefined);
+
     // Check if quiz exists
     const existingQuizzes = await db
       .select()
       .from(quiz)
       .where(eq(quiz.projectId, projectId));
 
-    if (!existingQuizzes || existingQuizzes.length === 0) {
-      return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
+    let quizToStart = existingQuizzes[0] || null;
+
+    if (!quizToStart) {
+      // create a new quiz
+      const { medias: projectMedias } = await getMedias(Number(projectId));
+
+      const newQuiz = await createQuiz(
+        projectMedias,
+        Number(projectId),
+        authRes.id,
+        authRes.type === 'guest',
+      );
+
+      quizToStart = newQuiz.quiz;
+    } else {
+      quizToStart = existingQuizzes[0];
     }
 
-    const quizId = existingQuizzes[0].id;
+    console.log(quizToStart, 'quizToStart');
 
     // Get questions for this quiz
     const dbQuestions = await db
       .select()
       .from(quizQuestion)
-      .where(eq(quizQuestion.quizId, quizId));
+      .where(eq(quizQuestion.quizId, quizToStart.id));
+
+    console.log(dbQuestions, 'dbQuestions');
 
     if (dbQuestions.length < questionCount) {
       return NextResponse.json(
@@ -53,14 +75,16 @@ const handler = async (req: NextRequest) => {
       );
     }
 
+    console.log(questionCount, 'questionCount');
+
     // Convert duration from minutes to seconds
     const durationInSeconds = duration * 60;
 
     const attemptData = {
-      quizId,
-      projectId: existingQuizzes[0].projectId,
-      userId: existingQuizzes[0].userId,
-      guestId: existingQuizzes[0].guestId,
+      quizId: quizToStart.id,
+      projectId: quizToStart.projectId,
+      userId: quizToStart.userId,
+      guestId: quizToStart.guestId,
       startedAt: new Date(),
       endedAt: null,
       score: null,
