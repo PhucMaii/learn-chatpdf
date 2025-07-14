@@ -15,27 +15,27 @@ import { domAnimation, LazyMotion } from 'framer-motion';
 const teachers = localFont({
   src: [
     {
-      path: './fonts/Teachers-Regular.ttf',
+      path: './fonts/Roboto/Roboto-Regular.ttf',
       weight: '400',
       style: 'normal',
     },
     {
-      path: './fonts/Teachers-Medium.ttf',
+      path: './fonts/Roboto/Roboto-Medium.ttf',
       weight: '500',
       style: 'normal',
     },
     {
-      path: './fonts/Teachers-SemiBold.ttf',
+      path: './fonts/Roboto/Roboto-SemiBold.ttf',
       weight: '600',
       style: 'normal',
     },
     {
-      path: './fonts/Teachers-Bold.ttf',
+      path: './fonts/Roboto/Roboto-Bold.ttf',
       weight: '800',
       style: 'normal',
     },
     {
-      path: './fonts/Teachers-ExtraBold.ttf',
+      path: './fonts/Roboto/Roboto-ExtraBold.ttf',
       weight: '900',
       style: 'normal',
     },

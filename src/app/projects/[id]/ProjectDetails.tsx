@@ -23,59 +23,65 @@ import LoadingComponent from '@/components/LoadingComponent';
 import toast from 'react-hot-toast';
 import Essay from '@/components/Projects/Essay';
 import QuizSummary from '@/components/Projects/QuizSummary';
+import { tabsInProjectDetails } from '@/lib/constant';
+import Summary from '@/components/Projects/Summary';
 
 // Memoized tab button component for better performance
 // eslint-disable-next-line react/display-name
-const TabButton = memo(({ 
-  tab, 
-  isActive, 
-  onClick, 
-  icon: Icon, 
-  label 
-}: {
-  tab: string;
-  isActive: boolean;
-  onClick: (tab: string) => void;
-  icon: any;
-  label: string;
-}) => (
-  <Button
-    variant={isActive ? 'default' : 'ghost'}
-    onClick={() => onClick(tab)}
-    className="justify-start gap-2 transition-all duration-150 md:w-full"
-  >
-    <Icon className="w-5 h-5" />
-    <span className="hidden sm:block md:block">{label}</span>
-  </Button>
-));
+const TabButton = memo(
+  ({
+    tab,
+    isActive,
+    onClick,
+    icon: Icon,
+    label,
+  }: {
+    tab: string;
+    isActive: boolean;
+    onClick: (tab: string) => void;
+    icon: any;
+    label: string;
+  }) => (
+    <Button
+      variant={isActive ? 'default' : 'ghost'}
+      onClick={() => onClick(tab)}
+      className="justify-start gap-2 transition-all duration-150 md:w-full"
+    >
+      <Icon className="w-5 h-5" />
+      <span className="hidden sm:block md:block">{label}</span>
+    </Button>
+  ),
+);
 
 // Mobile tab button component
 // eslint-disable-next-line react/display-name
-const MobileTabButton = memo(({ 
-  tab, 
-  isActive, 
-  onClick, 
-  icon: Icon, 
-  label 
-}: {
-  tab: string;
-  isActive: boolean;
-  onClick: (tab: string) => void;
-  icon: any;
-  label: string;
-}) => (
-  <button
-    onClick={() => onClick(tab)}
-    className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-150 ${
-      isActive 
-        ? 'bg-primary text-primary-foreground text-white font-semibold' 
-        : 'text-gray-600 hover:text-gray-900'
-    }`}
-  >
-    <Icon className="w-5 h-5 mb-1" />
-    <span className="text-xs font-medium">{label}</span>
-  </button>
-));
+const MobileTabButton = memo(
+  ({
+    tab,
+    isActive,
+    onClick,
+    icon: Icon,
+    label,
+  }: {
+    tab: string;
+    isActive: boolean;
+    onClick: (tab: string) => void;
+    icon: any;
+    label: string;
+  }) => (
+    <button
+      onClick={() => onClick(tab)}
+      className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-150 ${
+        isActive
+          ? 'bg-primary text-primary-foreground text-white font-semibold'
+          : 'text-gray-600 hover:text-gray-900'
+      }`}
+    >
+      <Icon className="w-5 h-5 mb-1" />
+      <span className="text-xs font-medium">{label}</span>
+    </button>
+  ),
+);
 
 export default function ProjectDetails() {
   const { id } = useParams();
@@ -109,17 +115,20 @@ export default function ProjectDetails() {
   }, [tab, router, id]);
 
   // Handle tab selection changes - optimized for responsiveness
-  const handleTabChange = useCallback((newTab: string) => {
-    // Immediately update local state for instant feedback
-    setSelectedTab(newTab);
-    
-    // Update URL without waiting for router
-    const url = `/projects/${id}?tab=${newTab}`;
-    window.history.pushState({}, '', url);
-    
-    // Use router.replace for faster navigation without adding to history
-    router.replace(url);
-  }, [router, id]);
+  const handleTabChange = useCallback(
+    (newTab: string) => {
+      // Immediately update local state for instant feedback
+      setSelectedTab(newTab);
+
+      // Update URL without waiting for router
+      const url = `/projects/${id}?tab=${newTab}`;
+      window.history.pushState({}, '', url);
+
+      // Use router.replace for faster navigation without adding to history
+      router.replace(url);
+    },
+    [router, id],
+  );
 
   useEffect(() => {
     if (isInitialized) {
@@ -196,8 +205,20 @@ export default function ProjectDetails() {
             <FoldersIcon className="w-5 h-5" />
             <h6 className="hidden sm:block">Projects</h6>
           </Button>
-          <h2 className="text-xl font-semibold mb-2 hidden sm:block">Explore</h2>
-          <TabButton
+          <h2 className="text-xl font-semibold mb-2 hidden sm:block">
+            Explore
+          </h2>
+          {tabsInProjectDetails.map((tab) => (
+            <TabButton
+              key={tab.params}
+              tab={tab.params}
+              isActive={selectedTab === tab.params}
+              onClick={handleTabChange}
+              icon={tab.icon}
+              label={tab.title}
+            />
+          ))}
+          {/* <TabButton
             tab="chat"
             isActive={selectedTab === 'chat'}
             onClick={handleTabChange}
@@ -238,18 +259,23 @@ export default function ProjectDetails() {
             onClick={handleTabChange}
             icon={FileQuestionIcon}
             label="Quizzes"
-          />
+          /> */}
         </aside>
 
         {/* Desktop Main Content */}
         <main className="col-span-10 px-6 pt-4 h-screen overflow-y-auto">
           <Tabs value={selectedTab || 'chat'} className="w-full">
             <TabsList className="hidden">
-              <TabsTrigger value="flashcards">Flashcards</TabsTrigger>
-              <TabsTrigger value="medias">Media</TabsTrigger>
-              <TabsTrigger value="chat">Chat with AI</TabsTrigger>
-              <TabsTrigger value="exam">Exam Mode</TabsTrigger>
+              {tabsInProjectDetails.map((tab) => (
+                <TabsTrigger key={tab.params} value={tab.params}>
+                  {tab.title}
+                </TabsTrigger>
+              ))}
             </TabsList>
+
+            <TabsContent value="summary">
+              <Summary />
+            </TabsContent>
 
             <TabsContent value="medias">
               <Media setLoading={setLoading} />

@@ -381,3 +381,21 @@ export const quizAttempt = pgTable(
     projectIdIdx: index('quiz_attempt_project_id_idx').on(table.projectId),
   }),
 );
+
+export const summary = pgTable(
+  'summary',
+  {
+    id: serial('id').primaryKey(),
+    projectId: integer('project_id').references(() => project.id, {
+      onDelete: 'cascade',
+    }),
+    title: text('title').notNull(),
+    text: text('text').notNull(),
+    userId: varchar('user_id', { length: 256 }),
+    guestId: varchar('guest_id', { length: 256 }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => ({
+    projectIdIdx: index('summary_project_id_idx').on(table.projectId),
+  }),
+);

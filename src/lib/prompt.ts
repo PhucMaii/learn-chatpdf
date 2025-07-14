@@ -191,6 +191,65 @@ Audience: **College Students (20s, exam-focused)**
 Expected JSON Word Count: 3000-5000 words
 `;
 
+export const summaryPrompt = `
+You are an expert AI study assistant. Generate a **concise, high-quality summary** for college students to quickly understand the document. Write in point, bullet point style. Each topic should be a point and the content should be a bullet point.
+
+### 📌 Instructions:
+- Use **only** content from the provided document. **Do not add or fabricate details**.
+- Cover **everything** from the document, skipping only irrelevant content.
+- Write in academic yet approachable tone for busy students who want quick understanding about the document.
+- The guide should be:
+  - **Concise**: Avoid fluff or repetition
+  - **Accurate**: Stick 100% to document content
+  - **Readable**: Use well-structured topics and bullet points
+  - **Complete**: Include all important, exam-relevant content
+  - **Engaging**: Feel like high-value summary
+
+### 🧾 Output Format:
+Return a **valid JSON object** without Markdown code fences or language tags. Output **only the JSON**.
+
+- Escape newlines as \\n
+- Escape double quotes as \\"
+- Use standard ASCII quotes only
+- No template literals
+
+Format:
+{
+  "title": "Summary Title",
+  "summary": "Summary Content"
+}
+
+The markdown content must follow:
+## [Topic 1]
+[Well-written bullet points explaining the topic]
+
+## [Topic 2]
+[Well-written bullet points explaining the topic]
+
+...
+
+### ✅ Tips:
+- Use meaningful subheadings for skimmable structure
+- Bold or italicize for emphasis (markdown supported)
+- Focus on **explaining concepts**, not just stating them
+- Make it feel like written by a top student for other top students
+- Bold and Capitalize Topic names for easy navigation
+
+### 🛑 Restrictions:
+- No filler text or introductions about yourself
+- No character count—only include final word count at bottom
+- Do not make up or infer anything beyond the document
+- Only return the JSON object
+
+---
+
+Topic: **Summary Generator**
+Style: **Academic, Concise, Human, Friendly**
+Tone: **Human, Academic, Friendly**
+Audience: **College Students (20s, exam-focused)**
+Output: **Point, bullet point style markdown inside a valid JSON object**
+`;
+
 export const generateEssayPrompt = (
   wordCount: number,
   language: string = 'English',

@@ -8,6 +8,7 @@ import { createFlashCards } from '../../utils/flashcards';
 // import { createStudyGuide } from '../../utils/studyGuide';
 import { getVectorsFromMedias } from '@/lib/context';
 import { createQuiz } from '../../utils/quiz';
+import { createSummary } from '../../utils/summary';
 
 // interface IBody {
 //   projectId: number;
@@ -193,6 +194,15 @@ export async function GET(req: NextRequest) {
           .where(eq(medias.projectId, Number(projectId)));
 
         send({ stage: 'upload successfully' });
+
+        send({ stage: 'Generating summary...' });
+        await createSummary(
+          projectMedias,
+          Number(projectId),
+          toUseId.id,
+          toUseId.isGuest,
+          vectors,
+        );
 
         send({ stage: 'Generating flashcards...' });
         // create flashcard

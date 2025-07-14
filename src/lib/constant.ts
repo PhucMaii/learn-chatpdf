@@ -7,8 +7,10 @@ import {
   FoldersIcon,
   // FacebookIcon,
   GraduationCapIcon,
+  ImageIcon,
   InstagramIcon,
   MailIcon,
+  MessageCircleIcon,
   // MessageCircleMoreIcon,
   NotebookIcon,
   NotebookPenIcon,
@@ -16,6 +18,11 @@ import {
   RocketIcon,
   ShieldCheckIcon,
   TwitterIcon,
+  NotepadTextIcon,
+  BookOpen,
+  FileTextIcon,
+  FileQuestionIcon,
+  FileCheckIcon,
 } from 'lucide-react';
 import { IFeature } from './type';
 
@@ -329,3 +336,41 @@ export const flashCardWidthResponsive = `
 export const flashCardTextResponsive = `
 text-lg sm:text-xl md:text-2xl lg:text-3xl
 `;
+
+export const tabsInProjectDetails = [
+  {
+    title: 'Summary',
+    icon: FileCheckIcon,
+    params: 'summary',
+  },
+  {
+    title: 'Chat With AI',
+    icon: MessageCircleIcon,
+    params: 'chat',
+  },
+  {
+    title: 'Media',
+    icon: ImageIcon,
+    params: 'medias',
+  },
+  {
+    title: 'Flashcards',
+    icon: BookOpen,
+    params: 'flashcards',
+  },
+  {
+    title: 'Study Guide',
+    icon: NotepadTextIcon,
+    params: 'studyGuide',
+  },
+  {
+    title: 'Essay',
+    icon: FileTextIcon,
+    params: 'essay',
+  },
+  {
+    title: 'Quizzes',
+    icon: FileQuestionIcon,
+    params: 'quizzes',
+  },
+];
