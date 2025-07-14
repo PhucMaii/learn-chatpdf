@@ -190,7 +190,7 @@ export default async function Home() {
       />
 
       <div className="max-w-[1400px] mx-auto min-h-screen flex justify-center">
-        <div className="py-4 md:py-8 px-4 md:px-8 flex flex-col gap-8 md:gap-16 w-full m-0 overflow-x-hidden overflow-y-scroll">
+        <div className="py-2 md:py-8 px-2 md:px-8 flex flex-col gap-4 md:gap-16 w-full m-0 overflow-x-hidden">
           {/* Navigation */}
           <NavBar />
           
@@ -205,11 +205,6 @@ export default async function Home() {
           
           {/* Benefits & Value Proposition */}
           <Gain />
-          
-          {/* Call to Action */}
-          {/* <div className="w-full p-8 md:p-16">
-            <InvitationCard />
-          </div> */}
           
           {/* Footer */}
           <Footer />

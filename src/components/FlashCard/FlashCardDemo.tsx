@@ -18,7 +18,7 @@ export default function FlashCardDemo({ className }: { className?: string }) {
     >
       <div
         className={cn(
-          `relative flipper-container flex flex-col justify-center items-center h-[600px] ${className}`,
+          `relative flipper-container flex flex-col justify-center items-center h-full w-full ${className}`,
           // { '2xl:w-[700px] w-[400px] h-[600px]': isInChat },
         )}
       >
@@ -26,11 +26,11 @@ export default function FlashCardDemo({ className }: { className?: string }) {
           {/* Front Side */}
           <div
             className={cn(
-              ' rounded-b-2xl front flex justify-center items-center xl:w-[900px] lg:w-[500px] w-[400px] h-[600px] bg-emerald-50 shadow-xl p-6 rounded-t-2xl border-2 border-emerald-300',
+              'rounded-b-xl md:rounded-b-2xl front flex justify-center items-center w-full h-full bg-emerald-50 shadow-xl p-4 md:p-6 rounded-t-xl md:rounded-t-2xl border-2 border-emerald-300 cursor-pointer',
             )}
             onClick={handleFlip}
           >
-            <h6 className="text-3xl text-black text-center font-semibold leading-[2.5rem]">
+            <h6 className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-black text-center font-semibold leading-relaxed">
               ✨ Real talk: What actually helps you remember stuff better:
               highlighting or testing yourself?
             </h6>
@@ -38,12 +38,12 @@ export default function FlashCardDemo({ className }: { className?: string }) {
 
           <div
             className={cn(
-              'back flex justify-center items-center xl:w-[900px] lg:w-[500px] w-[400px] h-[600px] bg-sky-50 shadow-xl p-6 rounded-t-2xl border-2 border-sky-300 rounded-b-2xl',
+              'back flex justify-center items-center w-full h-full bg-sky-50 shadow-xl p-4 md:p-6 rounded-t-xl md:rounded-t-2xl border-2 border-sky-300 rounded-b-xl md:rounded-b-2xl cursor-pointer',
             )}
             onClick={handleFlip}
           >
-            <h6 className="text-3xl text-black text-center font-semibold leading-[2.5rem]">
-              🎯 Testing yourself! That’s called active recall, and it’s like a
+            <h6 className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-black text-center font-semibold leading-relaxed">
+              🎯 Testing yourself! That&apos;s called active recall, and it&apos;s like a
               workout for your brain. Highlighting feels productive, but
               flashcards actually train your memory. So yeah, your brain called.
               It wants more flashcards. 😄

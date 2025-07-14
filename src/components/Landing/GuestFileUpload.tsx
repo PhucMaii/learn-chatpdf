@@ -1,17 +1,16 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDropzone } from 'react-dropzone';
-import { toast } from 'react-hot-toast';
-import { Progress } from '@/components/ui/progress';
 import { Inbox, Loader2 } from 'lucide-react';
 import { UserContext } from '../../../context/UserProvider';
 import { uploadToS3WithPresignedUrl } from '@/lib/s3';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { Button } from '../ui/button';
 import axios from 'axios';
-// Define the IProps interface if not already defined
+import { toast } from 'react-hot-toast';
+import { Progress } from '../ui/progress';
+
 interface IProps {
-  noIncludeLink?: boolean;
   className?: string;
   msg?: string;
   projectId?: number | string;

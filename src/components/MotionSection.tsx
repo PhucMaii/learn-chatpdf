@@ -5,22 +5,25 @@ import { useReducedMotion } from '@/hooks/use-mobile';
 const MotionSection = ({ children }: { children: React.ReactNode }) => {
   const prefersReducedMotion = useReducedMotion();
 
-  if (prefersReducedMotion) {
+  // Check if user is on mobile (simple check)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+  if (prefersReducedMotion || isMobile) {
     return <div>{children}</div>;
   }
 
   return (
     <m.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ 
-        duration: 0.5, 
+        duration: 0.3, 
         ease: 'easeOut',
-        delay: 0.1 
+        delay: 0.05 
       }}
       viewport={{ 
         once: true,
-        margin: "-50px"
+        margin: "-20px"
       }}
     >
       {children}
