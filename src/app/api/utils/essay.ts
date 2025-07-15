@@ -17,7 +17,7 @@ export const generateEssay = async (
 
   const prompt: any = generatePrompt(context, language);
 
-  const response: any = await openai.createChatCompletion({
+  const response: any = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       prompt,
@@ -29,11 +29,12 @@ export const generateEssay = async (
   });
 
   // console.log('pass prompt');
-  const completionData = await response.json();
+  const messageContent = response.choices[0].message.content;
+  if (!messageContent) {
+    throw new Error('No content received from OpenAI');
+  }
 
-  const formattedMessages = JSON.parse(
-    completionData.choices[0].message.content,
-  );
+  const formattedMessages = JSON.parse(messageContent);
 
   const newEssay = await db.insert(essays).values({
     projectId: projectId,

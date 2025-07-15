@@ -40,7 +40,7 @@ export const createQuiz = async (
 
   const prompt: any = generatePrompt(context, 'English');
 
-  const response = await openai.createChatCompletion({
+  const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       prompt,
@@ -49,16 +49,23 @@ export const createQuiz = async (
     ],
   });
 
-  const completionData = await response.json();
-  const formattedMessages: any = JSON.parse(
-    completionData.choices[0].message.content,
-  );
+  const messageContent = response.choices[0].message.content;
+  if (!messageContent) {
+    throw new Error('No content received from OpenAI');
+  }
+
+  const formattedMessages: any = JSON.parse(messageContent);
 
   // Check if quiz already exists
-  const existingQuiz = await db.select().from(quiz).where(eq(quiz.projectId, projectId));
+  const existingQuiz = await db
+    .select()
+    .from(quiz)
+    .where(eq(quiz.projectId, projectId));
   if (existingQuiz.length > 0) {
     await db.delete(quiz).where(eq(quiz.projectId, projectId));
-    await db.delete(quizQuestion).where(eq(quizQuestion.quizId, existingQuiz[0].id));
+    await db
+      .delete(quizQuestion)
+      .where(eq(quizQuestion.quizId, existingQuiz[0].id));
   }
 
   // Create quiz in db

@@ -23,7 +23,7 @@ export const createStudyGuide = async (
 
     const prompt: any = generatePrompt(context, 'English');
 
-    const response = await openai.createChatCompletion({
+    const response = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
             prompt,
@@ -34,11 +34,13 @@ export const createStudyGuide = async (
         ]
     });
 
-    const completionData = await response.json();
-    // const jsonData = completionData.choices[0].message;
-    console.log(completionData.choices[0].message, 'completionData');
+    const messageContent = response.choices[0].message.content;
+    if (!messageContent) {
+      throw new Error('No content received from OpenAI');
+    }
+    const formattedMessages: any = JSON.parse(messageContent);
 
-    const formattedMessages: any = JSON.parse(completionData.choices[0].message.content);
+    console.log(formattedMessages, 'formattedMessages');
 
     console.log(formattedMessages, 'formattedMessages');
     // Check if study guide already exists

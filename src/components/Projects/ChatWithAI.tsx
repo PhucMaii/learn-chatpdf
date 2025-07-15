@@ -4,35 +4,32 @@ import { Button } from '@/components/ui/button';
 import MessageList from '../MessageList';
 import SelectComponent from '../SelectComponent';
 import { languages } from '@/lib/constant';
-import { useChat } from 'ai/react';
 import { useParams } from 'next/navigation';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import SectionContainer from '../SectionContainer';
 
+interface Message {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
 export default function ChatWithAI() {
   const { id: projectId } = useParams();
-  const [initialMsg, setInitialMsg] = useState<any>(null);
+  const [initialMsg, setInitialMsg] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [guestSession, setGuestSession, isInitialized] = useLocalStorage(
+  const [guestSession, _setGuestSession, isInitialized] = useLocalStorage(
     'guest-session',
     {},
   );
 
   const [language, setLanguage] = useState<string>('English');
-
-  const { input, handleSubmit, handleInputChange, messages, isLoading } =
-    useChat({
-      api: `/api/chat?guestSessionId=${guestSession?.sessionId}`,
-      body: {
-        projectId,
-        language,
-        isAnswerOutOfContext: false,
-      },
-      initialMessages: initialMsg || [],
-    });
 
   useEffect(() => {
     // Ensure guestSession is ready before fetching messages
@@ -40,6 +37,13 @@ export default function ChatWithAI() {
       fetchMsg();
     }
   }, [isInitialized]);
+
+  useEffect(() => {
+    // Set messages when initial messages are loaded
+    if (initialMsg && initialMsg.length > 0) {
+      setMessages(initialMsg);
+    }
+  }, [initialMsg]);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
@@ -55,7 +59,7 @@ export default function ChatWithAI() {
       // Set height but don't exceed 5 rows
       textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px';
     }
-  }, [messages]);
+  }, [input]);
 
   const fetchMsg = async () => {
     try {
@@ -72,6 +76,137 @@ export default function ChatWithAI() {
     } catch (error: any) {
       console.log('There was an error in fetching messages: ', error);
       toast.error('Something went wrong in fetching messages');
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+  };
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    
+    if (!input.trim() || isLoading) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: input.trim(),
+    };
+
+    // Add user message immediately
+    setMessages(prev => [...prev, userMessage]);
+    
+    // Create assistant message placeholder for streaming
+    const assistantMessageId = (Date.now() + 1).toString();
+    const assistantMessage: Message = {
+      id: assistantMessageId,
+      role: 'assistant',
+      content: '',
+    };
+    
+    setMessages(prev => [...prev, assistantMessage]);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      // Make the streaming request
+      const response = await fetch(`/api/chat?guestSessionId=${guestSession?.sessionId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [...messages, userMessage],
+          projectId,
+          language,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response');
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) {
+        throw new Error('No reader available');
+      }
+
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        
+        // Process complete SSE messages
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6); // Remove 'data: ' prefix
+            
+            if (data === '[DONE]') {
+              setIsLoading(false);
+              continue;
+            }
+
+            try {
+              const parsed = JSON.parse(data);
+              
+              switch (parsed.type) {
+                case 'content':
+                  // Update the assistant message with new content
+                  setMessages(prev => 
+                    prev.map(msg => 
+                      msg.id === assistantMessageId 
+                        ? { ...msg, content: msg.content + parsed.content }
+                        : msg
+                    )
+                  );
+                  break;
+                  
+                case 'done':
+                  setIsLoading(false);
+                  // Optionally update with final complete response
+                  setMessages(prev => 
+                    prev.map(msg => 
+                      msg.id === assistantMessageId 
+                        ? { ...msg, content: parsed.fullResponse }
+                        : msg
+                    )
+                  );
+                  break;
+                  
+                case 'error':
+                  setIsLoading(false);
+                  toast.error(parsed.error || 'An error occurred');
+                  // Remove the placeholder assistant message on error
+                  setMessages(prev => 
+                    prev.filter(msg => msg.id !== assistantMessageId)
+                  );
+                  break;
+              }
+            } catch (parseError) {
+              console.error('Error parsing SSE data:', parseError);
+            }
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error('Chat error:', error);
+      setIsLoading(false);
+      toast.error('Failed to send message');
+      
+      // Remove the placeholder assistant message on error
+      setMessages(prev => 
+        prev.filter(msg => msg.id !== assistantMessageId)
+      );
     }
   };
 
@@ -106,6 +241,7 @@ export default function ChatWithAI() {
             placeholder="Ask me anything..."
             spellCheck="false"
             rows={3}
+            disabled={isLoading}
           />
 
           <div className="flex w-[95%] justify-between items-center gap-2 mt-2">
@@ -118,7 +254,12 @@ export default function ChatWithAI() {
                 onChange={(value) => setLanguage(value)}
               />
             </div>
-            <Button name="send-message" variant="ghost" onClick={handleSubmit}>
+            <Button 
+              name="send-message" 
+              variant="ghost" 
+              onClick={handleSubmit}
+              disabled={isLoading || !input.trim()}
+            >
               <ArrowUpIcon />
             </Button>
           </div>

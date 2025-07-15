@@ -45,7 +45,7 @@ export async function generateMetadata({
     const res = await fetch(`https://learnpdf.ca/api/public/project?id=${id}`);
 
     if (!res.ok) {
-      console.error('Failed to fetch project metadata', res.status);
+      // console.error('Failed to fetch project metadata', res.status);
       return {
         title: `Project Details | LearnPDF`,
       };

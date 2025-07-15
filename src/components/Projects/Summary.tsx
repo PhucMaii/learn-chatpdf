@@ -9,12 +9,12 @@ import ReactMarkdown from 'react-markdown';
 import { toast } from 'react-hot-toast';
 import { Button } from '../ui/button';
 
-export default function Summary() {
+export default function Summary({ loading }: { loading: boolean }) {
   const { id: projectId } = useParams();
 
   const queryClient = useQueryClient();
 
-  const [liveText, setLiveText] = useState(null);
+  const [liveText, setLiveText] = useState<string>('');
 
   const { data: summary, isLoading } = useQuery({
     queryKey: ['summary'],
@@ -37,6 +37,9 @@ export default function Summary() {
   const { mutateAsync: generateSummary, isPending: isGenerating } = useMutation(
     {
       mutationFn: async () => {
+        // Reset live text
+        setLiveText('');
+
         const res = await fetch('/api/summary', {
           method: 'POST',
           body: JSON.stringify({
@@ -57,24 +60,54 @@ export default function Summary() {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
+          
           const text = decoder.decode(value, { stream: true });
+          console.log({ text });
+          
+          // Append each chunk to the live text
           setLiveText((prev) => prev + text);
         }
 
-        return res.json();
+        return { success: true };
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['summary'] });
         toast.success('Summary generated successfully');
+        setLiveText(''); // Clear live text after success
       },
       onError: () => {
         toast.error('Something went wrong in generating summary');
+        setLiveText(''); // Clear live text on error
       },
     },
   );
 
+  if (loading) {
+    return (
+      <SectionContainer>
+        <div className="flex flex-col gap-4">
+          <h1 className="text-2xl font-bold">Generating Summary...</h1>
+        </div>
+      </SectionContainer>
+    );
+  }
+
   if (isLoading) {
     return <LoadingComponent />;
+  }
+
+  // Show live text while generating
+  if (isGenerating && liveText) {
+    return (
+      <SectionContainer>
+        <div className="flex flex-col gap-4">
+          <h1 className="text-2xl font-bold">Generating Summary...</h1>
+          <div className="flex flex-col gap-2 mt-4">
+            <ReactMarkdown>{liveText}</ReactMarkdown>
+          </div>
+        </div>
+      </SectionContainer>
+    );
   }
 
   if (!summary) {
@@ -103,7 +136,7 @@ export default function Summary() {
         <h1 className="text-2xl font-bold">{summary.title}</h1>
 
         <div className="flex flex-col gap-2 mt-4">
-          <ReactMarkdown>{liveText || summary.text}</ReactMarkdown>
+          <ReactMarkdown>{summary.text}</ReactMarkdown>
         </div>
       </div>
     </SectionContainer>

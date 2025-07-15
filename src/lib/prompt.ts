@@ -192,62 +192,48 @@ Expected JSON Word Count: 3000-5000 words
 `;
 
 export const summaryPrompt = `
-You are an expert AI study assistant. Generate a **concise, high-quality summary** for college students to quickly understand the document. Write in point, bullet point style. Each topic should be a point and the content should be a bullet point.
+You are an expert AI study assistant. Generate a comprehensive summary for college students studying this document.
 
-### 📌 Instructions:
-- Use **only** content from the provided document. **Do not add or fabricate details**.
-- Cover **everything** from the document, skipping only irrelevant content.
-- Write in academic yet approachable tone for busy students who want quick understanding about the document.
-- The guide should be:
-  - **Concise**: Avoid fluff or repetition
-  - **Accurate**: Stick 100% to document content
-  - **Readable**: Use well-structured topics and bullet points
-  - **Complete**: Include all important, exam-relevant content
-  - **Engaging**: Feel like high-value summary
+### Instructions:
+- Write in clear, academic markdown format
+- Create a well-structured summary with headings and bullet points
+- Keep content concise but comprehensive
+- Focus on key concepts, important details, and main takeaways
+- Use proper markdown formatting for readability
 
-### 🧾 Output Format:
-Return a **valid JSON object** without Markdown code fences or language tags. Output **only the JSON**.
+### Format Requirements:
+- Start with a clear title as # heading
+- Use ## for main sections
+- Use • for bullet points
+- Add proper spacing between sections
+- Keep paragraphs focused and scannable
 
-- Escape newlines as \\n
-- Escape double quotes as \\"
-- Use standard ASCII quotes only
-- No template literals
+### Content Guidelines:
+- Cover all important topics from the document
+- Explain concepts clearly for college-level understanding
+- Highlight key terms, definitions, and important facts
+- Include relevant examples when available
+- Organize information logically
 
-Format:
-{
-  "title": "Summary Title",
-  "summary": "Summary Content"
-}
+### Example Structure:
+# Document Title
 
-The markdown content must follow:
-## [Topic 1]
-[Well-written bullet points explaining the topic]
+## Main Topic 1
+• Key point about the subject
+• Important detail or definition
+• Supporting information
 
-## [Topic 2]
-[Well-written bullet points explaining the topic]
+## Main Topic 2  
+• Another crucial insight
+• Related concept or example
+• Additional context
 
-...
+## Key Takeaways
+• Most important points to remember
+• Practical applications
+• Study focus areas
 
-### ✅ Tips:
-- Use meaningful subheadings for skimmable structure
-- Bold or italicize for emphasis (markdown supported)
-- Focus on **explaining concepts**, not just stating them
-- Make it feel like written by a top student for other top students
-- Bold and Capitalize Topic names for easy navigation
-
-### 🛑 Restrictions:
-- No filler text or introductions about yourself
-- No character count—only include final word count at bottom
-- Do not make up or infer anything beyond the document
-- Only return the JSON object
-
----
-
-Topic: **Summary Generator**
-Style: **Academic, Concise, Human, Friendly**
-Tone: **Human, Academic, Friendly**
-Audience: **College Students (20s, exam-focused)**
-Output: **Point, bullet point style markdown inside a valid JSON object**
+Return ONLY the markdown content. No JSON, no code blocks, no extra formatting - just clean markdown text that can be directly displayed.
 `;
 
 export const generateEssayPrompt = (

@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils';
-import { Message } from 'ai/react';
+// import { Message } from 'ai/react';
 import React, { useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 type Props = {
-  messages: Message[];
+  messages: any[];
   isLoading: boolean;
 };
 

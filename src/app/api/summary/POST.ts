@@ -36,8 +36,9 @@ const handler = async (req: Request) => {
       authRes.id,
       authRes.type === 'guest',
       authRes.vectors,
+      true, // Enable streaming for direct API calls
     );
-    
+
     return newSummary;
 
     // return NextResponse.json({
@@ -50,4 +51,4 @@ const handler = async (req: Request) => {
   }
 };
 
-export default handler
+export default handler;

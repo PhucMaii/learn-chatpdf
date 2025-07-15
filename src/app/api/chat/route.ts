@@ -1,4 +1,3 @@
-import { StreamingTextResponse, OpenAIStream, Message } from 'ai';
 import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
@@ -13,12 +12,6 @@ import { convertToAscii } from '@/lib/utils';
 import { getEmbeddings } from '@/lib/embedding';
 
 export const runtime = 'nodejs';
-
-// const config = new Configuration({
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
-
-// const openai = new OpenAIApi(config);
 
 const handler = async (req: Request) => {
   try {
@@ -53,7 +46,6 @@ const handler = async (req: Request) => {
       chatId = newChat[0].id;
     }
 
-    // const fileKey = _chats[0].fileKey;
     const lastMessage = messages[messages.length - 1];
 
     const projectMedias = await db
@@ -108,38 +100,98 @@ const handler = async (req: Request) => {
       .substring(0, 3000);
 
     const prompt: any = generatePrompt(contextText, language);
-    const response: any = await openai.createChatCompletion({
+
+    // Save user message before streaming starts
+    await db.insert(_messages).values({
+      chatId,
+      content: lastMessage.content,
+      role: 'user',
+    });
+
+    // Create OpenAI streaming request following official documentation
+    const stream = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         prompt,
-        ...messages.filter((message: Message) => message.role === 'user'),
+        ...messages.filter((message: any) => message.role === 'user'),
       ],
       stream: true,
     });
 
-    const stream = OpenAIStream(response, {
-      onStart: async () => {
-        // Save user message into db
-        await db.insert(_messages).values({
-          chatId,
-          content: lastMessage.content,
-          role: 'user',
-        });
-      },
-      onCompletion: async (completion) => {
-        // Save ai message into db
-        await db.insert(_messages).values({
-          chatId,
-          content: completion,
-          role: 'system',
-        });
+    const encoder = new TextEncoder();
+    let fullResponse = '';
+
+    // Create ReadableStream following OpenAI streaming documentation pattern
+    const readableStream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of stream) {
+            const content = chunk.choices[0]?.delta?.content || '';
+
+            if (content) {
+              fullResponse += content;
+
+              // Send Server-Sent Events format data
+              const data = `data: ${JSON.stringify({
+                content,
+                type: 'content',
+              })}\n\n`;
+
+              controller.enqueue(encoder.encode(data));
+            }
+
+            // Check if stream is finished
+            if (chunk.choices[0]?.finish_reason === 'stop') {
+              // Send completion event
+              const doneData = `data: ${JSON.stringify({
+                type: 'done',
+                fullResponse,
+              })}\n\n`;
+
+              controller.enqueue(encoder.encode(doneData));
+
+              // Save AI response to database
+              await db.insert(_messages).values({
+                chatId,
+                content: fullResponse,
+                role: 'system',
+              });
+
+              // Send final SSE close
+              controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+              controller.close();
+              return;
+            }
+          }
+        } catch (error) {
+          console.error('Streaming error:', error);
+
+          // Send error event
+          const errorData = `data: ${JSON.stringify({
+            type: 'error',
+            error: 'An error occurred during streaming',
+          })}\n\n`;
+
+          controller.enqueue(encoder.encode(errorData));
+          controller.close();
+        }
       },
     });
-    return new StreamingTextResponse(stream);
+
+    return new Response(readableStream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      },
+    });
   } catch (error) {
-    console.error(error);
+    console.error('Chat API error:', error);
     return new Response(JSON.stringify({ error: 'An error occurred' }), {
       status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
   }
 };

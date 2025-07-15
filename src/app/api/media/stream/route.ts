@@ -124,36 +124,124 @@ export async function GET(req: NextRequest) {
   }
 
   const encoder = new TextEncoder();
+  let isClosed = false; // Track controller state
+  let hasError = false; // Track if any errors occurred
+
   const stream = new ReadableStream({
     async start(controller) {
-      const send = (obj: any) => {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(obj)}\n\n`));
+      // Controller health check function
+      const isControllerHealthy = () => {
+        try {
+          // Check our state tracking
+          if (isClosed || hasError) {
+            console.log(
+              '❌ Controller unhealthy: isClosed =',
+              isClosed,
+              'hasError =',
+              hasError,
+            );
+            return false;
+          }
+
+          // Check controller's built-in state
+          if (controller.desiredSize === null) {
+            console.log(
+              '❌ Controller unhealthy: desiredSize is null (controller closed)',
+            );
+            return false;
+          }
+
+          if (controller.desiredSize < 0) {
+            console.log(
+              '❌ Controller unhealthy: desiredSize is negative (backpressure issue)',
+            );
+            return false;
+          }
+
+          // All checks passed
+          return true;
+        } catch (error) {
+          console.log('❌ Controller health check failed:', error);
+          return false;
+        }
       };
 
-      try {
-        send({
-          stage: 'AI is learning',
-        });
+      const send = (obj: any) => {
+        if (isControllerHealthy()) {
+          try {
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify(obj)}\n\n`),
+            );
+            console.log(
+              '📡 Sent successfully:',
+              obj.stage || obj.type || 'unknown',
+            );
+            return true;
+          } catch (error) {
+            console.error('❌ Error sending data:', error);
+            if (!isClosed) {
+              isClosed = true;
+              hasError = true;
+            }
+            return false;
+          }
+        } else {
+          console.log(
+            '⚠️ Controller unhealthy, skipping send:',
+            obj.stage || obj.type || 'unknown',
+          );
+          return false;
+        }
+      };
 
-        // Convert the object to a JSON string and enqueue it as a data event
+      const safeClose = () => {
+        if (isControllerHealthy() && !isClosed) {
+          try {
+            console.log('🔒 Closing controller safely');
+            isClosed = true;
+            controller.close();
+            return true;
+          } catch (error) {
+            console.error('❌ Error closing controller:', error);
+            hasError = true;
+            return false;
+          }
+        } else {
+          console.log(
+            '⚠️ Controller already closed or unhealthy, skipping close',
+          );
+          return false;
+        }
+      };
+
+      // Log initial controller state
+      console.log('🚀 Controller initialized. Initial state:', {
+        desiredSize: controller.desiredSize,
+        isClosed,
+        hasError,
+      });
+
+      try {
+        if (!send({ stage: 'AI is learning' })) {
+          throw new Error('Failed to send initial stage');
+        }
+
+        // Vector processing
         let vectors = [];
-        // const vectors = await loadS3IntoPinecone(fileKey);
         if (parsedFileList && parsedFileList.length > 0) {
-          // vectors = await loadS3IntoPinecone(
-          //   existingProject[0]?.id.toString(),
-          //   'fileKey',
-          // );
           const promiseVectors = parsedFileList.map((file: any) => {
             return loadS3IntoPinecone(file.fileKey, file.fileKey, 'fileKey');
           });
-
           vectors = await Promise.all(promiseVectors);
         } else if (url) {
           vectors = await loadS3IntoPinecone(url, url, 'url');
         }
 
-        send({ stage: 'Saving medias...' });
+        if (!send({ stage: 'Saving medias...' })) {
+          throw new Error('Failed to send medias stage');
+        }
 
+        // Media data preparation
         let mediaData: any = null;
         if (parsedFileList && parsedFileList.length > 0) {
           mediaData = parsedFileList.map((file: any) => {
@@ -193,67 +281,124 @@ export async function GET(req: NextRequest) {
           .from(medias)
           .where(eq(medias.projectId, Number(projectId)));
 
-        send({ stage: 'upload successfully' });
+        if (!send({ stage: 'upload successfully' })) {
+          throw new Error('Failed to send upload success stage');
+        }
 
-        send({ stage: 'Generating summary...' });
-        await createSummary(
-          projectMedias,
-          Number(projectId),
-          toUseId.id,
-          toUseId.isGuest,
-          vectors,
-        );
+        // Generate content sequentially with individual error handling
+        console.log('🎯 Pipeline: Starting content generation...');
 
-        send({ stage: 'Generating flashcards...' });
-        // create flashcard
-        await createFlashCards(
-          projectMedias,
-          Number(projectId),
-          toUseId.id,
-          vectors,
-          toUseId.isGuest,
-        );
+        // Summary generation
+        if (isControllerHealthy()) {
+          try {
+            if (!send({ stage: 'Generating summary...' })) {
+              throw new Error('Failed to send summary stage');
+            }
+            console.log('🎯 Pipeline: Starting summary generation...');
 
-        // send({ stage: 'Generating study guide...' });
-        // await createStudyGuide(
-        //   projectMedias,
-        //   Number(projectId),
-        //   toUseId.id,
-        //   toUseId.isGuest,
-        //   vectors,
-        // );
-        send({ stage: 'Generating quiz...' });
-        await createQuiz(
-          projectMedias,
-          Number(projectId),
-          toUseId.id,
-          toUseId.isGuest,
-        );
+            await createSummary(
+              projectMedias,
+              Number(projectId),
+              toUseId.id,
+              toUseId.isGuest,
+              vectors,
+            );
 
-        send({
-          stage: 'done',
-          // mediaId: mediaInsert[0]?.id,
-          projectMedias: projectMedias,
-        });
+            if (isControllerHealthy()) {
+              console.log('🎯 Pipeline: Summary generation completed');
+              send({ stage: 'Summary completed' });
+            }
+          } catch (error) {
+            console.error('❌ Summary generation failed:', error);
+            if (isControllerHealthy()) {
+              send({ stage: 'Summary failed, continuing...' });
+            }
+          }
+        }
 
-        // Create Study Guide
-        // await createStudyGuide(
-        //   mediasToFlashcards,
-        //   Number(projectId),
-        //   toUseId.id,
-        //   toUseId.isGuest,
-        // );
+        // Flashcard generation
+        if (isControllerHealthy()) {
+          try {
+            if (!send({ stage: 'Generating flashcards...' })) {
+              throw new Error('Failed to send flashcards stage');
+            }
+            console.log('🎯 Pipeline: Starting flashcard generation...');
 
-        // send({
-        //   stage: 'done',
-        // });
-        controller.close();
+            await createFlashCards(
+              projectMedias,
+              Number(projectId),
+              toUseId.id,
+              vectors,
+              toUseId.isGuest,
+            );
 
-        // return new StreamingTextResponse(stream);
+            if (isControllerHealthy()) {
+              console.log('🎯 Pipeline: Flashcard generation completed');
+              send({ stage: 'Flashcards completed' });
+            }
+          } catch (error) {
+            console.error('❌ Flashcard generation failed:', error);
+            if (isControllerHealthy()) {
+              send({ stage: 'Flashcards failed, continuing...' });
+            }
+          }
+        }
+
+        // Quiz generation
+        if (isControllerHealthy()) {
+          try {
+            if (!send({ stage: 'Generating quiz...' })) {
+              throw new Error('Failed to send quiz stage');
+            }
+            console.log('🎯 Pipeline: Starting quiz generation...');
+
+            await createQuiz(
+              projectMedias,
+              Number(projectId),
+              toUseId.id,
+              toUseId.isGuest,
+            );
+
+            if (isControllerHealthy()) {
+              console.log('🎯 Pipeline: Quiz generation completed');
+              send({ stage: 'Quiz completed' });
+            }
+          } catch (error) {
+            console.error('❌ Quiz generation failed:', error);
+            if (isControllerHealthy()) {
+              send({ stage: 'Quiz failed, continuing...' });
+            }
+          }
+        }
+
+        // Final completion
+        if (isControllerHealthy()) {
+          const finalSuccess = send({
+            stage: 'done',
+            projectMedias: projectMedias,
+          });
+          console.log(
+            '🎯 Pipeline: All stages completed successfully. Final send:',
+            finalSuccess,
+          );
+        }
+
+        // Always try to close safely
+        const closeSuccess = safeClose();
+        console.log('🔒 Controller close result:', closeSuccess);
       } catch (error: any) {
-        console.error('Internal Server Error: ', error);
-        send({ stage: 'error', error: error.message || 'Unknown error' });
-        controller.close();
+        console.error('❌ Internal Server Error: ', error);
+        hasError = true;
+
+        if (!isClosed) {
+          try {
+            send({ stage: 'error', error: error.message || 'Unknown error' });
+          } catch (sendError) {
+            console.error('❌ Failed to send error message:', sendError);
+          }
+        }
+
+        safeClose();
       }
     },
   });

@@ -101,6 +101,7 @@ export default function ProjectDetails() {
     studyGuide: false,
     essay: false,
     quiz: false,
+    summary: false,
   });
 
   const router = useRouter();
@@ -274,7 +275,7 @@ export default function ProjectDetails() {
             </TabsList>
 
             <TabsContent value="summary">
-              <Summary />
+              <Summary loading={loading.summary} />
             </TabsContent>
 
             <TabsContent value="medias">
@@ -311,11 +312,16 @@ export default function ProjectDetails() {
         <main className="flex-1 px-4 pt-2 pb-20 overflow-y-auto">
           <Tabs value={selectedTab || 'chat'} className="w-full">
             <TabsList className="hidden">
+              <TabsTrigger value="summary">Summary</TabsTrigger>
               <TabsTrigger value="flashcards">Flashcards</TabsTrigger>
               <TabsTrigger value="medias">Media</TabsTrigger>
               <TabsTrigger value="chat">Chat with AI</TabsTrigger>
               <TabsTrigger value="exam">Exam Mode</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="summary" className="mt-2">
+              <Summary loading={loading.summary} />
+            </TabsContent>
 
             <TabsContent value="medias" className="mt-2">
               <Media setLoading={setLoading} />
