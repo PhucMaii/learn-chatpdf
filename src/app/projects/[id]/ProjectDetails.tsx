@@ -352,7 +352,14 @@ export default function ProjectDetails() {
 
         {/* Mobile Bottom Navigation */}
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 safe-area-bottom z-100">
-          <div className="grid grid-cols-6 gap-1 max-w-md mx-auto">
+          <div className="grid grid-cols-7 gap-1 max-w-md mx-auto">
+            <MobileTabButton
+              tab="summary"
+              isActive={selectedTab === 'summary'}
+              onClick={handleTabChange}
+              icon={FileTextIcon}
+              label="Summary"
+            />
             <MobileTabButton
               tab="chat"
               isActive={selectedTab === 'chat'}

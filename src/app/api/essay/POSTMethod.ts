@@ -24,8 +24,6 @@ export default async function POSTMethod(req: NextRequest) {
 
     const newEssay = await generateEssay(projectMedias, Number(projectId), userId, Number(wordCount), language);
 
-    console.log(newEssay);
-
     return NextResponse.json({ data: newEssay }, { status: 200 });
 
   } catch (error) {

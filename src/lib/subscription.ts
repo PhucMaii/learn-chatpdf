@@ -63,7 +63,6 @@ export const getIsTrial = async (guestSessionId?: string) => {
 };
 
 export const checkSubscription = async (guestSessionId?: string) => {
-  console.log('checkSubscription', guestSessionId);
   const isPro = await checkIsPro(guestSessionId); // Wait for the async operation to complete
   const isTrial = await getIsTrial(guestSessionId);
 

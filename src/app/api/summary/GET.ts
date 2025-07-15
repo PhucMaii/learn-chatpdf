@@ -21,7 +21,7 @@ const handler = async (req: Request) => {
       .where(eq(summary.projectId, Number(projectId)));
 
     if (targetSummary.length === 0) {
-      return NextResponse.json({ error: 'Summary not found' }, { status: 404 });
+      return NextResponse.json({ data: null }, { status: 200 });
     }
 
     return NextResponse.json({ data: targetSummary[0] }, { status: 200 });

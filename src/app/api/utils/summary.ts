@@ -1,5 +1,5 @@
 import { getContext } from '@/lib/context';
-import { summaryPrompt } from '@/lib/prompt';
+import { generatePrompt, summaryPrompt } from '@/lib/prompt';
 import { openai } from './openai';
 import { db } from '@/lib/db';
 import { summary } from '@/lib/db/schema';
@@ -31,16 +31,15 @@ export const createSummary = async (
       await db.delete(summary).where(eq(summary.projectId, Number(projectId)));
     }
 
+    const prompt: any = generatePrompt(context, 'English');
+
     const stream = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
-        {
-          role: 'system',
-          content: summaryPrompt,
-        },
+        prompt,
         {
           role: 'user',
-          content: context,
+          content: summaryPrompt,
         },
       ],
       stream: true,

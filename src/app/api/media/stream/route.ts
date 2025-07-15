@@ -27,28 +27,10 @@ export async function GET(req: NextRequest) {
   const parsedFileList = fileList ? JSON.parse(fileList) : [];
   const guestSessionId = searchParams.get('guestSessionId');
   const guestSessionSignature = searchParams.get('guestSessionSignature');
-  // const { projectId, fileList, url, guestSessionId, guestSessionSignature } =
-  //   await req.json();
-
-  // console.log({
-  //   projectId,
-  //   parsedFileList,
-  //   url,
-  //   guestSessionId,
-  //   guestSessionSignature,
-  // });
 
   if (!projectId) {
     return NextResponse.json({ error: 'Missing projectId' }, { status: 400 });
   }
-
-  // console.log({
-  //   projectId,
-  //   fileList,
-  //   url,
-  //   guestSessionId,
-  //   guestSessionSignature,
-  // });
 
   if (!fileList && !url) {
     return NextResponse.json(
@@ -67,7 +49,6 @@ export async function GET(req: NextRequest) {
   }
   const { userId } = await auth();
 
-  console.log(userId, 'userId');
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -87,8 +68,6 @@ export async function GET(req: NextRequest) {
         { status: 400 },
       );
     }
-
-    console.log('guestSessionId', guestSessionId);
 
     // HANDLE GUESTS -> Find guest with session id
     const existingGuest = await db
@@ -114,7 +93,6 @@ export async function GET(req: NextRequest) {
         } as any)
         .returning();
 
-      // console.log('newGuest', newGuest);
       toUseId = {
         id: guestSessionId,
         table: guests,

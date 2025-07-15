@@ -60,11 +60,6 @@ const GETMethod = async (req: Request) => {
       .from(medias)
       .where(eq(medias.projectId, Number(projectId)));
 
-    console.log({
-      messages: _messages,
-      isEmptyChat: projectMedias.length > 0 && _messages.length === 0,
-    });
-
     return NextResponse.json({
       messages: _messages,
       isEmptyChat: projectMedias.length > 0 && _messages.length === 0,

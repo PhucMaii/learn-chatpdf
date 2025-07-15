@@ -15,7 +15,6 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 //   },
 // }) as any;
 
-
 export const s3Client = new S3Client({
   region: 'us-east-2',
   credentials: {
@@ -123,30 +122,59 @@ export async function generatePresignedUrl(
   }
 }
 
-export async function uploadToS3WithPresignedUrl(file: File, userId: string) {
+export async function uploadToS3WithPresignedUrl(
+  file: File,
+  userId: string,
+  setProgress?: (progress: number) => void,
+) {
   try {
     const fileKey = `${userId}/${Date.now()}-${file.name}`;
 
     // Generate pre-signed URL
     const presignedUrl = await generatePresignedUrl(fileKey, file.type);
 
-    // Upload directly to S3/R2 using the pre-signed URL
-    const uploadResponse = await fetch(presignedUrl, {
-      method: 'PUT',
-      body: file,
-      headers: {
-        'Content-Type': file.type,
+    // Upload directly to S3/R2 using XMLHttpRequest for progress tracking
+    return new Promise<{ fileKey: string; fileName: string }>(
+      (resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+
+        // Track upload progress
+        xhr.upload.addEventListener('progress', (event) => {
+          if (event.lengthComputable && setProgress) {
+            const percentComplete = Math.round(
+              (event.loaded / event.total) * 100,
+            );
+            setProgress(percentComplete);
+          }
+        });
+
+        xhr.addEventListener('load', () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            if (setProgress) {
+              setProgress(100);
+            }
+            resolve({
+              fileKey,
+              fileName: file.name,
+            });
+          } else {
+            reject(new Error(`Upload failed: ${xhr.statusText}`));
+          }
+        });
+
+        xhr.addEventListener('error', () => {
+          reject(new Error('Upload failed: Network error'));
+        });
+
+        xhr.addEventListener('abort', () => {
+          reject(new Error('Upload failed: Request aborted'));
+        });
+
+        xhr.open('PUT', presignedUrl);
+        xhr.setRequestHeader('Content-Type', file.type);
+        xhr.send(file);
       },
-    });
-
-    if (!uploadResponse.ok) {
-      throw new Error(`Upload failed: ${uploadResponse.statusText}`);
-    }
-
-    return {
-      fileKey,
-      fileName: file.name,
-    };
+    );
   } catch (error) {
     console.log('Error uploading with pre-signed URL:', error);
     throw error;

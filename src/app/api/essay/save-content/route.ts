@@ -37,8 +37,6 @@ const handler = async (req: NextRequest) => {
 
         const essay = await db.update(essays).set(updatedEssay).where(eq(essays.id, essayId)).returning();
 
-        console.log(essay, 'ESSAY');
-
         return NextResponse.json({ data: essay[0] }, { status: 200 });
     } catch (error) {
         console.error('Error saving essay: ' + error);

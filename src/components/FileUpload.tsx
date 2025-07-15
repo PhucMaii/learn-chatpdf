@@ -48,7 +48,7 @@ const FileUpload = ({
   const [isUploading, setIsUploading] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isUploadingLink, setIsUploadingLink] = useState<boolean>(false);
-  // const [progress, setProgress] = useState<number>(0);
+  const [progress, setProgress] = useState<number>(0);
 
   // const { mutate } = useMutation({
   //   mutationFn: async ({
@@ -86,6 +86,7 @@ const FileUpload = ({
 
       try {
         setIsUploading(true);
+        setProgress(0);
         setLoading?.({
           flashcards: true,
           chat: true,
@@ -93,8 +94,24 @@ const FileUpload = ({
           essay: true,
           quiz: true,
         });
-        const dataList = acceptedFiles.map((file) => {
-          return uploadToS3WithPresignedUrl(file, user?.id);
+
+        // Track individual file progress locally
+        const fileProgressMap: { [key: string]: number } = {};
+        acceptedFiles.forEach((file, index) => {
+          fileProgressMap[`file-${index}`] = 0;
+        });
+
+        const dataList = acceptedFiles.map((file, index) => {
+          const fileSetProgress = (progress: number) => {
+            // Update individual file progress
+            fileProgressMap[`file-${index}`] = progress;
+            
+            // Calculate total progress as average of all files
+            const totalProgress = Object.values(fileProgressMap).reduce((sum, p) => sum + p, 0) / acceptedFiles.length;
+            setProgress(totalProgress);
+          };
+
+          return uploadToS3WithPresignedUrl(file, user?.id, fileSetProgress);
         });
         await Promise.all(dataList);
 
@@ -169,7 +186,7 @@ const FileUpload = ({
               quiz: false,
             });
             // router.push(`/chat/${chatId}`);
-            toast.success('Process Completed', { id: 'upload-progress' });
+            toast.success('Process Completed', { id: 'generate-progress' });
             setDisplay(projectMedias);
             // setOptimisticDisplays((prev: any[]) => {
             //   // Keep optimistic items (e.g. still loading: true)
@@ -177,6 +194,15 @@ const FileUpload = ({
             //   // Replace the rest with new server data
             //   return [...projectMedias, ...optimisticOnly];
             // });
+          } else if (stage === 'Generating summary...') {
+            setLoading?.({
+              flashcards: true,
+              chat: true,
+              studyGuide: true,
+              essay: true,
+              quiz: true,
+            });
+            toast.loading(stage, { id: 'generate-progress'});
           }
           else if (stage === 'Generating flashcards...') {
             setLoading?.({
@@ -185,7 +211,9 @@ const FileUpload = ({
               studyGuide: true,
               essay: false,
               quiz: true,
+              summary: false,
             });
+            toast.loading(stage, { id: 'generate-progress'});
           } else if (stage === 'Generating quiz...') {
             setLoading?.({
               flashcards: false,
@@ -193,9 +221,11 @@ const FileUpload = ({
               studyGuide: false,
               essay: false,
               quiz: true,
+              summary: false,
             });
-          } else {
-            toast.loading(stage, { id: 'upload-progress' });
+            toast.loading(stage, { id: 'generate-progress'});
+          } else if (stage.includes('completed')) {
+            toast.success(stage, { id: 'complete-stage'});
           }
         };
 
@@ -274,7 +304,7 @@ const FileUpload = ({
               <p className="mt-2 text-sm text-slate-500">
                 Uploading your file...
               </p>
-              <Progress value={100} className="w-full" />
+              <Progress value={progress} className="w-full" />
             </>
           ) : isLearning ? (
             <>
