@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 const isProtectedRoute = createRouteMatcher([
   '/create-chat(.*)',
-  '/flash-cards(.*)',
+  '/flash-cards/[id](.*)', // Only protect individual flashcard pages, not the main page
   '/chats',
 ]);
 

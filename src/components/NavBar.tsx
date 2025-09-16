@@ -150,6 +150,17 @@ const NavBar = memo(() => {
               </Link>
 
               <Link
+                href="/about"
+                className="relative text-gray-700 hover:text-emerald-600 font-medium text-sm lg:text-base transition-all duration-300 group"
+              >
+                <span className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  About
+                </span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-500 to-emerald-600 transition-all duration-300 group-hover:w-full" />
+              </Link>
+
+              <Link
                 href="/pricing"
                 className="relative text-gray-700 hover:text-emerald-600 font-medium text-sm lg:text-base transition-all duration-300 group"
               >

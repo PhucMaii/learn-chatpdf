@@ -12,6 +12,7 @@ export default function robots(): MetadataRoute.Robots {
         '/private/',
         '/chat/*',
         '/projects/*/edit',
+        '/flash-cards/[id]',
       ],
     },
     sitemap: 'https://learnpdf.ca/sitemap.xml',
