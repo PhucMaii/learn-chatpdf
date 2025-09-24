@@ -5,11 +5,11 @@ import { chats, messages as _messages, medias } from '@/lib/db/schema';
 import { auth } from '@clerk/nextjs/server';
 import { getQueryParams } from '@/utils/query';
 import { handleAuthGuard } from '@/utils/auth';
-import { generatePrompt } from '@/lib/prompt';
+import { generateChatPrompt } from '@/lib/prompt';
 import { openai } from '../utils/openai';
 import { getPineconeClient } from '@/lib/pinecone';
-import { convertToAscii } from '@/lib/utils';
 import { getEmbeddings } from '@/lib/embedding';
+import { buildPerDocTop, resolveTargetDocs, TargetDoc } from '@/utils/docs';
 
 export const runtime = 'nodejs';
 
@@ -60,46 +60,50 @@ const handler = async (req: Request) => {
     const pinecone = await getPineconeClient();
     const index = pinecone.Index('learn-chatpdf');
 
-    // Query each media's namespace and combine results
-    const queryPromises = projectMedias.map(async (media) => {
-      const namespace =
-        media.type === 'url'
-          ? convertToAscii(media.url || '')
-          : convertToAscii(media.fileKey || '');
+    // Find best match document
+    const targetDocs = resolveTargetDocs(lastMessage.content, projectMedias);
 
+    // Query each media's namespace and combine results
+    const queryPromises = targetDocs.map(async (doc: any) => {
       try {
-        const queryResult = await index.namespace(namespace).query({
-          topK: 15,
+        const queryResult = await index.namespace(doc.namespace).query({
+          topK: 10,
           vector: queryEmbeddings,
           includeMetadata: true,
         });
         return queryResult.matches || [];
       } catch (error) {
-        console.error(`Error querying namespace ${namespace}:`, error);
+        console.error(`Error querying namespace ${doc.namespace}:`, error);
         return [];
       }
     });
-
+    
     const queryResults = await Promise.all(queryPromises);
-    const allMatches = queryResults.flat();
+    console.log({ targetDocs, queryResults });
+    for (const queryResult of queryResults) {
+      console.log({ queryResult });
+    }
 
-    // Sort matches by score
-    const sortedMatches = allMatches.sort(
-      (a, b) => (b.score || 0) - (a.score || 0),
-    );
+    const perDocTop = buildPerDocTop(targetDocs as TargetDoc[], queryResults);
+    // const allMatches = queryResults.flat();
 
-    // Filter and get top matches
-    const qualifyingDocs = sortedMatches
-      .filter((match) => match.score && match.score > 0.5)
-      .slice(0, 5); // Get top 5 matches
+    // // Sort matches by score
+    // const sortedMatches = allMatches.sort(
+    //   (a, b) => (b.score || 0) - (a.score || 0),
+    // );
+
+    // // Filter and get top matches
+    // const qualifyingDocs = sortedMatches
+    //   .filter((match) => match.score && match.score > 0.5)
+    //   .slice(0, 5); // Get top 5 matches
 
     // Extract text from matches
-    const contextText = qualifyingDocs
-      .map((match) => match.metadata?.text || '')
-      .join('\n')
-      .substring(0, 3000);
+    // const contextText = qualifyingDocs
+    //   .map((match) => match.metadata?.text || '')
+    //   .join('\n')
+    //   .substring(0, 3000);
 
-    const prompt: any = generatePrompt(contextText, language);
+    const prompt: any = generateChatPrompt(perDocTop, language);
 
     // Save user message before streaming starts
     await db.insert(_messages).values({
@@ -111,6 +115,10 @@ const handler = async (req: Request) => {
     // Create OpenAI streaming request following official documentation
     const stream = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
+      temperature: 0.2,
+      top_p: 1,
+      frequency_penalty: 0.4,
+      presence_penalty: 0,
       messages: [
         prompt,
         ...messages.filter((message: any) => message.role === 'user'),
